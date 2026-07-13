@@ -1,0 +1,22 @@
+{
+  "contentVersion": "0.1.0",
+  "verses": [],
+  "announcements": [],
+  "practices": [],
+  "courses": [],
+  "topics": [],
+  "camps": [],
+  "resources": [],
+  "homes": [],
+  "fellowships": [],
+  "antChurches": [],
+  "antFellowships": [],
+  "ministries": [],
+  "coworkers": [],
+  "meetings": [],
+  "links": {
+    "zoom": { "url": "", "meetingId": "", "passcode": "" },
+    "youtube": { "url": "" },
+    "offering": { "bank": "", "account": "", "holder": "", "onlineUrl": "", "note": "" }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "國度321空中團契",
+  "short_name": "321空中團契",
+  "description": "認識國度321空中團契：異象、裝備、資源、連結與服侍。落實321理念，活出無己，建立屬神的體系。",
+  "lang": "zh-Hant",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#12233F",
+  "theme_color": "#12233F",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
