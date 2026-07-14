@@ -268,6 +268,19 @@ a{color:var(--blue);text-decoration:none;}
 .fmt{display:inline-flex;align-items:center;gap:5px;background:var(--sky);border:1px solid var(--blue-light);border-radius:10px;padding:7px 12px;color:var(--blue);font-size:calc(13px * var(--fs));font-weight:600;}
 .fmt:active{background:var(--blue-light);}
 .search input:disabled{color:var(--muted);}
+.course{border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden;background:#fff;}
+.course summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:10px;}
+.course summary::-webkit-details-marker{display:none;}
+.course .csum{flex:1;}
+.course .csum b{display:block;font-family:var(--font-display);color:var(--navy);font-size:calc(17px * var(--fs));}
+.course .csum span{color:var(--muted);font-size:calc(13px * var(--fs));}
+.course[open] summary{border-bottom:1px solid var(--line);}
+.course .cbody{padding:12px 16px;}
+.lesson{display:flex;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line);}
+.lesson:last-child{border-bottom:0;}
+.lnum{width:28px;height:28px;flex:0 0 28px;border-radius:50%;background:var(--sky);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:calc(13px * var(--fs));font-weight:700;margin-top:2px;}
+.lbody{flex:1;}
+.lbody b{display:block;color:var(--ink);font-size:calc(16px * var(--fs));}
 .note{color:var(--muted);font-size:calc(13px * var(--fs));margin:6px 2px 0;}
 .hr{height:1px;background:var(--line);margin:18px 0;border:0;}
 .center{text-align:center;}
@@ -697,6 +710,18 @@ var FMT=[
   { k:"video",    label:"視頻", ic:"video" },
   { k:"questions",label:"討論", ic:"users" }
 ];
+function fmtButtons(f){
+  f=f||{}; var out='';
+  for(var j=0;j<FMT.length;j++){ var def=FMT[j]; var url=f[def.k];
+    if(url) out+='<a class="fmt" href="'+esc(url)+'" target="_blank" rel="noopener">'+icon(def.ic,16)+' '+def.label+'</a>';
+  }
+  return out;
+}
+function resById(id){
+  var list=D.resources||[];
+  for(var i=0;i<list.length;i++){ if(list[i].id===id) return list[i]; }
+  return null;
+}
 function resMatch(r){
   if(RES_STAGE && RES_STAGE!=="全部" && (r.stage||"")!==RES_STAGE) return false;
   var q=(RES_Q||"").replace(/^\s+|\s+$/g,"");
@@ -710,10 +735,7 @@ function renderResList(){
   for(var i=0;i<list.length;i++){ var r=list[i];
     if(!resMatch(r)) continue;
     shown++;
-    var fmts='', f=r.formats||{};
-    for(var j=0;j<FMT.length;j++){ var def=FMT[j]; var url=f[def.k];
-      if(url) fmts+='<a class="fmt" href="'+esc(url)+'" target="_blank" rel="noopener">'+icon(def.ic,16)+' '+def.label+'</a>';
-    }
+    var fmts=fmtButtons(r.formats);
     rows+='<div class="rescard">'+
       (r.forServers?'<span class="pack">適合帶領</span>':'')+
       '<b>'+esc(r.title)+'</b>'+
@@ -836,10 +858,51 @@ var PAGES = {
   },
 
   equip: function(){
+    // 裝備課程（把資源策展成學習路徑）
+    var courses=D.courses||[], cHtml='';
+    for(var i=0;i<courses.length;i++){ var c=courses[i];
+      var lessons=c.lessons||[], li='';
+      for(var j=0;j<lessons.length;j++){ var ls=lessons[j];
+        var res=ls.resourceId?resById(ls.resourceId):null;
+        var title=ls.title||(res?res.title:"（課程）");
+        var fmts=fmtButtons(ls.formats||(res?res.formats:null));
+        li+='<div class="lesson"><span class="lnum">'+(j+1)+'</span>'+
+          '<div class="lbody"><b>'+esc(title)+'</b>'+(fmts?'<div class="fmts">'+fmts+'</div>':'')+'</div></div>';
+      }
+      cHtml+='<details class="course"'+(i===0?' open':'')+'>'+
+        '<summary><div class="csum"><b>'+esc(c.title)+'</b>'+
+        '<span>'+(c.speaker?esc(c.speaker)+' · ':'')+(lessons.length)+' 課</span></div>'+
+        '<span class="darrow">'+icon("chev",18)+'</span></summary>'+
+        '<div class="cbody">'+(c.desc?'<p class="note" style="margin:0 0 10px">'+esc(c.desc)+'</p>':'')+li+'</div></details>';
+    }
+    var coursesBlock = courses.length ? cHtml
+      : slot('系列課程（影音＋逐字稿＋討論問題）即將上架。（同工可在 data.json 的 courses 策展）');
+
+    // 專題
+    var topics=D.topics||[], tHtml='';
+    for(var k=0;k<topics.length;k++){ var t=topics[k];
+      tHtml+='<a class="rowlink" href="'+esc(t.link||"#")+'"'+(t.link?' target="_blank" rel="noopener"':'')+'>'+
+        '<span class="ri">'+icon("seed",22)+'</span>'+
+        '<span class="rt"><b>'+esc(t.title)+'</b><span>'+esc(t.category||"")+'</span></span>'+
+        '<span class="chev">'+icon("chev",20)+'</span></a>';
+    }
+    var topicsBlock = topics.length ? tHtml : slot('婚姻、職場、親子、護教等專題庫即將加入。');
+
+    // 營會
+    var camps=D.camps||[], mHtml='';
+    for(var n=0;n<camps.length;n++){ var cp=camps[n];
+      mHtml+='<div class="card"><h3>'+esc(cp.title)+'</h3>'+
+        '<p class="note">'+(cp.date?esc(cp.date):'')+(cp.mode?' · '+esc(cp.mode):'')+'</p>'+
+        (cp.signupUrl?'<a class="btn" style="margin-top:10px" href="'+esc(cp.signupUrl)+'" target="_blank" rel="noopener">報名</a>':'')+
+      '</div>';
+    }
+    var campsBlock = camps.length ? mHtml : slot('營會報名、資訊與回顧即將加入。');
+
     return pageHead("生命 · 改變的第二站","生命裝備","領受真理，被建造")+
-      sect("課","裝備課程")+ slot('系列課程（影音＋逐字稿＋討論問題）即將上架。')+
-      sect("題","專題")+ slot('婚姻、職場、親子、護教等專題庫即將加入。')+
-      sect("營","營會")+ slot('營會報名、資訊與回顧即將加入。')+
+      sect("課","裝備課程")+
+      '<p class="note" style="margin:-4px 2px 12px">一條條學習的路，點課程展開它的每一課。</p>'+ coursesBlock +
+      sect("題","專題")+ topicsBlock +
+      sect("營","營會")+ campsBlock +
       sect("修","每日靈修")+
       '<p class="note" style="margin-bottom:10px">連結321數位生態系，每天親近神：</p>'+ appcards();
   },

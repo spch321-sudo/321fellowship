@@ -1,5 +1,5 @@
 {
-  "contentVersion": "1.1.0",
+  "contentVersion": "1.2.0",
   "verses": [
     {
       "ref": "加二20",
@@ -277,6 +277,47 @@
       "formats": {
         "video": "https://www.youtube.com/@kingdom321air"
       }
+    }
+  ],
+  "courses": [
+    {
+      "id": "c1",
+      "title": "無己入門 · 三堂",
+      "speaker": "321核心課程",
+      "desc": "從看見問題（有己），到領受出路（無己），走一遍生命翻轉的路。",
+      "lessons": [
+        {
+          "resourceId": "r2"
+        },
+        {
+          "resourceId": "r1"
+        },
+        {
+          "resourceId": "r3"
+        }
+      ]
+    }
+  ],
+  "topics": [
+    {
+      "id": "t1",
+      "title": "婚姻與家庭",
+      "category": "專題 · 關係",
+      "link": "https://www.youtube.com/@kingdom321air"
+    },
+    {
+      "id": "t2",
+      "title": "職場得勝",
+      "category": "專題 · 生活",
+      "link": "https://www.youtube.com/@kingdom321air"
+    }
+  ],
+  "camps": [
+    {
+      "title": "321夫妻成長營",
+      "date": "日期將公布",
+      "mode": "線上",
+      "signupUrl": "https://spch321-sudo.github.io/321couples/"
     }
   ]
 }
