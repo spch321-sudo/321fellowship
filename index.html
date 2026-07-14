@@ -822,6 +822,20 @@ function afterDecision(){
   out+='<button class="btn" data-contact="決志">我要一位同工陪我</button>';
   return out+'</div>';
 }
+/* ---- 美圖用 logo（同網域載入，無跨域問題；失敗則優雅略過） ---- */
+var LOGO_IMG=null, LOGO_STATE=0; /* 0未載入 1載入中 2成功 3失敗 */
+function loadLogo(cb){
+  if(LOGO_STATE===2 || LOGO_STATE===3){ cb(); return; }
+  if(LOGO_STATE===1){ setTimeout(function(){ loadLogo(cb); },150); return; }
+  LOGO_STATE=1;
+  try{
+    var img=new Image();
+    img.onload=function(){ LOGO_IMG=img; LOGO_STATE=2; cb(); };
+    img.onerror=function(){ LOGO_STATE=3; cb(); };
+    img.src="icon-192.png?v=3";
+  }catch(e){ LOGO_STATE=3; cb(); }
+}
+
 /* ---- 共用：把今日經文畫成海報（可指定尺寸） ---- */
 function drawVersePoster(ctx, W, H, v, t){
   t=t||0; var s=W/1080;
@@ -837,9 +851,27 @@ function drawVersePoster(ctx, W, H, v, t){
   ctx.strokeStyle="rgba(212,175,55,0.4)"; ctx.lineWidth=2*s;
   roundRectPath(ctx,60*s,60*s,W-120*s,H-120*s,32*s); ctx.stroke();
   ctx.textAlign="center";
+  var titleY=190*s;
+  if(LOGO_IMG){
+    var ls=132*s;
+    try{
+      ctx.save();
+      /* 柔和光暈襯托徽章 */
+      var lg=ctx.createRadialGradient(W/2,(140*s),ls*0.2,W/2,(140*s),ls*0.85);
+      lg.addColorStop(0,"rgba(233,204,107,0.28)"); lg.addColorStop(1,"rgba(233,204,107,0)");
+      ctx.fillStyle=lg; ctx.beginPath(); ctx.arc(W/2,140*s,ls*0.85,0,Math.PI*2); ctx.fill();
+      /* 徽章（圓角裁切） */
+      var lx=W/2-ls/2, ly=140*s-ls/2;
+      roundRectPath(ctx, lx, ly, ls, ls, ls*0.22); ctx.clip();
+      ctx.drawImage(LOGO_IMG, lx, ly, ls, ls);
+      ctx.restore();
+    }catch(e){ ctx.restore(); }
+    titleY=272*s;
+  } else {
+    drawStar(ctx, W/2, 150*s, 14*s, "#E9CC6B");
+  }
   ctx.fillStyle="#E9CC6B"; ctx.font='600 '+(34*s)+'px "PingFang TC","Noto Sans CJK TC","Microsoft JhengHei",sans-serif';
-  ctx.fillText("今　日　一　句", W/2, 190*s);
-  drawStar(ctx, W/2, 150*s, 14*s, "#E9CC6B");
+  ctx.fillText("今　日　金　句", W/2, titleY);
   ctx.fillStyle="#FFFFFF";
   var fontSize=64; ctx.font='700 '+(fontSize*s)+'px "Songti TC","Noto Serif CJK TC","PingFang TC",serif';
   var maxW=W-260*s;
@@ -877,6 +909,9 @@ function drawStar(ctx,cx,cy,r,color){ ctx.save(); ctx.fillStyle=color; ctx.begin
 /* ---- 美圖分享 ---- */
 function makeVerseImage(){
   var v=todayVerse(); if(!v){ note("今天還沒有經文可以分享。"); return; }
+  loadLogo(function(){ makeVerseImage2(v); });
+}
+function makeVerseImage2(v){
   var W=1080,H=1350;
   var cv=document.createElement("canvas"); cv.width=W; cv.height=H;
   drawVersePoster(cv.getContext("2d"), W, H, v, 0);
@@ -903,6 +938,9 @@ function pickVideoMime(){
 function makeVerseVideo(){
   if(!REC.blob){ note("請先錄一段聲音，再做成影片。"); return; }
   var v=todayVerse(); if(!v){ note("今天還沒有經文。"); return; }
+  loadLogo(function(){ makeVerseVideo2(v); });
+}
+function makeVerseVideo2(v){
   var W=720,H=900;
   var cv=document.createElement("canvas"); cv.width=W; cv.height=H;
   var AC=window.AudioContext||window.webkitAudioContext;
