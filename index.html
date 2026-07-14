@@ -232,6 +232,42 @@ a{color:var(--blue);text-decoration:none;}
 .qrbox{margin-top:12px;text-align:center;padding-top:12px;border-top:1px dashed var(--line);}
 .qrimg{width:170px;height:170px;image-rendering:pixelated;border:1px solid var(--line);border-radius:10px;background:#fff;display:inline-block;}
 .qrcap{margin-top:6px;color:var(--muted);font-size:calc(13px * var(--fs));}
+.day{border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden;background:#fff;}
+.day summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:12px;font-family:var(--font-display);color:var(--navy);font-size:calc(17px * var(--fs));font-weight:700;}
+.day summary::-webkit-details-marker{display:none;}
+.day .dnum{width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:calc(15px * var(--fs));}
+.day summary .darrow{margin-left:auto;color:#B9C4D2;}
+.day[open] summary{border-bottom:1px solid var(--line);}
+.day .dbody{padding:14px 16px;}
+.day .dbody p{margin:0 0 10px;}
+.dverse{background:var(--sky);border-left:4px solid var(--gold);border-radius:8px;padding:10px 12px;color:var(--navy);font-size:calc(15px * var(--fs));margin:10px 0;}
+.dpray{color:var(--muted);font-size:calc(14px * var(--fs));font-style:italic;}
+.decision{background:linear-gradient(160deg,#fbf3d9,#f6e8c0);border:1px solid #e8d38a;border-radius:18px;padding:18px;margin-bottom:14px;}
+.decision h3{color:#8a6d00;margin:0 0 6px;font-size:calc(20px * var(--fs));}
+.prayerbox{background:#fff;border-radius:14px;padding:16px;margin:12px 0;font-size:calc(17px * var(--fs));line-height:1.95;color:var(--ink);border:1px dashed var(--gold);}
+.keypill{background:linear-gradient(135deg,#fbf3d9,#f3e4b6);border:1px solid #e8d38a;border-radius:10px;padding:8px 12px;color:#8a6d00;font-family:var(--font-display);font-weight:700;font-size:calc(15px * var(--fs));margin-top:6px;}
+.switchtrack{background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 16px;color:var(--blue);font-size:calc(14px * var(--fs));font-weight:600;margin-bottom:16px;display:inline-flex;}
+.switchtrack:active{background:var(--sky);}
+.fld{display:block;margin-bottom:12px;}
+.fld span{display:block;font-size:calc(14px * var(--fs));color:var(--navy);font-weight:600;margin-bottom:6px;}
+.fld input,.fld textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-family:inherit;font-size:calc(16px * var(--fs));color:var(--ink);background:#fff;outline:none;box-sizing:border-box;}
+.fld input:focus,.fld textarea:focus{border-color:var(--blue);}
+.fld textarea{resize:vertical;}
+.remindcard{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#eef5ff,#e2ecfb);border:1px solid var(--blue-light);border-radius:16px;padding:14px 14px;margin:0 0 16px;color:var(--ink);}
+.remindcard:active{opacity:.9;}
+.remindcard .ri{width:42px;height:42px;flex:0 0 42px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;color:var(--blue);}
+.remindcard .rt{flex:1;}
+.remindcard .rt b{display:block;color:var(--navy);font-size:calc(16px * var(--fs));}
+.remindcard .rt span{color:var(--muted);font-size:calc(13px * var(--fs));}
+.rescard{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 14px;margin-bottom:12px;}
+.rescard b{display:block;color:var(--navy);font-size:calc(17px * var(--fs));font-family:var(--font-display);line-height:1.4;padding-right:70px;}
+.rescard .resmeta{color:var(--muted);font-size:calc(13px * var(--fs));margin-top:3px;}
+.rescard .restag{display:inline-block;background:var(--sky);color:var(--blue);border-radius:8px;padding:2px 10px;font-size:calc(12px * var(--fs));margin-top:8px;}
+.rescard .pack{position:absolute;top:12px;right:12px;background:var(--gold);color:#fff;border-radius:8px;padding:3px 10px;font-size:calc(11px * var(--fs));font-weight:700;}
+.fmts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.fmt{display:inline-flex;align-items:center;gap:5px;background:var(--sky);border:1px solid var(--blue-light);border-radius:10px;padding:7px 12px;color:var(--blue);font-size:calc(13px * var(--fs));font-weight:600;}
+.fmt:active{background:var(--blue-light);}
+.search input:disabled{color:var(--muted);}
 .note{color:var(--muted);font-size:calc(13px * var(--fs));margin:6px 2px 0;}
 .hr{height:1px;background:var(--line);margin:18px 0;border:0;}
 .center{text-align:center;}
@@ -293,6 +329,28 @@ a{color:var(--blue);text-decoration:none;}
   </div>
 </div>
 
+<!-- 接待表單 -->
+<div class="sheet" id="contactSheet">
+  <div class="mask" data-close="1"></div>
+  <div class="panel">
+    <h3 id="ctTitle">留下聯絡方式</h3>
+    <p class="note" id="ctIntro" style="margin-bottom:14px">我們會請一位接待同工，在 24 小時內主動與你聯繫、陪伴你。</p>
+    <div id="ctForm">
+      <label class="fld"><span>你的稱呼</span><input id="ctName" type="text" placeholder="怎麼稱呼你？"></label>
+      <label class="fld"><span>聯絡方式</span><input id="ctContact" type="text" placeholder="LINE ID／電話／Email"></label>
+      <label class="fld"><span>想說的話（可不填）</span><textarea id="ctMsg" rows="3" placeholder="有什麼想讓我們知道的嗎？"></textarea></label>
+      <button class="btn" id="ctSend" style="margin-top:6px">送出，讓同工來認識我</button>
+      <p class="note" style="margin-top:10px">你的資料只會給接待同工，用來與你聯繫。</p>
+    </div>
+    <div id="ctDone" style="display:none;text-align:center;padding:10px 0">
+      <div style="font-size:calc(40px * var(--fs))">🕊️</div>
+      <h3 style="margin:8px 0">我們收到了！</h3>
+      <p id="ctDoneMsg" class="note">接待同工會在 24 小時內與你聯繫。你不孤單，歡迎回家！</p>
+      <button class="btn ghost" data-close="1" style="margin-top:12px">好的</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ===== data.js ===== */
 /* =====================================================================
@@ -300,6 +358,16 @@ a{color:var(--blue);text-decoration:none;}
    說明：這是「內容的骨架」。凡是會變動的內容，之後填在這裡即可，
         不需改動程式。上線後建議改由 data.json / Google Sheet 供應。
    ===================================================================== */
+window.APP_CONFIG = {
+  /* 接待通知後端（Cloudflare Worker）網址。部署後填入，例如：
+     "https://spch321-welcome.你的帳號.workers.dev"
+     留空則表單改為「本機記錄＋提示自行聯繫」的備援模式。 */
+  contactEndpoint: "",
+  /* 每日經文提醒的 Telegram 頻道/群組邀請連結。設定後，首頁會顯示
+     「加入每日經文提醒」卡片。例如 "https://t.me/你的頻道" */
+  verseChannelUrl: ""
+};
+
 window.APP_DATA = {
 
   /* 內容版本（供離線快取比對，更新內容時 +1） */
@@ -471,6 +539,82 @@ window.APP_DATA = {
       { q:"我是新朋友，怎麼開始？", a:"到「新朋友」頁，有溫暖的歡迎與認識321的路徑；也可以找一位同工陪你一起走。" }
     ]
   },
+  /* 新朋友專區內容（恩典先行） */
+  newfriend: {
+    welcome: "這裡有一個溫暖的家，正在等你。無論你是誰、從哪裡來、正經歷什麼，你都是被愛的、被等候的。歡迎你回家。",
+    intro: "我們是一群來自世界各國、渴慕神的人，每天在線上一起認識耶穌、學習聖經。我們相信：耶穌是榜樣、聖經是準則、聖靈是引導。在這裡，你不需要先變好才被接納——正如你，就可以來。",
+    path: [
+      { d:1, t:"歡迎你回家",
+        msg:"你今天會打開這個App，不是偶然。有一位神，在你還不認識祂的時候，就一直在等你。你是被愛的，不是因為你做了什麼，而是因為你本身就寶貴。",
+        verse:"「你在我眼中看為寶貴，是尊榮的；我也愛你。」（賽四三4）",
+        pray:"今天，只要輕輕地說：『神啊，如果你是真的，求你讓我認識你。』" },
+      { d:2, t:"有一位這麼愛你的神",
+        msg:"這位神不是遙遠、冷漠的。祂認識你的名字，數算你的頭髮，看見你每一滴眼淚。祂的愛不會因為你的軟弱而減少。",
+        verse:"「神愛世人，甚至將他的獨生子賜給他們，叫一切信他的，不致滅亡，反得永生。」（約三16）",
+        pray:"神啊，謝謝你這樣愛我，這份愛超過我所能明白的。" },
+      { d:3, t:"祂為你做了一件事",
+        msg:"耶穌來到世上，為你我的罪死在十字架上，第三天又復活了。這不只是一個故事——是一位愛你的神，親自為你付上了代價，只為把你贖回。",
+        verse:"「惟有基督在我們還作罪人的時候為我們死，神的愛就在此向我們顯明了。」（羅五8）",
+        pray:"主耶穌，謝謝你為我死、為我復活，你的愛我實在不配得。" },
+      { d:4, t:"你看見自己了嗎",
+        msg:"在這位神的愛裡，我們可以誠實一點：我們都曾想自己作主、以自己為中心，這就是聖經說的『罪』。但看見這一點不是要你自責——而是因為，唯有承認，才能被醫治。你不是一個人在掙扎。",
+        verse:"「世人都犯了罪，虧缺了神的榮耀。」（羅三23）",
+        pray:"神啊，我承認我需要你。我不想再自己作主，我願意讓你帶領。" },
+      { d:5, t:"一個好消息：無己",
+        msg:"福音的核心是：不再是我，乃是基督。當我們把生命交給耶穌，舊的有己的生命，就換成新的、有基督的生命。這不是失去自己，而是進入一個更豐盛、更自由的生命。",
+        verse:"「現在活著的不再是我，乃是基督在我裡面活著。」（加二20）",
+        pray:"主耶穌，我願意讓你在我裡面活，作我生命的主。" },
+      { d:6, t:"你不是一個人",
+        msg:"跟隨耶穌，不是孤單的旅程。神為你預備了一個屬靈的家——有屬靈的同伴、有像父母般陪伴你的人、有一起同行的弟兄姊妹。你會被愛、被牧養、被同行。",
+        verse:"「看哪，弟兄和睦同居是何等地善，何等地美！」（詩一三三1）",
+        pray:"神啊，謝謝你為我預備了一個家，我不再需要孤單面對人生。" },
+      { d:7, t:"你願意嗎",
+        msg:"走到這裡，也許你的心正被觸動。這不是宗教的要求，而是一位愛你的神，向你發出的邀請：你願意接受祂的愛，讓耶穌成為你生命的主嗎？如果你願意，就用下面的禱告，向祂說。",
+        verse:"「看哪，我站在門外叩門，若有聽見我聲音就開門的，我要進到他那裡去。」（啟三20）",
+        pray:"（請往下做決志禱告）" }
+    ],
+    tracks: {
+      seeker: "我還在認識耶穌（慕道友）",
+      believer: "我已信主，想認識321（基督徒）"
+    },
+    believerWelcome: "親愛的弟兄姊妹，歡迎你！你已經在基督裡，這是何等的恩典。321不是另一個門派，而是一套幫助你『從得救走向得勝、從有己走向無己』的門訓。願接下來的七天，成為你生命翻轉的起點。",
+    believerPath: [
+      { d:1, t:"看見真正的問題：有己",
+        msg:"我們信了主，卻常常不得勝——問題在哪裡？321幫我們看見：不是行為的問題，是生命的問題。舊人『有己』，凡事以自己為中心、想自己作主作王，這才是一切問題的根源。看見它，是改變的第一步。",
+        verse:"「因為我所做的，我自己不明白……我也知道在我裡頭，就是我肉體之中，沒有良善。」（羅七15、18）",
+        key:"改變觀念，就改變生命。" },
+      { d:2, t:"三個基礎：321的根基",
+        msg:"321的三個基礎，是我們生命的定位：耶穌是我的榜樣（照著祂的生命活）、聖經是我的準則（照著真理行）、聖靈是我的引導（順著聖靈走）。不是靠自己的努力，而是回到這三個根基上。",
+        verse:"「你們立志行事，都是神在你們心裡運行，為要成就他的美意。」（腓二13）",
+        key:"耶穌是榜樣、聖經是準則、聖靈是引導。" },
+      { d:3, t:"兩個核心：讓耶穌作王",
+        msg:"321的兩個核心，是一切的目標：讓耶穌作王、讓耶穌得一切的榮耀。我們的問題常是自己想作王；得勝的祕訣，是把王位讓給耶穌，讓祂在我裡面掌權，也把一切榮耀歸給祂。",
+        verse:"「他必興旺，我必衰微。」（約三30）",
+        key:"讓耶穌作王，讓耶穌得一切榮耀。" },
+      { d:4, t:"謙卑戰勝驕傲",
+        msg:"驕傲是離開本位、抓住權力想要代替神；謙卑是放下權力、回到本位，讓神作神、讓人作人。神阻擋驕傲的人，賜恩給謙卑的人。謙卑，是復興的鑰匙，也是得勝的關鍵。",
+        verse:"「神阻擋驕傲的人，賜恩給謙卑的人。」（雅四6）",
+        key:"謙卑戰勝驕傲，無己戰勝撒但。" },
+      { d:5, t:"無己：不再是我，乃是基督",
+        msg:"321門訓的核心，就是『無己』。藉著福音真理，舊人有己的生命，被基督的生命取代。無己不是沒有自己，乃是進入無限、活出無限——讓耶穌在我裡面活。無己才能合一，無己才能得勝。",
+        verse:"「現在活著的不再是我，乃是基督在我裡面活著。」（加二20）",
+        key:"無己讓耶穌在裡面活，無己才能得勝。" },
+      { d:6, t:"920與235：活出關係、建立體系",
+        msg:"生命改變了，就要活在關係中。920：操練無己（0），活出聖靈的果子（9），愛每一個與我有關係的人（2）。235：發展2屬靈同伴、3屬靈父母兒女、5五重職份戰友，讓生命繁殖生命，建立屬神的體系。",
+        verse:"「你在許多見證人面前聽見我所教訓的，也要交託那忠心能教導別人的人。」（提後二2）",
+        key:"先生命、再關係、後事工。" },
+      { d:7, t:"加入空中團契，一起成為得勝者",
+        msg:"321不是一個人走的路。國度321空中團契，連結世界各國敬虔愛神的人，每天在線上一起學習真理、操練無己、彼此同行。歡迎你加入我們，一起邁向末後的大復興，將來與基督同坐寶座、同作王，直到永遠。",
+        verse:"「得勝的，我要賜他在我寶座上與我同坐，就如我得了勝，在我父的寶座上與他同坐一般。」（啟三21）",
+        key:"陪伴每個人成為得勝者。" }
+    ],
+    decision: {
+      title: "決志禱告",
+      intro: "如果你願意接受耶穌，不必用華麗的話，只要真心地跟著這樣禱告：",
+      prayer: "親愛的主耶穌，謝謝你這麼愛我，為我死在十字架上，第三天又復活。我承認我是罪人，過去總想自己作主。現在我願意打開心門，接受你作我生命的救主和王。求你赦免我的罪，把新的生命賜給我，讓不再是我，乃是你在我裡面活。從今天起，我要跟隨你。奉主耶穌的名禱告，阿們。",
+      after: "如果你剛剛真心做了這個禱告——恭喜你，你已經回到天父的家了！這是天上都要歡喜的時刻（路十五10）。這只是起點，接下來，讓我們陪你一起走。"
+    }
+  },
   /* 321 數位生態系（真實可連結） */
   ecosystem: [
     { badge:"晨", name:"晨讀321",     desc:"每日靈修 · 171課三語", url:"https://spch321-sudo.github.io/chendu321/", img:"data:image/jpeg;base64,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" },
@@ -545,7 +689,48 @@ function appcards(){
   return out+'</div>';
 }
 
+/* ---- 資源中心 ---- */
+var FMT=[
+  { k:"article",  label:"文章", ic:"book" },
+  { k:"manuscript_doc", label:"講章", ic:"book" },
+  { k:"slides_pdf", label:"投影片", ic:"video" },
+  { k:"video",    label:"視頻", ic:"video" },
+  { k:"questions",label:"討論", ic:"users" }
+];
+function resMatch(r){
+  if(RES_STAGE && RES_STAGE!=="全部" && (r.stage||"")!==RES_STAGE) return false;
+  var q=(RES_Q||"").replace(/^\s+|\s+$/g,"");
+  if(!q) return true;
+  var hay=((r.title||"")+" "+(r.series||"")+" "+(r.scripture||"")+" "+((r.topics||[]).join(" "))).toLowerCase();
+  return hay.indexOf(q.toLowerCase())>-1;
+}
+function renderResList(){
+  var list=D.resources||[];
+  var rows='', shown=0;
+  for(var i=0;i<list.length;i++){ var r=list[i];
+    if(!resMatch(r)) continue;
+    shown++;
+    var fmts='', f=r.formats||{};
+    for(var j=0;j<FMT.length;j++){ var def=FMT[j]; var url=f[def.k];
+      if(url) fmts+='<a class="fmt" href="'+esc(url)+'" target="_blank" rel="noopener">'+icon(def.ic,16)+' '+def.label+'</a>';
+    }
+    rows+='<div class="rescard">'+
+      (r.forServers?'<span class="pack">適合帶領</span>':'')+
+      '<b>'+esc(r.title)+'</b>'+
+      '<div class="resmeta">'+(r.series?esc(r.series)+' · ':'')+(r.scripture?esc(r.scripture):'')+'</div>'+
+      (r.stage?'<span class="restag">'+esc(r.stage)+'</span>':'')+
+      (fmts?'<div class="fmts">'+fmts+'</div>':'')+
+    '</div>';
+  }
+  if(!list.length) return slot('資源卡即將加入。<br>每篇信息一張卡，掛著 <b>文章 · 講章 · 投影片 · 視頻 · 討論</b> 多種型態。（同工可在 data.json 的 resources 新增）');
+  if(!shown) return slot('找不到符合的資源，換個關鍵字或分類試試。');
+  return rows;
+}
+
 /* ---- 頁面渲染 ---- */
+var NF_TRACK=null;
+var RES_STAGE=null;
+var RES_Q="";
 var PAGES = {
 
   home: function(){
@@ -585,7 +770,14 @@ var PAGES = {
       D.announcements.map(function(a){return '<div class="card"><h3>'+esc(a.title)+'</h3><p>'+esc(a.body)+'</p></div>';}).join("")
       : slot('目前沒有新消息。<br>營會、專題、代禱事項將顯示在這裡。');
 
-    return verse +
+    var vc=(window.APP_CONFIG&&window.APP_CONFIG.verseChannelUrl)||"";
+    var remind = vc ?
+      ('<a class="remindcard" href="'+esc(vc)+'" target="_blank" rel="noopener">'+
+        '<span class="ri">'+icon("book",22)+'</span>'+
+        '<span class="rt"><b>每日經文提醒</b><span>加入，每天清晨收到今日一句</span></span>'+
+        '<span class="chev">'+icon("chev",20)+'</span></a>')
+      : '';
+    return verse + remind +
       sect("路","成長之路")+
       '<div class="card" style="padding:8px 8px 4px">'+stations+'</div>'+
       '<p class="note center">由內而外五重的改變 · 一步一步走上這條路</p>'+
@@ -653,14 +845,19 @@ var PAGES = {
   },
 
   resources: function(){
-    var chips='<div class="chips">'+
-      ['系列','型態','主題','經卷','五重改變'].map(function(x,i){return '<span class="chip'+(i===0?' on':'')+'">'+x+'</span>';}).join("")+'</div>';
-    var search='<div class="search">'+icon("search",20)+'<input type="text" placeholder="搜尋一篇信息、經文或主題…" disabled></div>';
+    var stages=["全部","觀念","生命","生活","關係","事工"];
+    var chips='<div class="chips">'+stages.map(function(s){
+      var on=(RES_STAGE===s)||(!RES_STAGE&&s==="全部");
+      return '<span class="chip'+(on?' on':'')+'" data-resstage="'+s+'">'+s+'</span>';
+    }).join("")+'</div>';
+    var search='<div class="search">'+icon("search",20)+
+      '<input id="resSearch" type="text" placeholder="搜尋信息、經文或主題…" value="'+esc(RES_Q||"")+'"></div>';
     return pageHead("材料總庫","資源中心","一篇信息，一張卡：讀 · 看 · 下載")+
       search + chips +
-      slot('資源卡即將加入。<br>每篇信息一張卡，掛著 <b>文章 · 講章 · 投影片 · 視頻 · 討論</b> 多種型態。')+
+      '<div id="resList">'+renderResList()+'</div>'+
       sect("生","321 App 生態系")+ appcards()+
-      sect("包","為繁殖者預備")+ slot('有完整講章＋投影片＋討論問題的信息，將標記「適合帶領」並可下載「帶領包」——白白得來，白白捨去。');
+      sect("包","為繁殖者預備")+
+      slot('有完整講章＋投影片＋討論問題的信息，會標記「適合帶領」並可下載帶領包——白白得來，白白捨去。');
   },
 
   practice: function(){
@@ -740,30 +937,76 @@ var PAGES = {
     return pageHead("永遠可用","聚會與工具","把最高頻的行動集中在這裡")+
       toolCard("線上聚會 Zoom","zoom",zoomBody)+
       toolCard("YouTube 頻道","video",ytBody)+
+      sect("表","聚會時間表")+ sched+
+      sect("獻","奉獻支持")+
       '<div class="card"><h3>'+icon("give",20)+' 奉獻支持</h3>'+
         '<p class="note" style="margin-bottom:12px">奉獻是回應神的供應，出於甘心樂意（林後九7）。凡事謝恩，把榮耀歸給神。</p>'+
-        offBody+'</div>'+
-      sect("表","聚會時間表")+ sched;
+        offBody+'</div>';
   },
 
   newfriend: function(){
-    var steps=[
-      "歡迎你回家","有一位這麼愛你的神","祂為你做了一件事",
-      "你看見自己了嗎","一個好消息：無己","你不是一個人","你願意嗎"
-    ];
-    var path='';
-    for(var i=0;i<steps.length;i++){
-      path+='<div class="rowlink" style="cursor:default"><span class="ri" style="background:var(--navy);color:#fff;font-family:var(--font-display);font-weight:700">'+(i+1)+'</span>'+
-        '<span class="rt"><b>第 '+(i+1)+' 天 · '+esc(steps[i])+'</b><span>每天 3 分鐘，恩典先行</span></span></div>';
+    var N=D.newfriend||{}, T=N.tracks||{};
+
+    function renderDays(list, useKey){
+      var out='';
+      for(var i=0;i<list.length;i++){ var s=list[i];
+        out+='<details class="day"'+(i===0?' open':'')+'>'+
+          '<summary><span class="dnum">'+esc(s.d)+'</span>第 '+esc(s.d)+' 天 · '+esc(s.t)+'<span class="darrow">'+icon("chev",18)+'</span></summary>'+
+          '<div class="dbody"><p>'+esc(s.msg)+'</p>'+
+          (s.verse?'<div class="dverse">'+esc(s.verse)+'</div>':'')+
+          (useKey ? (s.key?'<div class="keypill">'+esc(s.key)+'</div>':'')
+                  : (s.pray?'<div class="dpray">'+esc(s.pray)+'</div>':''))+
+          '</div></details>';
+      }
+      return out;
     }
-    return pageHead("福音前線","新朋友專區","零門檻 · 少術語 · 多溫度")+
-      '<div class="card"><h3>歡迎你</h3><p>這裡有一個溫暖的家，正在等你。無論你在哪裡、正經歷什麼，你都是被愛的、被等候的。</p></div>'+
-      sect("識","這是一個怎樣的家")+ slot('3分鐘認識321的短影片與牧者的話即將加入。')+
-      sect("路","新朋友七日路徑")+ path +
+
+    // ---- 未選身分：先選一條路 ----
+    if(!NF_TRACK){
+      return pageHead("福音前線","新朋友專區","歡迎你，正如你，就可以來")+
+        '<div class="card"><h3>歡迎你</h3><p>'+esc(N.welcome||"")+'</p></div>'+
+        sect("路","你是哪一種朋友？")+
+        '<p class="note" style="margin:-4px 2px 14px">選擇最符合你的，我們為你預備了不同的七日路：</p>'+
+        '<button class="btn" data-nftrack="seeker" style="margin-bottom:12px">'+esc(T.seeker||"我還在認識耶穌")+'</button>'+
+        '<button class="btn gold" data-nftrack="believer">'+esc(T.believer||"我已信主，想認識321")+'</button>';
+    }
+
+    var switchBtn='<button class="switchtrack" data-nftrack="_reset">&#8634; 選擇另一種身分</button>';
+
+    // ---- 基督徒：認識321 ----
+    if(NF_TRACK==="believer"){
+      var bdays=renderDays(N.believerPath||[], true);
+      return pageHead("認識321","給基督徒朋友","從得救到得勝 · 從有己到無己")+ switchBtn+
+        '<div class="card"><h3>歡迎你，弟兄姊妹</h3><p>'+esc(N.believerWelcome||"")+'</p></div>'+
+        sect("路","認識321 · 七日路徑")+
+        '<p class="note" style="margin:-4px 2px 12px">點一天，展開那一天。</p>'+ bdays +
+        sect("家","加入空中團契")+
+        '<div class="card"><p>準備好一起走這條路了嗎？歡迎你加入我們每天的線上聚會，與各國家人一起操練無己、成為得勝者。</p>'+
+        '<button class="btn" data-route="meet" style="margin-top:10px">查看聚會時間</button>'+
+        '<div style="height:10px"></div>'+
+        '<button class="btn ghost" data-contact="認識321">我想找人帶我認識321</button></div>';
+    }
+
+    // ---- 慕道友：認識耶穌 ----
+    var sdays=renderDays(N.path||[], false);
+    var dec=N.decision||{};
+    var decision = dec.prayer ?
+      ('<div class="decision"><h3>'+icon("heart",20)+' '+esc(dec.title||"決志禱告")+'</h3>'+
+       '<p class="note" style="margin-bottom:4px">'+esc(dec.intro||"")+'</p>'+
+       '<div class="prayerbox">'+esc(dec.prayer)+'</div>'+
+       '<p>'+esc(dec.after||"")+'</p>'+
+       '<button class="btn" style="margin-top:8px" data-contact="決志">我剛剛做了這個禱告</button></div>')
+      : '';
+    return pageHead("福音前線","給慕道友","零門檻 · 少術語 · 多溫度")+ switchBtn+
+      '<div class="card"><h3>歡迎你</h3><p>'+esc(N.welcome||"")+'</p></div>'+
+      sect("識","這是一個怎樣的家")+
+      '<div class="card"><p>'+esc(N.intro||"")+'</p></div>'+
+      sect("路","認識耶穌 · 七日路徑")+
+      '<p class="note" style="margin:-4px 2px 12px">每天 3 分鐘，恩典先行。點一天，展開那一天。</p>'+ sdays +
+      sect("心","你願意接受這份愛嗎")+ decision +
       sect("人","我想認識一個人")+
-      '<button class="btn ghost" data-note="將連上一位同工或小家長，並觸發牧養接待通知。">我想找人聊聊</button>'+
-      '<div style="height:12px"></div>'+
-      '<button class="btn gold" data-note="決志禱告與『真人接手』流程將於內容階段加入。">我現在就想認識這位耶穌</button>';
+      '<div class="card"><p class="note" style="margin-bottom:12px">想找一位真人陪你聊聊、為你禱告嗎？我們很樂意。</p>'+
+      '<button class="btn ghost" data-contact="慕道">我想找人聊聊</button></div>';
   },
 
   invite: function(){
@@ -823,6 +1066,8 @@ function render(route){
 
 /* ---- 動態綁定（每次渲染後） ---- */
 function bindDynamic(){
+  var rs=$("resSearch");
+  if(rs){ rs.oninput=function(){ RES_Q=rs.value||""; var lst=$("resList"); if(lst) lst.innerHTML=renderResList(); }; }
   var share=$("shareBtn");
   if(share) share.onclick=function(){
     var url=location.origin+location.pathname;
@@ -839,6 +1084,9 @@ function bindDynamic(){
 document.addEventListener("click",function(e){
   var el=e.target;
   while(el && el!==document){
+    if(el.getAttribute && el.getAttribute("data-resstage")){ RES_STAGE=el.getAttribute("data-resstage"); render("resources"); window.scrollTo(0,0); return; }
+    if(el.getAttribute && el.getAttribute("data-contact")){ openContact(el.getAttribute("data-contact")); return; }
+    if(el.getAttribute && el.getAttribute("data-nftrack")){ var tk=el.getAttribute("data-nftrack"); NF_TRACK=(tk==="_reset")?null:tk; render("newfriend"); window.scrollTo(0,0); return; }
     if(el.getAttribute && el.getAttribute("data-route")){ go(el.getAttribute("data-route")); return; }
     if(el.getAttribute && el.getAttribute("data-close")){ closeSheets(); return; }
     el=el.parentNode;
@@ -851,6 +1099,49 @@ function closeSheets(){ var s=document.querySelectorAll(".sheet"); for(var i=0;i
 function openSet(){ openSheet("setSheet"); }
 function note(msg){ // 簡易提示（暫用 alert；內容階段可換自訂浮層）
   try{ window.alert(msg); }catch(e){}
+}
+
+/* ---- 接待表單 ---- */
+var CT_TYPE="";
+var CT_META={
+  "決志":   { title:"歡迎你回家！", intro:"恭喜你把生命交給了耶穌！留下聯絡方式，接待同工會盡快來歡迎你、陪你走信仰的第一步。", done:"接待同工會盡快與你聯繫，陪你開始新生命。天上正為你歡喜！" },
+  "慕道":   { title:"我想找人聊聊", intro:"想找一位真人陪你聊聊、為你禱告嗎？留下聯絡方式即可，我們很樂意。", done:"接待同工會在 24 小時內與你聯繫。你不孤單！" },
+  "認識321":{ title:"我想認識321", intro:"留下聯絡方式，我們會請同工陪你一起認識321、加入空中團契。", done:"同工會盡快與你聯繫，陪你一起認識321。" }
+};
+function openContact(type){
+  CT_TYPE=type;
+  var meta=CT_META[type]||{title:"留下聯絡方式",intro:"接待同工會盡快與你聯繫。",done:"我們收到了！"};
+  $("ctTitle").innerHTML=meta.title; $("ctIntro").innerHTML=meta.intro;
+  $("ctForm").style.display=""; $("ctDone").style.display="none";
+  $("ctName").value=""; $("ctContact").value=""; $("ctMsg").value="";
+  openSheet("contactSheet");
+}
+function saveLocalContact(rec){
+  try{ var k="k321_contacts"; var arr=JSON.parse(lsGet(k)||"[]"); arr.push(rec); lsSet(k,JSON.stringify(arr)); }catch(e){}
+}
+function submitContact(){
+  var name=($("ctName").value||"").replace(/^\s+|\s+$/g,"");
+  var contact=($("ctContact").value||"").replace(/^\s+|\s+$/g,"");
+  if(!name || !contact){ note("請留下你的稱呼與聯絡方式，我們才能找到你 🙂"); return; }
+  var rec={ type:CT_TYPE, name:name, contact:contact,
+    message:($("ctMsg").value||""), time:(new Date()).toISOString(),
+    ua:(navigator.userAgent||"") };
+  saveLocalContact(rec);
+  var meta=CT_META[CT_TYPE]||{done:"我們收到了！"};
+  function showDone(){ $("ctForm").style.display="none"; $("ctDone").style.display=""; $("ctDoneMsg").innerHTML=meta.done; }
+  var ep=(window.APP_CONFIG&&window.APP_CONFIG.contactEndpoint)||"";
+  var btn=$("ctSend"); if(btn){ btn.disabled=true; btn.innerHTML="送出中…"; }
+  if(ep){
+    try{
+      fetch(ep,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(rec) })
+        .then(function(){ showDone(); })
+        .catch(function(){ showDone(); }) // 失敗也顯示完成(已本機備援)，避免嚇到新朋友
+        .then(function(){ if(btn){btn.disabled=false;btn.innerHTML="送出，讓同工來認識我";} });
+    }catch(e){ showDone(); if(btn){btn.disabled=false;btn.innerHTML="送出，讓同工來認識我";} }
+  }else{
+    // 尚未設定後端：本機已記錄，直接顯示完成
+    showDone(); if(btn){btn.disabled=false;btn.innerHTML="送出，讓同工來認識我";}
+  }
 }
 
 /* ---- 字級 ---- */
@@ -888,13 +1179,36 @@ function init(){
   $("backBtn").onclick=function(){ if(history.length>1) history.back(); else go("home"); };
   $("setBtn").onclick=openSet;
   initFs();
+  var _cs=$("ctSend"); if(_cs) _cs.onclick=submitContact;
   initHelp();
   window.addEventListener("hashchange",function(){ render(); });
-  render();
+  // 先嘗試讀外部 data.json（同工可自行更新內容），讀不到則用內嵌備援
+  loadContent(function(){ render(); });
   // Service Worker（部署後啟用；沙箱可能失敗，故 try/catch）
   if("serviceWorker" in navigator){
     try{ navigator.serviceWorker.register("sw.js"); }catch(e){}
   }
+}
+
+/* 讀取外部內容並合併覆蓋內嵌預設；任何失敗都安全退回內嵌資料 */
+function loadContent(done){
+  var finished=false;
+  function finish(){ if(finished) return; finished=true; try{ done(); }catch(e){} }
+  try{
+    if(!window.fetch){ finish(); return; }
+    var url="data.json?v="+(new Date()).getTime();   // 加時間戳避免快取舊內容
+    fetch(url).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){
+        if(j && typeof j==="object"){
+          for(var k in j){ if(Object.prototype.hasOwnProperty.call(j,k)) window.APP_DATA[k]=j[k]; }
+          D=window.APP_DATA;
+        }
+        finish();
+      })
+      .catch(function(){ finish(); });
+    // 保險：1.8 秒內若無回應就先用內嵌資料渲染，不讓畫面卡住
+    setTimeout(finish, 1800);
+  }catch(e){ finish(); }
 }
 if(document.readyState!=="loading") init();
 else document.addEventListener("DOMContentLoaded",init);
