@@ -316,6 +316,7 @@ a{color:var(--blue);text-decoration:none;}
 .recdot{width:20px;height:20px;border-radius:50%;background:#e0483c;margin:6px auto 0;animation:recpulse 1.2s infinite;}
 @keyframes recpulse{0%,100%{opacity:1}50%{opacity:.3}}
 .rectimer{font-family:var(--font-display);font-size:calc(40px * var(--fs));color:var(--navy);margin-top:8px;font-variant-numeric:tabular-nums;}
+.tgroup{font-family:var(--font-display);color:var(--navy);font-weight:700;font-size:calc(15px * var(--fs));margin:16px 2px 8px;padding-left:10px;border-left:4px solid var(--gold);}
 .note{color:var(--muted);font-size:calc(13px * var(--fs));margin:6px 2px 0;}
 .hr{height:1px;background:var(--line);margin:18px 0;border:0;}
 .center{text-align:center;}
@@ -790,6 +791,7 @@ function resById(id){
   for(var i=0;i<list.length;i++){ if(list[i].id===id) return list[i]; }
   return null;
 }
+function fmtNum(n){ n=String(n); var out="", c=0; for(var i=n.length-1;i>=0;i--){ out=n.charAt(i)+out; c++; if(c%3===0 && i>0) out=","+out; } return out; }
 function dayOfYear(d){ d=d||new Date(); var start=new Date(d.getFullYear(),0,0); var diff=d-start; return Math.floor(diff/86400000); }
 function todayVerse(){ var vs=D.verses||[]; return vs.length? vs[ dayOfYear() % vs.length ] : null; }
 function dateKey(d){ d=d||new Date(); var m=(d.getMonth()+1), day=d.getDate(); return d.getFullYear()+"-"+(m<10?"0"+m:m)+"-"+(day<10?"0"+day:day); }
@@ -1235,13 +1237,29 @@ var PAGES = {
     var coursesBlock = courses.length ? cHtml
       : slot('系列課程（影音＋逐字稿＋討論問題）即將上架。（同工可在 data.json 的 courses 策展）');
 
-    // 專題
+    // 專題影音（依分類分組）
     var topics=D.topics||[], tHtml='';
-    for(var k=0;k<topics.length;k++){ var t=topics[k];
-      tHtml+='<a class="rowlink" href="'+esc(t.link||"#")+'"'+(t.link?' target="_blank" rel="noopener"':'')+'>'+
-        '<span class="ri">'+icon("seed",22)+'</span>'+
-        '<span class="rt"><b>'+esc(t.title)+'</b><span>'+esc(t.category||"")+'</span></span>'+
-        '<span class="chev">'+icon("chev",20)+'</span></a>';
+    if(topics.length){
+      var order=[], groups={}, tot=0;
+      for(var k=0;k<topics.length;k++){
+        var c=topics[k].category||"專題";
+        if(!groups[c]){ groups[c]=[]; order.push(c); }
+        groups[c].push(topics[k]);
+        tot += (topics[k].count||0);
+      }
+      for(var g=0;g<order.length;g++){
+        var cat=order[g], items=groups[cat];
+        tHtml+='<div class="tgroup">'+esc(cat)+'</div>';
+        for(var n2=0;n2<items.length;n2++){ var t=items[n2];
+          var isYT = t.link && t.link.indexOf("youtube")>-1;
+          var meta = t.count ? (fmtNum(t.count)+" 部影片") : (t.desc||"");
+          tHtml+='<a class="rowlink" href="'+esc(t.link||"#")+'"'+(t.link?' target="_blank" rel="noopener"':'')+'>'+
+            '<span class="ri">'+icon(isYT?"video":"seed",22)+'</span>'+
+            '<span class="rt"><b>'+esc(t.title)+'</b><span>'+esc(meta)+'</span></span>'+
+            '<span class="chev">'+icon("chev",20)+'</span></a>';
+        }
+      }
+      if(tot) tHtml='<p class="note" style="margin:-4px 2px 12px">團契歷年信息影音，共 '+fmtNum(tot)+' 部，點一下即可觀看：</p>'+tHtml;
     }
     var topicsBlock = topics.length ? tHtml : slot('婚姻、職場、親子、護教等專題庫即將加入。');
 
@@ -1258,7 +1276,7 @@ var PAGES = {
     return pageHead("生命 · 改變的第二站","生命裝備","領受真理，被建造")+
       sect("課","裝備課程")+
       '<p class="note" style="margin:-4px 2px 12px">一條條學習的路，點課程展開它的每一課。</p>'+ coursesBlock +
-      sect("題","專題")+ topicsBlock +
+      sect("題","專題影音")+ topicsBlock +
       sect("營","營會")+ campsBlock +
       sect("修","每日靈修")+
       '<p class="note" style="margin-bottom:10px">連結321數位生態系，每天親近神：</p>'+ appcards();
