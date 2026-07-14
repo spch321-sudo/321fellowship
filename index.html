@@ -84,7 +84,7 @@ a{color:var(--blue);text-decoration:none;}
   padding:16px;color:var(--muted);font-size:calc(14px * var(--fs));text-align:center;}
 .slot b{color:var(--blue);}
 
-/* 今日一句 */
+/* 今日金句 */
 .verse{background:linear-gradient(160deg,#16294a,#28477a);color:#fff;border:0;
   border-radius:20px;padding:22px 20px;margin-bottom:18px;position:relative;overflow:hidden;}
 .verse:before{content:"”";position:absolute;right:14px;top:-18px;font-family:var(--font-display);
@@ -449,7 +449,7 @@ window.APP_DATA = {
   /* 內容版本（供離線快取比對，更新內容時 +1） */
   contentVersion: "0.1.0",
 
-  /* 今日一句：經文 + 321金句（內容階段填，建議 ≥90 則） */
+  /* 今日金句：經文 + 321金句（內容階段填，建議 ≥90 則） */
   verses: [
     { ref:"加二20", text:"我已經與基督同釘十字架，現在活著的不再是我，乃是基督在我裡面活著。", motto:"無己不是沒有，乃是進入無限、活出無限" },
     { ref:"雅四6", text:"神阻擋驕傲的人，賜恩給謙卑的人。", motto:"謙卑是復興的鑰匙" },
@@ -882,7 +882,7 @@ function drawVersePoster(ctx, W, H, v, t){
   for(var i=0;i<lines.length;i++){ ctx.fillText(lines[i], W/2, startY+i*lh); }
   var refY=startY+lines.length*lh+30*s;
   ctx.fillStyle="#E9CC6B"; ctx.font='500 '+(40*s)+'px "PingFang TC","Noto Sans CJK TC",sans-serif';
-  ctx.fillText("— "+((v&&v.ref)||""), W/2, refY);
+  ctx.fillText("～ "+((v&&v.ref)||""), W/2, refY);
   ctx.strokeStyle="rgba(212,175,55,0.5)"; ctx.lineWidth=2*s;
   ctx.beginPath(); ctx.moveTo(W/2-80*s, refY+50*s); ctx.lineTo(W/2+80*s, refY+50*s); ctx.stroke();
   if(v&&v.motto){
@@ -918,7 +918,7 @@ function makeVerseImage2(v){
   try{
     cv.toBlob(function(blob){
       if(!blob){ note("圖片產生失敗，請再試一次。"); return; }
-      var fname="321-今日一句.png";
+      var fname="321-今日金句.png";
       try{ if(navigator.canShare){ var file=new File([blob],fname,{type:"image/png"});
         if(navigator.canShare({files:[file]}) && navigator.share){ navigator.share({files:[file], text:(v.text||"")+" "+(v.ref||"")}).then(function(){},function(){}); return; } } }catch(e){}
       var url=URL.createObjectURL(blob); var a=document.createElement("a"); a.href=url; a.download=fname;
@@ -979,9 +979,9 @@ function makeVerseVideo2(v){
 }
 function shareVideo(blob, mime){
   var ext=(mime && mime.indexOf("mp4")>-1)?"mp4":"webm";
-  var fname="321-今日一句影片."+ext;
+  var fname="321-今日金句影片."+ext;
   try{ if(navigator.canShare){ var file=new File([blob],fname,{type:blob.type||("video/"+ext)});
-    if(navigator.canShare({files:[file]}) && navigator.share){ navigator.share({files:[file], text:"今日一句"}).then(function(){},function(){}); return; } } }catch(e){}
+    if(navigator.canShare({files:[file]}) && navigator.share){ navigator.share({files:[file], text:"今日金句"}).then(function(){},function(){}); return; } } }catch(e){}
   var url=URL.createObjectURL(blob); var a=document.createElement("a"); a.href=url; a.download=fname;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(function(){ URL.revokeObjectURL(url); },6000);
@@ -1111,14 +1111,14 @@ var PAGES = {
   home: function(){
     var v = todayVerse();
     var verse = v ?
-      '<div class="verse"><div class="lbl">今 日 一 句</div>'+
+      '<div class="verse"><div class="lbl">今 日 金 句</div>'+
         '<div class="txt">'+esc(v.text)+'</div><div class="ref">'+esc(v.ref)+'</div>'+
         (v.motto?'<div class="motto">'+esc(v.motto)+'</div>':'')+'</div>'+
         '<div class="vact">'+
           '<button class="vbtn" data-verseimg="1">'+icon("image",18)+' 美圖分享</button>'+
           '<button class="vbtn" data-record="1">'+icon("mic",18)+' 錄音</button>'+
         '</div>'
-      : '<div class="verse"><div class="lbl">今 日 一 句</div>'+
+      : '<div class="verse"><div class="lbl">今 日 金 句</div>'+
         '<div class="txt">願神的話，每早晨來找你。</div>'+
         '<div class="motto">（經文與321金句將於內容階段加入）</div></div>';
 
@@ -1153,7 +1153,7 @@ var PAGES = {
     var remind = vc ?
       ('<a class="remindcard" href="'+esc(vc)+'" target="_blank" rel="noopener">'+
         '<span class="ri">'+icon("book",22)+'</span>'+
-        '<span class="rt"><b>每日經文提醒</b><span>加入，每天清晨收到今日一句</span></span>'+
+        '<span class="rt"><b>每日經文提醒</b><span>加入，每天清晨收到今日金句</span></span>'+
         '<span class="chev">'+icon("chev",20)+'</span></a>')
       : '';
     return verse + remind +
