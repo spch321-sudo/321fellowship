@@ -1,5 +1,5 @@
 {
-  "contentVersion": "2.7.0",
+  "contentVersion": "2.8.0",
   "verses": [
     {
       "ref": "創一 1",
@@ -2072,13 +2072,6 @@
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA187UYA2rCCHyUHwxIkDUS5"
     },
     {
-      "id": "pl2",
-      "title": "舊約導讀",
-      "category": "聖經裝備",
-      "count": 125,
-      "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA35mHv8utiFplYcccBDIzk0"
-    },
-    {
       "id": "pl3",
       "title": "真理點心",
       "category": "聖經裝備",
@@ -2102,98 +2095,98 @@
     {
       "id": "ot1",
       "title": "創世記導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 50,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA3geGJ8yJxz_a66j_-fuB5h"
     },
     {
       "id": "ot2",
       "title": "出埃及記導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 40,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA0d13KyrowAkr0D9RL4OUb5"
     },
     {
       "id": "ot3",
       "title": "利未記導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 27,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA27wOLn9vtWpfpEaLTt2fG8"
     },
     {
       "id": "ot4",
       "title": "民數記導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 36,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA2yjERMZM46r0N4mMFdP0nF"
     },
     {
       "id": "ot5",
       "title": "申命記導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 34,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA2Ud3pjP0llGf0xUd-jjntR"
     },
     {
       "id": "ot6",
       "title": "約書亞記導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 24,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA0J3w8Qg70R-TMHiImAmWX4"
     },
     {
       "id": "ot7",
       "title": "士師記導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 21,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA3iAt_rE3I3sX6BBYdHPM-L"
     },
     {
       "id": "ot8",
       "title": "路得記導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 3,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA0iTtPRElSl26zz_DgScjGd"
     },
     {
       "id": "ot9",
       "title": "撒母耳記上導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 32,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA1W3r3JNC5T6SkBEqkBaNq2"
     },
     {
       "id": "ot10",
       "title": "撒母耳記下導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 24,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA0Cq4HvMeJens4MBvhsQoXb"
     },
     {
       "id": "ot11",
       "title": "列王紀上導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 22,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA34Xt9jF7l7X1KQFKaf-COP"
     },
     {
       "id": "ot12",
       "title": "列王紀下導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 25,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA3_Wy22C10VzCILiSfO8IF8"
     },
     {
       "id": "ot13",
       "title": "歷代志上導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 29,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA1VNyUsJQipXM2HsRWVPuF_"
     },
     {
       "id": "ot14",
       "title": "歷代志下導讀",
-      "category": "舊約導讀 · 分卷",
+      "category": "舊約導讀",
       "count": 37,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA22VwPWc4grXNK_9_1Z8lTA"
     },
