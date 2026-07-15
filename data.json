@@ -1,5 +1,5 @@
 {
-  "contentVersion": "2.5.0",
+  "contentVersion": "2.6.0",
   "verses": [
     {
       "ref": "創一1",
@@ -2021,6 +2021,13 @@
       "category": "321系列",
       "count": 136,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA0FfnPty6XroQC7HcFHertG"
+    },
+    {
+      "id": "s7",
+      "title": "321播客影片",
+      "category": "321系列",
+      "count": 138,
+      "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA1lnKIXFqKdBKMbATMZ_Q11"
     },
     {
       "id": "s2",
