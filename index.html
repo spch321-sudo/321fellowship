@@ -324,6 +324,12 @@ a{color:var(--blue);text-decoration:none;}
 .tg .tgsum span{color:var(--muted);font-size:calc(13px * var(--fs));}
 .tg[open] summary{border-bottom:1px solid var(--line);background:var(--sky);}
 .tg .tgbody{padding:8px 10px;}
+.tsg{border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;overflow:hidden;background:#fcfdff;margin:6px 0;}
+.tsg summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;align-items:center;gap:10px;}
+.tsg summary::-webkit-details-marker{display:none;}
+.tsg[open] summary{border-bottom:1px solid var(--line);}
+.tsg .tgsum b{font-size:calc(16px * var(--fs));}
+.tsg .tgbody{padding:8px;background:#fff;}
 .tg .tgbody .rowlink{margin-bottom:6px;}
 .tg .tgbody .rowlink:last-child{margin-bottom:0;}
 .note{color:var(--muted);font-size:calc(13px * var(--fs));margin:6px 2px 0;}
@@ -800,6 +806,14 @@ function resById(id){
   for(var i=0;i<list.length;i++){ if(list[i].id===id) return list[i]; }
   return null;
 }
+function topicRow(t){
+  var isYT = t.link && t.link.indexOf("youtube")>-1;
+  var meta = t.count ? (fmtNum(t.count)+" 部影片") : (t.desc||"");
+  return '<a class="rowlink" href="'+esc(t.link||"#")+'"'+(t.link?' target="_blank" rel="noopener"':'')+'>'+
+    '<span class="ri">'+icon(isYT?"video":"seed",22)+'</span>'+
+    '<span class="rt"><b>'+esc(t.title)+'</b><span>'+esc(meta)+'</span></span>'+
+    '<span class="chev">'+icon("chev",20)+'</span></a>';
+}
 function fmtNum(n){ n=String(n); var out="", c=0; for(var i=n.length-1;i>=0;i--){ out=n.charAt(i)+out; c++; if(c%3===0 && i>0) out=","+out; } return out; }
 function dayOfYear(d){ d=d||new Date(); var start=new Date(d.getFullYear(),0,0); var diff=d-start; return Math.floor(diff/86400000); }
 function todayVerse(){ var vs=D.verses||[]; return vs.length? vs[ dayOfYear() % vs.length ] : null; }
@@ -1259,14 +1273,23 @@ var PAGES = {
       }
       for(var g=0;g<order.length;g++){
         var cat=order[g], items=groups[cat], gsum=0, rows='';
-        for(var n2=0;n2<items.length;n2++){ var t=items[n2];
-          gsum += (t.count||0);
-          var isYT = t.link && t.link.indexOf("youtube")>-1;
-          var meta = t.count ? (fmtNum(t.count)+" 部影片") : (t.desc||"");
-          rows+='<a class="rowlink" href="'+esc(t.link||"#")+'"'+(t.link?' target="_blank" rel="noopener"':'')+'>'+
-            '<span class="ri">'+icon(isYT?"video":"seed",22)+'</span>'+
-            '<span class="rt"><b>'+esc(t.title)+'</b><span>'+esc(meta)+'</span></span>'+
-            '<span class="chev">'+icon("chev",20)+'</span></a>';
+        // 分出「直屬系列」與「子分類」（例如 聖經裝備 → 舊約導讀）
+        var direct=[], suborder=[], subs={};
+        for(var a=0;a<items.length;a++){
+          var it=items[a]; gsum += (it.count||0);
+          var sg=it.subgroup||"";
+          if(sg){ if(!subs[sg]){ subs[sg]=[]; suborder.push(sg); } subs[sg].push(it); }
+          else direct.push(it);
+        }
+        for(var b=0;b<direct.length;b++) rows+=topicRow(direct[b]);
+        for(var c=0;c<suborder.length;c++){
+          var sname=suborder[c], sitems=subs[sname], ssum=0, srows='';
+          for(var e2=0;e2<sitems.length;e2++){ ssum+=(sitems[e2].count||0); srows+=topicRow(sitems[e2]); }
+          rows+='<details class="tsg">'+
+            '<summary><div class="tgsum"><b>'+esc(sname)+'</b>'+
+            '<span>'+sitems.length+' 個系列'+(ssum?' · '+fmtNum(ssum)+' 部影片':'')+'</span></div>'+
+            '<span class="darrow">'+icon("chev",18)+'</span></summary>'+
+            '<div class="tgbody">'+srows+'</div></details>';
         }
         tHtml+='<details class="tg"'+(g===0?' open':'')+'>'+
           '<summary><div class="tgsum"><b>'+esc(cat)+'</b>'+
