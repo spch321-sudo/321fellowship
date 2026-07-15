@@ -1,5 +1,5 @@
 {
-  "contentVersion": "3.0.1",
+  "contentVersion": "3.0.2",
   "verses": [
     {
       "ref": "創一 1",
@@ -2382,7 +2382,7 @@
       "id": "pk1",
       "title": "料理包講道",
       "desc": "8個專題 · 每包含影片、講章逐字稿（繁／簡）、投影片",
-      "note": "用瀏覽器開啟即可下載。影片檔較大，建議連 WiFi；講章與投影片請用 WPS 或 Word／PowerPoint 開啟。",
+      "note": "請用瀏覽器開啟（勿讓 pCloud App 接手），並全程保持同一個網路（只用 WiFi 或只用行動網路，中途切換會下載失敗）。影片檔較大，建議連 WiFi；講章與投影片請用 WPS 或 Word／PowerPoint 開啟。",
       "link": "https://u.pcloud.link/publink/show?code=kZcYPr5ZIxJdz5WPhO7R9NJHvfOOKzYHhbmy"
     }
   ]
