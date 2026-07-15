@@ -1,5 +1,5 @@
 {
-  "contentVersion": "2.4.0",
+  "contentVersion": "2.5.0",
   "verses": [
     {
       "ref": "創一1",
@@ -2016,6 +2016,48 @@
   ],
   "topics": [
     {
+      "id": "s1",
+      "title": "321講述影片",
+      "category": "321系列",
+      "count": 136,
+      "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA0FfnPty6XroQC7HcFHertG"
+    },
+    {
+      "id": "s2",
+      "title": "321真理傳遞",
+      "category": "321系列",
+      "count": 171,
+      "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA1UuDbZhE7DtNyi470DBgS_"
+    },
+    {
+      "id": "s3",
+      "title": "321經文分享",
+      "category": "321系列",
+      "count": 172,
+      "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA3Va3cvqDCVaISuttlz6QQd"
+    },
+    {
+      "id": "s4",
+      "title": "321主題曲詩歌",
+      "category": "321系列",
+      "count": 149,
+      "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA3MIBi93uQN7t5LdeM_GUAV"
+    },
+    {
+      "id": "s5",
+      "title": "321祝福",
+      "category": "321系列",
+      "count": 12,
+      "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA1kKA7fIUMPcTADK_UmDw1x"
+    },
+    {
+      "id": "s6",
+      "title": "321生活應用分享",
+      "category": "321系列",
+      "count": 10,
+      "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA1gCfftzGAtUwm6JOwK0UZ5"
+    },
+    {
       "id": "pl1",
       "title": "新約靈修會主",
       "category": "聖經裝備",
@@ -2042,6 +2084,13 @@
       "category": "聖經裝備",
       "count": 9,
       "link": "https://www.youtube.com/playlist?list=PLFLd4PQGMJ90"
+    },
+    {
+      "id": "pl5b",
+      "title": "聖經主題曲",
+      "category": "聖經裝備",
+      "count": 9,
+      "link": "https://www.youtube.com/playlist?list=PLXNRqV3BHXnc"
     },
     {
       "id": "ot1",
@@ -2156,6 +2205,13 @@
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA3zj28DGuI2Cq652xXx22E-"
     },
     {
+      "id": "pl7b",
+      "title": "上帝應許的祝福－勝過自卑的應許",
+      "category": "上帝應許的祝福",
+      "count": 6,
+      "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA38mUGrxvLkvM7Fu-p8WsHu"
+    },
+    {
       "id": "pl7",
       "title": "心靈快餐",
       "category": "生命成長",
@@ -2182,6 +2238,27 @@
       "category": "生命成長",
       "count": 50,
       "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA2quLc9nwzBUFphKE9plUva"
+    },
+    {
+      "id": "g1",
+      "title": "福音影片－燒香拜祖先",
+      "category": "福音影片",
+      "count": 10,
+      "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA2wtD37SUtQ-Cz8VZRhfnmf"
+    },
+    {
+      "id": "g2",
+      "title": "福音影片－科學與信仰",
+      "category": "福音影片",
+      "count": 10,
+      "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA1SGjYOEHiegPp_kp5YWdFO"
+    },
+    {
+      "id": "g3",
+      "title": "福音影片－心靈故事",
+      "category": "福音影片",
+      "count": 9,
+      "link": "https://www.youtube.com/playlist?list=PLid55ck_AyA0vEDIkW1h9fr6GFKFipIfR"
     }
   ],
   "camps": [
