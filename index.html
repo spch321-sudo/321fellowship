@@ -316,7 +316,16 @@ a{color:var(--blue);text-decoration:none;}
 .recdot{width:20px;height:20px;border-radius:50%;background:#e0483c;margin:6px auto 0;animation:recpulse 1.2s infinite;}
 @keyframes recpulse{0%,100%{opacity:1}50%{opacity:.3}}
 .rectimer{font-family:var(--font-display);font-size:calc(40px * var(--fs));color:var(--navy);margin-top:8px;font-variant-numeric:tabular-nums;}
-.tgroup{font-family:var(--font-display);color:var(--navy);font-weight:700;font-size:calc(15px * var(--fs));margin:16px 2px 8px;padding-left:10px;border-left:4px solid var(--gold);}
+.tg{border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden;background:#fff;}
+.tg summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:10px;}
+.tg summary::-webkit-details-marker{display:none;}
+.tg .tgsum{flex:1;}
+.tg .tgsum b{display:block;font-family:var(--font-display);color:var(--navy);font-size:calc(17px * var(--fs));}
+.tg .tgsum span{color:var(--muted);font-size:calc(13px * var(--fs));}
+.tg[open] summary{border-bottom:1px solid var(--line);background:var(--sky);}
+.tg .tgbody{padding:8px 10px;}
+.tg .tgbody .rowlink{margin-bottom:6px;}
+.tg .tgbody .rowlink:last-child{margin-bottom:0;}
 .note{color:var(--muted);font-size:calc(13px * var(--fs));margin:6px 2px 0;}
 .hr{height:1px;background:var(--line);margin:18px 0;border:0;}
 .center{text-align:center;}
@@ -1248,18 +1257,23 @@ var PAGES = {
         tot += (topics[k].count||0);
       }
       for(var g=0;g<order.length;g++){
-        var cat=order[g], items=groups[cat];
-        tHtml+='<div class="tgroup">'+esc(cat)+'</div>';
+        var cat=order[g], items=groups[cat], gsum=0, rows='';
         for(var n2=0;n2<items.length;n2++){ var t=items[n2];
+          gsum += (t.count||0);
           var isYT = t.link && t.link.indexOf("youtube")>-1;
           var meta = t.count ? (fmtNum(t.count)+" 部影片") : (t.desc||"");
-          tHtml+='<a class="rowlink" href="'+esc(t.link||"#")+'"'+(t.link?' target="_blank" rel="noopener"':'')+'>'+
+          rows+='<a class="rowlink" href="'+esc(t.link||"#")+'"'+(t.link?' target="_blank" rel="noopener"':'')+'>'+
             '<span class="ri">'+icon(isYT?"video":"seed",22)+'</span>'+
             '<span class="rt"><b>'+esc(t.title)+'</b><span>'+esc(meta)+'</span></span>'+
             '<span class="chev">'+icon("chev",20)+'</span></a>';
         }
+        tHtml+='<details class="tg"'+(g===0?' open':'')+'>'+
+          '<summary><div class="tgsum"><b>'+esc(cat)+'</b>'+
+          '<span>'+items.length+' 個系列'+(gsum?' · '+fmtNum(gsum)+' 部影片':'')+'</span></div>'+
+          '<span class="darrow">'+icon("chev",18)+'</span></summary>'+
+          '<div class="tgbody">'+rows+'</div></details>';
       }
-      if(tot) tHtml='<p class="note" style="margin:-4px 2px 12px">團契歷年信息影音，共 '+fmtNum(tot)+' 部，點一下即可觀看：</p>'+tHtml;
+      if(tot) tHtml='<p class="note" style="margin:-4px 2px 12px">團契歷年信息影音，共 '+fmtNum(tot)+' 部。點分類展開，再點系列即可觀看：</p>'+tHtml;
     }
     var topicsBlock = topics.length ? tHtml : slot('婚姻、職場、親子、護教等專題庫即將加入。');
 
