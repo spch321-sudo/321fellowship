@@ -806,6 +806,48 @@ function resById(id){
   for(var i=0;i<list.length;i++){ if(list[i].id===id) return list[i]; }
   return null;
 }
+/* 專題影音區塊（資源中心與生命裝備共用） */
+function renderTopics(){
+  // 依分類分組，聖經裝備下可再有子分類（如舊約導讀）
+    var topics=D.topics||[], tHtml='';
+    if(topics.length){
+      var order=[], groups={}, tot=0;
+      for(var k=0;k<topics.length;k++){
+        var c=topics[k].category||"專題";
+        if(!groups[c]){ groups[c]=[]; order.push(c); }
+        groups[c].push(topics[k]);
+        tot += (topics[k].count||0);
+      }
+      for(var g=0;g<order.length;g++){
+        var cat=order[g], items=groups[cat], gsum=0, rows='';
+        // 分出「直屬系列」與「子分類」（例如 聖經裝備 → 舊約導讀）
+        var direct=[], suborder=[], subs={};
+        for(var a=0;a<items.length;a++){
+          var it=items[a]; gsum += (it.count||0);
+          var sg=it.subgroup||"";
+          if(sg){ if(!subs[sg]){ subs[sg]=[]; suborder.push(sg); } subs[sg].push(it); }
+          else direct.push(it);
+        }
+        for(var b=0;b<direct.length;b++) rows+=topicRow(direct[b]);
+        for(var c=0;c<suborder.length;c++){
+          var sname=suborder[c], sitems=subs[sname], ssum=0, srows='';
+          for(var e2=0;e2<sitems.length;e2++){ ssum+=(sitems[e2].count||0); srows+=topicRow(sitems[e2]); }
+          rows+='<details class="tsg">'+
+            '<summary><div class="tgsum"><b>'+esc(sname)+'</b>'+
+            '<span>'+sitems.length+' 個系列'+(ssum?' · '+fmtNum(ssum)+' 部影片':'')+'</span></div>'+
+            '<span class="darrow">'+icon("chev",18)+'</span></summary>'+
+            '<div class="tgbody">'+srows+'</div></details>';
+        }
+        tHtml+='<details class="tg"'+(g===0?' open':'')+'>'+
+          '<summary><div class="tgsum"><b>'+esc(cat)+'</b>'+
+          '<span>'+items.length+' 個系列'+(gsum?' · '+fmtNum(gsum)+' 部影片':'')+'</span></div>'+
+          '<span class="darrow">'+icon("chev",18)+'</span></summary>'+
+          '<div class="tgbody">'+rows+'</div></details>';
+      }
+      if(tot) tHtml='<p class="note" style="margin:-4px 2px 12px">團契歷年信息影音，共 '+fmtNum(tot)+' 部。點分類展開，再點系列即可觀看：</p>'+tHtml;
+    }
+  return topics.length ? tHtml : slot('專題影音即將加入。（同工可在 data.json 的 topics 新增）');
+}
 function topicRow(t){
   var isYT = t.link && t.link.indexOf("youtube")>-1;
   var meta = t.count ? (fmtNum(t.count)+" 部影片") : (t.desc||"");
@@ -1261,45 +1303,7 @@ var PAGES = {
     var coursesBlock = courses.length ? cHtml
       : slot('系列課程（影音＋逐字稿＋討論問題）即將上架。（同工可在 data.json 的 courses 策展）');
 
-    // 專題影音（依分類分組）
-    var topics=D.topics||[], tHtml='';
-    if(topics.length){
-      var order=[], groups={}, tot=0;
-      for(var k=0;k<topics.length;k++){
-        var c=topics[k].category||"專題";
-        if(!groups[c]){ groups[c]=[]; order.push(c); }
-        groups[c].push(topics[k]);
-        tot += (topics[k].count||0);
-      }
-      for(var g=0;g<order.length;g++){
-        var cat=order[g], items=groups[cat], gsum=0, rows='';
-        // 分出「直屬系列」與「子分類」（例如 聖經裝備 → 舊約導讀）
-        var direct=[], suborder=[], subs={};
-        for(var a=0;a<items.length;a++){
-          var it=items[a]; gsum += (it.count||0);
-          var sg=it.subgroup||"";
-          if(sg){ if(!subs[sg]){ subs[sg]=[]; suborder.push(sg); } subs[sg].push(it); }
-          else direct.push(it);
-        }
-        for(var b=0;b<direct.length;b++) rows+=topicRow(direct[b]);
-        for(var c=0;c<suborder.length;c++){
-          var sname=suborder[c], sitems=subs[sname], ssum=0, srows='';
-          for(var e2=0;e2<sitems.length;e2++){ ssum+=(sitems[e2].count||0); srows+=topicRow(sitems[e2]); }
-          rows+='<details class="tsg">'+
-            '<summary><div class="tgsum"><b>'+esc(sname)+'</b>'+
-            '<span>'+sitems.length+' 個系列'+(ssum?' · '+fmtNum(ssum)+' 部影片':'')+'</span></div>'+
-            '<span class="darrow">'+icon("chev",18)+'</span></summary>'+
-            '<div class="tgbody">'+srows+'</div></details>';
-        }
-        tHtml+='<details class="tg"'+(g===0?' open':'')+'>'+
-          '<summary><div class="tgsum"><b>'+esc(cat)+'</b>'+
-          '<span>'+items.length+' 個系列'+(gsum?' · '+fmtNum(gsum)+' 部影片':'')+'</span></div>'+
-          '<span class="darrow">'+icon("chev",18)+'</span></summary>'+
-          '<div class="tgbody">'+rows+'</div></details>';
-      }
-      if(tot) tHtml='<p class="note" style="margin:-4px 2px 12px">團契歷年信息影音，共 '+fmtNum(tot)+' 部。點分類展開，再點系列即可觀看：</p>'+tHtml;
-    }
-    var topicsBlock = topics.length ? tHtml : slot('婚姻、職場、親子、護教等專題庫即將加入。');
+    var topicsBlock = renderTopics();
 
     // 營會
     var camps=D.camps||[], mHtml='';
@@ -1331,6 +1335,7 @@ var PAGES = {
     return pageHead("材料總庫","資源中心","一篇信息，一張卡：讀 · 看 · 下載")+
       search + chips +
       '<div id="resList">'+renderResList()+'</div>'+
+      sect("影","專題影音")+ renderTopics()+
       sect("生","321 App 生態系")+ appcards()+
       sect("包","為繁殖者預備")+
       slot('有完整講章＋投影片＋討論問題的信息，會標記「適合帶領」並可下載帶領包——白白得來，白白捨去。');
