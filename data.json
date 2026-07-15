@@ -1,5 +1,5 @@
 {
-  "contentVersion": "2.9.0",
+  "contentVersion": "3.0.0",
   "verses": [
     {
       "ref": "創一 1",
@@ -2375,6 +2375,14 @@
       "icon": "users",
       "desc": "為團契、各國家人、未得之民恆切禱告。",
       "need": "願意每天守望禱告的人"
+    }
+  ],
+  "packs": [
+    {
+      "id": "pk1",
+      "title": "料理包講道",
+      "desc": "8專題信息 · 完整講章，拿了就能去帶領",
+      "link": "https://u.pcloud.link/publink/show?code=kZcYPr5ZIxJdz5WPhO7R9NJHvfOOKzYHhbmy"
     }
   ]
 }

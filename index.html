@@ -808,6 +808,19 @@ function resById(id){
   for(var i=0;i<list.length;i++){ if(list[i].id===id) return list[i]; }
   return null;
 }
+/* 帶領包（白白得來，白白捨去） */
+function renderPacks(){
+  var ps=D.packs||[];
+  if(!ps.length) return slot('有完整講章＋投影片＋討論問題的信息，會標記「適合帶領」並可下載帶領包——白白得來，白白捨去。');
+  var out='<p class="note" style="margin:-4px 2px 12px">預備好的信息包，下載就能帶領——白白得來，白白捨去（太十 8）：</p>';
+  for(var i=0;i<ps.length;i++){ var k=ps[i];
+    out+='<a class="rowlink" href="'+esc(k.link||"#")+'"'+(k.link?' target="_blank" rel="noopener"':'')+'>'+
+      '<span class="ri">'+icon("download",22)+'</span>'+
+      '<span class="rt"><b>'+esc(k.title)+'</b><span>'+esc(k.desc||"")+'</span></span>'+
+      '<span class="chev">'+icon("chev",20)+'</span></a>';
+  }
+  return out;
+}
 /* 專題影音區塊（資源中心與生命裝備共用） */
 function renderTopics(){
   // 依分類分組，聖經裝備下可再有子分類（如舊約導讀）
@@ -1339,8 +1352,7 @@ var PAGES = {
       '<div id="resList">'+renderResList()+'</div>'+
       sect("影","專題影音")+ renderTopics()+
       sect("生","321 App 生態系")+ appcards()+
-      sect("包","為繁殖者預備")+
-      slot('有完整講章＋投影片＋討論問題的信息，會標記「適合帶領」並可下載帶領包——白白得來，白白捨去。');
+      sect("包","為繁殖者預備")+ renderPacks();
   },
 
   practice: function(){
