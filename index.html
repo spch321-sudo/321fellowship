@@ -818,6 +818,7 @@ function renderPacks(){
       '<span class="ri">'+icon("download",22)+'</span>'+
       '<span class="rt"><b>'+esc(k.title)+'</b><span>'+esc(k.desc||"")+'</span></span>'+
       '<span class="chev">'+icon("chev",20)+'</span></a>';
+    if(k.note) out+='<p class="note" style="margin:-4px 2px 14px;padding-left:2px">'+esc(k.note)+'</p>';
   }
   return out;
 }
