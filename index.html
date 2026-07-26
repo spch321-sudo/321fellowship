@@ -5641,11 +5641,27 @@ function rvFetchPiece(piece){
     rvCacheGet(key,function(blob){
       if(blob){ try{ var url=URL.createObjectURL(blob); rv.cache[key]=url; resolve(url); return; }catch(e){} }
       var ep=(window.APP_CONFIG&&window.APP_CONFIG.ttsEndpoint)||"";
+      /* 逾時保護：真人語音伺服器若太久沒回應（例如英文 HD 聲音在後端較慢或暫時不可用），
+         12 秒後自動放棄，讓上層改用系統語音接著唸，不會卡住無聲音。 */
+      var settled=false;
+      var ctrl=(typeof AbortController!=="undefined") ? new AbortController() : null;
+      var timer=setTimeout(function(){
+        if(settled) return; settled=true;
+        try{ if(ctrl) ctrl.abort(); }catch(e){}
+        reject(new Error("TTS timeout"));
+      }, 12000);
       fetch(ep,{ method:"POST", headers:{"Content-Type":"application/json"},
+        signal:(ctrl?ctrl.signal:undefined),
         body:JSON.stringify({ voice:rvVoiceName(), rate:rvRateAttr(), sil:140, silc:140, sile:260, text:piece })
       }).then(function(res){ if(!res.ok) throw new Error("TTS HTTP "+res.status); return res.blob(); })
-        .then(function(b){ try{ rvCachePut(key,b); }catch(e){} var url; try{ url=URL.createObjectURL(b); rv.cache[key]=url; }catch(e){} resolve(url); })
-        .catch(reject);
+        .then(function(b){
+          if(settled) return; settled=true; clearTimeout(timer);
+          try{ rvCachePut(key,b); }catch(e){} var url; try{ url=URL.createObjectURL(b); rv.cache[key]=url; }catch(e){} resolve(url);
+        })
+        .catch(function(err){
+          if(settled) return; settled=true; clearTimeout(timer);
+          reject(err);
+        });
     });
   });
 }
@@ -5691,13 +5707,19 @@ function rvSpeak(text, onDone){
 /* 真人語音這一段抓不到時，改用瀏覽器內建語音把這一段唸完，唸完才繼續下一段 */
 function rvFallbackChunk(piece, cb){
   if(!ttsOK()){ if(cb) cb(); return; }
+  var done=false;
+  function finish(){ if(done) return; done=true; if(cb) cb(); }
   try{
     var u=new SpeechSynthesisUtterance(piece);
     var lg=(typeof curLang==="function")?curLang():"zh-Hant";
     u.lang = lg==="en" ? "en-US" : "zh-TW"; u.rate=0.95;
-    u.onend=cb; u.onerror=cb;
+    u.onend=finish; u.onerror=finish;
+    /* 保險：某些瀏覽器／WebView 對 speechSynthesis 會靜默不出聲、也不觸發 onend，
+       估算朗讀所需時間加上緩衝，逾時就直接往下一段走，不讓畫面卡住。 */
+    var estMs=Math.max(4000, Math.min(20000, piece.length*90));
+    setTimeout(finish, estMs);
     window.speechSynthesis.speak(u);
-  }catch(e){ if(cb) cb(); }
+  }catch(e){ finish(); }
 }
 
 /* ---- 朗讀今日金句：眼力吃緊的家人，需要的不只是放大字級 ---- */
@@ -6282,7 +6304,7 @@ function speakLesson(){
   if(already){ stopSpeak(); return; }
   var L=lessonFromCache(LESSON_NO); if(!L) return;
   var isEn=(curLang()==="en"); var sep=isEn?". ":"。";
-  var q=isEn?["Lesson "+L.no+". "+L.title+". "]:["第"+L.no+"課。"+L.title+"。"];
+  var q=isEn?["Lesson "+L.no+". "+lessonTitleOf(L.no, L.title)+". "]:["第"+L.no+"課。"+L.title+"。"];
   if(L.scripture && L.scripture.text) q.push(L.scripture.text+sep+L.scripture.ref+sep);
   var bs=L.blocks||[];
   for(var i=0;i<bs.length;i++) if(bs[i].v) q.push(bs[i].v);
