@@ -1268,7 +1268,12 @@ window.APP_CONFIG = {
   ttsVoices: {
     yunjhe:   { name:"zh-TW-YunJheNeural",                  label:"雲哲", desc:"溫潤親切男聲（預設）" },
     yunfan:   { name:"zh-CN-Yunfan:DragonHDLatestNeural",   label:"雲帆", desc:"高清男聲 HD" },
-    xiaochen: { name:"zh-CN-Xiaochen:DragonHDLatestNeural", label:"曉辰", desc:"高清女聲 HD" }
+    xiaochen: { name:"zh-CN-Xiaochen:DragonHDLatestNeural", label:"曉辰", desc:"高清女聲 HD" },
+    /* 英文版真人語音：與晨讀321英文版同一組 HD 聲音，同一個 Worker 後端。
+       key 以 en_ 開頭，用來跟中文聲音分組（見 rvVoiceKey）。 */
+    en_brian:  { name:"en-US-Brian:DragonHDLatestNeural",  label:"Brian", desc:"HD male · steady (default)" },
+    en_ava:    { name:"en-US-Ava:DragonHDLatestNeural",    label:"Ava",   desc:"HD female · warm" },
+    en_andrew: { name:"en-US-Andrew:DragonHDLatestNeural", label:"Andrew",desc:"HD male · friendly" }
   }
 };
 
@@ -5533,9 +5538,17 @@ function rvUnlock(){
     else rv.unlocked=true;
   }catch(e){}
 }
-function rvVoiceKey(){
+/* 依目前介面語言，只挑同一組（中文 / 英文 en_ 開頭）的聲音清單 */
+function rvVoicesForLang(){
   var voices=(window.APP_CONFIG&&window.APP_CONFIG.ttsVoices)||{};
-  var saved=lsGet("k321_tts_voice");
+  var isEn=(curLang()==="en"); var out={};
+  for(var k in voices){ if((k.indexOf("en_")===0)===isEn) out[k]=voices[k]; }
+  return out;
+}
+function rvVoiceStoreKey(){ return (curLang()==="en") ? "k321_tts_voice_en" : "k321_tts_voice"; }
+function rvVoiceKey(){
+  var voices=rvVoicesForLang();
+  var saved=lsGet(rvVoiceStoreKey());
   if(saved && voices[saved]) return saved;
   for(var k in voices) return k;
   return "";
@@ -5548,7 +5561,7 @@ function rvVoiceName(){
 /* 依標點切句，句段落在 100~300 字之間，唸起來自然、請求次數也不會太多 */
 function rvChunks(text){
   var t=String(text||"").replace(/\s+/g," ").trim(); if(!t) return [];
-  var enders="。！？；\n"; var out=[]; var buf="";
+  var enders="。！？；\n.!?"; var out=[]; var buf="";
   for(var i=0;i<t.length;i++){ buf+=t[i]; if(enders.indexOf(t[i])>=0 && buf.length>=100){ out.push(buf); buf=""; } }
   if(buf.replace(/^\s+|\s+$/g,"")) out.push(buf);
   var fin=[]; out.forEach(function(seg){ while(seg.length>300){ fin.push(seg.slice(0,300)); seg=seg.slice(300); } if(seg) fin.push(seg); });
@@ -5590,7 +5603,7 @@ window.rvClearCache=function(cb){
 function renderVoiceBlock(){
   var host=$("setVoiceBlock"); if(!host) return;
   if(!rvReady()){ host.innerHTML=""; return; }
-  var voices=(window.APP_CONFIG&&window.APP_CONFIG.ttsVoices)||{};
+  var voices=rvVoicesForLang();
   var cur=rvVoiceKey();
   var keys=[]; for(var k in voices) keys.push(k);
   var opts = keys.map(function(k){
@@ -5606,7 +5619,7 @@ function renderVoiceBlock(){
     var btns=box.querySelectorAll("button");
     for(var i=0;i<btns.length;i++){ (function(b){
       b.onclick=function(){
-        lsSet("k321_tts_voice", b.getAttribute("data-ttsv"));
+        lsSet(rvVoiceStoreKey(), b.getAttribute("data-ttsv"));
         rv.cache={};
         renderVoiceBlock();
       };
@@ -5704,16 +5717,17 @@ function speakVerse(){
   var already = (RV_ACTIVE_ID==="verse") || (ttsOK() && (window.speechSynthesis.speaking||window.speechSynthesis.pending));
   if(already){ stopSpeak(); return; }
   var v=todayVerse(); if(!v) return;
-  var txt=v.text+"。"+v.ref+(v.motto?("。"+v.motto):"");
+  var isEn=(curLang()==="en"); var sep=isEn?". ":"。";
+  var txt=v.text+sep+v.ref+(v.motto?(sep+v.motto):"");
   if(rvReady()){
     RV_ACTIVE_ID="verse"; markSpeak(true);
     rvSpeak(txt, function(){ RV_ACTIVE_ID=""; markSpeak(false); });
     return;
   }
-  if(!ttsOK()){ note("這台裝置不支援語音朗讀。"); return; }
+  if(!ttsOK()){ note(isEn?"This device does not support voice reading.":"這台裝置不支援語音朗讀。"); return; }
   try{
     var u=new SpeechSynthesisUtterance(sayNorm(txt));
-    u.lang="zh-TW"; u.rate=0.85; u.pitch=1; u.volume=1;
+    u.lang=isEn?"en-US":"zh-TW"; u.rate=0.85; u.pitch=1; u.volume=1;
     u.onend=function(){ markSpeak(false); };
     u.onerror=function(){ markSpeak(false); };
     window.speechSynthesis.cancel();
@@ -6267,19 +6281,20 @@ function speakLesson(){
   var already = (RV_ACTIVE_ID==="lesson") || (ttsOK() && window.speechSynthesis.speaking) || SPEAK_Q.length;
   if(already){ stopSpeak(); return; }
   var L=lessonFromCache(LESSON_NO); if(!L) return;
-  var q=["第"+L.no+"課。"+L.title+"。"];
-  if(L.scripture && L.scripture.text) q.push(L.scripture.text+"。"+L.scripture.ref+"。");
+  var isEn=(curLang()==="en"); var sep=isEn?". ":"。";
+  var q=isEn?["Lesson "+L.no+". "+L.title+". "]:["第"+L.no+"課。"+L.title+"。"];
+  if(L.scripture && L.scripture.text) q.push(L.scripture.text+sep+L.scripture.ref+sep);
   var bs=L.blocks||[];
   for(var i=0;i<bs.length;i++) if(bs[i].v) q.push(bs[i].v);
-  if(L.tip) q.push("小提醒。"+L.tip);
-  if(L.declaration) q.push("信心宣告。"+L.declaration);
-  if(L.closing) q.push("結語。"+L.closing);
+  if(L.tip) q.push((isEn?"A brief reminder. ":"小提醒。")+L.tip);
+  if(L.declaration) q.push((isEn?"A declaration of faith. ":"信心宣告。")+L.declaration);
+  if(L.closing) q.push((isEn?"Closing. ":"結語。")+L.closing);
   if(rvReady()){
     RV_ACTIVE_ID="lesson"; markLessonSpeak(true);
     rvSpeak(q.join(" "), function(){ RV_ACTIVE_ID=""; markLessonSpeak(false); });
     return;
   }
-  if(!ttsOK()){ note("這台裝置不支援語音朗讀。"); return; }
+  if(!ttsOK()){ note(isEn?"This device does not support voice reading.":"這台裝置不支援語音朗讀。"); return; }
   SPEAK_Q=q; SPEAK_I=0;
   try{ window.speechSynthesis.cancel(); }catch(e){}
   markLessonSpeak(true); speakNext();
@@ -6288,7 +6303,7 @@ function speakNext(){
   if(SPEAK_I>=SPEAK_Q.length){ SPEAK_Q=[]; markLessonSpeak(false); return; }
   try{
     var u=new SpeechSynthesisUtterance(sayNorm(SPEAK_Q[SPEAK_I++]));
-    u.lang="zh-TW"; u.rate=0.9;
+    u.lang=(curLang()==="en")?"en-US":"zh-TW"; u.rate=0.9;
     u.onend=speakNext;
     u.onerror=function(){ SPEAK_Q=[]; markLessonSpeak(false); };
     window.speechSynthesis.speak(u);
