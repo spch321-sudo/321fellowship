@@ -7,7 +7,7 @@
    ★ 每次更新 index.html，只要把下面的 VER 往上跳一號即可。
      舊快取會自動清掉，家人下次開啟會拿到新內容。
    ===================================================================== */
-var VER   = "v2.8.0";
+var VER   = "v2.8.1";
 var SHELL = "k321-shell-" + VER;   /* App 本體：HTML／圖示／manifest */
 var DATA  = "k321-data-"  + VER;   /* 內容：data.json 等 */
 var IMG   = "k321-img-"   + VER;   /* 圖片：縮圖、QR */
@@ -58,6 +58,9 @@ function swr(e, cacheName){
     return c.match(e.request).then(function(hit){
       var net = fetch(e.request).then(function(res){
         if(res && res.ok) c.put(e.request, res.clone());
+        /* 檔案已被移除（例如同工刪掉了舊的 data.json）→ 快取也要跟著清，
+           否則會永遠回舊內容，怎麼刪都沒用。 */
+        else if(res && (res.status===404 || res.status===410)) c["delete"](e.request);
         return res;
       })["catch"](function(){ return hit; });
       if(hit){ e.waitUntil(net); return hit; }
