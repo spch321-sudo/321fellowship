@@ -211,7 +211,10 @@ a{color:var(--blue);text-decoration:none;}
 .sheet .mask{position:absolute;inset:0;background:rgba(18,35,63,.5);}
 .sheet .panel{position:absolute;left:50%;transform:translateX(-50%);bottom:0;
   width:100%;max-width:var(--maxw);background:var(--paper);border-radius:22px 22px 0 0;
-  padding:20px 18px calc(24px + env(safe-area-inset-bottom));}
+  padding:20px 18px calc(24px + env(safe-area-inset-bottom));
+  /* 內容變長時面板自己捲動，標題與「關閉」永遠留在畫面裡，上方仍留一條可點的遮罩 */
+  max-height:86vh;max-height:86dvh;overflow-y:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;}
 .sheet .panel h3{font-family:var(--font-display);color:var(--head);margin:0 0 14px;font-size:calc(20px * var(--fs));}
 .fsrow{display:flex;align-items:center;gap:10px;justify-content:space-between;margin:10px 0 4px;}
 .fsrow .opts{display:flex;gap:8px;}
@@ -958,6 +961,7 @@ body.rv-playing .toast{bottom:calc(148px + env(safe-area-inset-bottom));}
     <p class="note" id="setLangNote">這裡切換的是介面文字；171 課的內容仍是原文，尚未逐課翻譯。</p>
     <div id="setVoiceBlock"></div>
     <hr class="hr">
+    <button class="btn ghost" data-close="1" id="setCloseBtn" style="margin-top:14px">關閉</button>
     <p class="note center" id="setFooter">國度321空中團契 App · 架構版 v0.1<br>三二一理念 · 建立屬神的體系 · 讓耶穌得一切榮耀</p>
   </div>
 </div>
@@ -9438,7 +9442,8 @@ function applyLang(v){
   var map={
     setTitle:"settings", setFsLbl:"fontSize", setFsNote:"fsNote", setThLbl:"appearance",
     setThNote:"thNote", setLangLbl:"language", setLangNote:"langNote",
-    helpTitle:"help", helpIntro:"helpIntro", helpFoot:"helpFoot"
+    helpTitle:"help", helpIntro:"helpIntro", helpFoot:"helpFoot",
+    setCloseBtn:"vidClose"
   };
   for(var id in map){ var el=$(id); if(el) el.textContent=t(map[id]); }
   var f1=$("fsOpts"); if(f1){ var b=f1.querySelectorAll("button");
