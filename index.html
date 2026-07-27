@@ -964,7 +964,9 @@ body.rv-playing .help-fab{bottom:calc(178px + env(safe-area-inset-bottom));}
     <p class="note" id="setLangNote">這裡切換的是介面文字；171 課的內容仍是原文，尚未逐課翻譯。</p>
     <div id="setVoiceBlock"></div>
     <hr class="hr">
-    <button class="btn ghost" data-close="1" id="setCloseBtn" style="margin-top:14px">關閉</button>
+    <button class="btn ghost" id="forceUpdBtn" style="margin-top:14px">強制更新（抓取最新版）</button>
+    <p class="note" id="forceUpdNote">聽不到聲音或看起來沒更新時按這裡：會清掉舊快取、抓最新版並重新載入。</p>
+    <button class="btn ghost" data-close="1" id="setCloseBtn" style="margin-top:6px">關閉</button>
     <p class="note center" id="setFooter">國度321空中團契 App · 架構版 v0.1<br>三二一理念 · 建立屬神的體系 · 讓耶穌得一切榮耀</p>
   </div>
 </div>
@@ -1107,6 +1109,7 @@ var I18N = {
     vidCatZhu:"321祝福", vidCatZhen:"真理傳遞", vidCatGe:"主題曲", vidOpenYT:"在 YouTube 開啟", vidCantPlay:"影片無法在這裡播放？改用 YouTube 開啟",
     ttsRealVoice:"真人語音", ttsUseNative:"使用系統語音", ttsClearCache:"清空語音快取",
     ttsCacheCleared:"已清空語音快取", ttsFallbackNote:"下方僅在真人語音連不上時作為備援。",
+    forceUpd:"強制更新（抓取最新版）", forceUpdNote:"聽不到聲音或看起來沒更新時按這裡：會清掉舊快取、抓最新版並重新載入。", forceUpdBusy:"更新中…",
     ttsLocked:"音訊尚未解鎖",
     ttsTest:"語音連線測試", ttsTesting:"測試中…",
     ttsTestNote:"聽不到聲音時先按這裡：能連上後端就會立刻試播一句。若顯示成功卻仍沒聲音，請檢查手機側邊的靜音鍵與音量。",
@@ -1176,6 +1179,7 @@ var I18N = {
     vidCatZhu:"321祝福", vidCatZhen:"真理传递", vidCatGe:"主题曲", vidOpenYT:"在 YouTube 打开", vidCantPlay:"视频无法在这里播放？改用 YouTube 打开",
     ttsRealVoice:"真人语音", ttsUseNative:"使用系统语音", ttsClearCache:"清空语音缓存",
     ttsCacheCleared:"已清空语音缓存", ttsFallbackNote:"下方仅在真人语音连不上时作为备援。",
+    forceUpd:"强制更新（抓取最新版）", forceUpdNote:"听不到声音或看起来没更新时按这里：会清掉旧缓存、抓最新版并重新载入。", forceUpdBusy:"更新中…",
     ttsLocked:"音讯尚未解锁",
     ttsTest:"语音连线测试", ttsTesting:"测试中…",
     ttsTestNote:"听不到声音时先按这里：能连上后端就会立刻试播一句。若显示成功却仍没声音，请检查手机侧边的静音键与音量。",
@@ -1245,6 +1249,7 @@ var I18N = {
     vidCatZhu:"321 Blessing", vidCatZhen:"Truth", vidCatGe:"Theme Song", vidOpenYT:"Open in YouTube", vidCantPlay:"Video won\u2019t play here? Open it in YouTube",
     ttsRealVoice:"Human-like Voice", ttsUseNative:"Use Device Voice", ttsClearCache:"Clear Voice Cache",
     ttsCacheCleared:"Voice cache cleared", ttsFallbackNote:"The list below is only a fallback if the human-like voice can\u2019t connect.",
+    forceUpd:"Force Update (get latest)", forceUpdNote:"Tap here if you hear nothing or it looks out of date: it clears old caches, fetches the latest version and reloads.", forceUpdBusy:"Updating\u2026",
     ttsLocked:"audio not unlocked",
     ttsTest:"Test Voice Connection", ttsTesting:"Testing\u2026",
     ttsTestNote:"Tap here first if you hear nothing: if the backend answers, a sample plays right away. If it says success but you still hear nothing, check your phone\u2019s silent switch and volume.",
@@ -5793,6 +5798,7 @@ function renderVoiceBlock(){
       b.onclick=function(){ var want=(b.getAttribute("data-ttsbg")==="1"); if(want!==rvBgOn()) window.rvToggleBg(); };
     })(gb[m]); }
   }
+  var fu=$("forceUpdBtn"); if(fu) fu.onclick=function(){ window.forceUpdate(); };
   var tb=$("ttsTestBtn"); if(tb) tb.onclick=function(){ window.rvTestVoice(); };
   var cb=$("ttsClearBtn"); if(cb) cb.onclick=function(){ window.rvClearCache(); };
 }
@@ -9519,6 +9525,7 @@ function applyLang(v){
     setTitle:"settings", setFsLbl:"fontSize", setFsNote:"fsNote", setThLbl:"appearance",
     setThNote:"thNote", setLangLbl:"language", setLangNote:"langNote",
     helpTitle:"help", helpIntro:"helpIntro", helpFoot:"helpFoot",
+    forceUpdBtn:"forceUpd", forceUpdNote:"forceUpdNote",
     setCloseBtn:"vidClose"
   };
   for(var id in map){ var el=$(id); if(el) el.textContent=t(map[id]); }
@@ -9652,8 +9659,26 @@ function init(){
         });
       }).catch(function(){});
     }catch(e){}
+    /* 每次開啟主動探詢有沒有新版；有的話溫和提示，不打斷閱讀 */
+    try{ navigator.serviceWorker.getRegistration().then(function(r){ if(r&&r.update) r.update(); }); }catch(e){}
   }
 }
+/* ---- 強制更新：清掉 Service Worker 與所有快取，重新抓最新版 ----
+   iOS 的 PWA 常把舊檔卡在快取裡，一顆按鈕解決，家人不必刪捷徑重加。 */
+window.forceUpdate=function(){
+  var btn=$("forceUpdBtn");
+  if(btn){ btn.disabled=true; btn.textContent=t("forceUpdBusy"); }
+  function reload(){
+    try{ var u=location.href.split("#")[0]; u += (u.indexOf("?")>=0?"&":"?")+"_fu="+Date.now(); location.replace(u); }
+    catch(e){ location.reload(); }
+  }
+  var jobs=[];
+  try{ if("caches" in window) jobs.push(caches.keys().then(function(ks){ return Promise.all(ks.map(function(k){ return caches.delete(k); })); })); }catch(e){}
+  try{ if("serviceWorker" in navigator) jobs.push(navigator.serviceWorker.getRegistrations().then(function(rs){ return Promise.all(rs.map(function(r){ return r.unregister(); })); })); }catch(e){}
+  try{ if(typeof rvStop==="function") rvStop(); rv.cache={}; }catch(e){}
+  Promise.all(jobs).then(reload, reload);
+  setTimeout(reload, 3000);   /* 保險：任何一步卡住，3 秒後照樣重載 */
+};
 
 /* 版本比較："2.8.0" → [2,8,0]；回傳 1 / 0 / -1 */
 function verCmp(a,b){
