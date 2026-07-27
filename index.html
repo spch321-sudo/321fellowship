@@ -447,6 +447,20 @@ html[data-theme="dark"] .fld textarea{background:#0F1826;}
   box-shadow:0 8px 26px rgba(18,35,63,.30);opacity:0;pointer-events:none;
   transition:opacity .22s ease,transform .22s ease;}
 .toast.show{opacity:1;transform:translate(-50%,0);}
+/* 朗讀時的浮動控制條讓路給提示浮層，兩者不互相遮住 */
+body.rv-playing .toast{bottom:calc(148px + env(safe-area-inset-bottom));}
+
+/* ===== 真人朗讀 · 浮動控制條（暫停／離線存檔／停止） ===== */
+#rvBar{position:fixed;left:50%;transform:translateX(-50%);z-index:36;display:none;
+  bottom:calc(78px + env(safe-area-inset-bottom));
+  width:100%;max-width:var(--maxw);padding:0 12px;pointer-events:none;}
+#rvBar .rvbar-in{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;pointer-events:auto;}
+#rvBar .rvpill{display:inline-flex;align-items:center;gap:6px;min-height:44px;
+  border:1px solid var(--line);background:var(--white);color:var(--head);
+  border-radius:999px;padding:8px 16px;font-size:calc(15px * var(--fs));font-weight:700;
+  box-shadow:0 6px 20px var(--shadow);}
+#rvBar .rvpill.stop{background:var(--navy);color:#fff;border-color:var(--navy);}
+#rvBar .rvpill[disabled]{opacity:.6;}
 
 /* ===== 同意勾選與說明連結 ===== */
 .chk{display:flex;gap:10px;align-items:flex-start;margin:2px 0 12px;
@@ -1086,6 +1100,24 @@ var I18N = {
     vidCatZhu:"321祝福", vidCatZhen:"真理傳遞", vidCatGe:"主題曲", vidOpenYT:"在 YouTube 開啟", vidCantPlay:"影片無法在這裡播放？改用 YouTube 開啟",
     ttsRealVoice:"真人語音", ttsUseNative:"使用系統語音", ttsClearCache:"清空語音快取",
     ttsCacheCleared:"已清空語音快取", ttsFallbackNote:"下方僅在真人語音連不上時作為備援。",
+    ttsVoiceNote:"真人語音由團契自己的後端提供；連不上時會自動改用手機內建語音，朗讀不會中斷。",
+    ttsRate:"語速", ttsRateSlow:"慢", ttsRateStd:"標準", ttsRateFast:"快",
+    ttsRateNote:"唸慢一點，長輩與眼力吃緊的家人聽得更清楚。換了語速會重新取語音。",
+    ttsBg:"背景播放", ttsOn:"開", ttsOff:"關",
+    ttsBgNote:"開啟後，整課先接成一段完整音檔：鎖屏、關螢幕、切換App 都會一路唸到底，開始前需要幾秒鐘預備。關閉則逐段播放，開始得快，朗讀時螢幕保持恆亮。",
+    ttsBgOnNote:"已開啟背景播放：鎖屏也會繼續唸。",
+    ttsBgOffNote:"已關閉背景播放：朗讀時螢幕會保持恆亮。",
+    ttsPause:"暫停", ttsResume:"繼續", ttsStop:"停止",
+    ttsSaveOffline:"\u2b07 離線存檔", ttsSaving:"存檔中… {n}/{t}", ttsSaved:"\u2713 已離線存檔",
+    ttsSavedPart:"已存 {n}/{t} · 再按補齊",
+    ttsSavedToast:"這一課的語音已存好，之後離線也聽得到。",
+    ttsSavedPartToast:"大部分已存好，再按一次就能補齊剩下的。",
+    ttsNoAudio:"這一課沒有可存檔的語音。", ttsNeedLesson:"請先打開一課，再存離線語音。",
+    ttsNativeOffline:"目前使用手機內建語音，本來就可以離線朗讀。",
+    ttsResumeToast:"從上次停下的地方接著唸。", ttsStopToast:"已停止，下次從頭開始。",
+    ttsPreparing:"正在接成一段完整音檔…", ttsPreparingPct:"正在接成一段完整音檔… {p}%",
+    ttsPlayLock:"開始播放 · 鎖屏或切換App 都不會中斷。",
+    ttsFallbackDevice:"真人語音暫時連不上，改用手機內建語音陪你唸。",
   },
   "zh-Hans": {
     brand:"国度321空中团契", brandTag:"三 二 一 理 念",
@@ -1130,6 +1162,24 @@ var I18N = {
     vidCatZhu:"321祝福", vidCatZhen:"真理传递", vidCatGe:"主题曲", vidOpenYT:"在 YouTube 打开", vidCantPlay:"视频无法在这里播放？改用 YouTube 打开",
     ttsRealVoice:"真人语音", ttsUseNative:"使用系统语音", ttsClearCache:"清空语音缓存",
     ttsCacheCleared:"已清空语音缓存", ttsFallbackNote:"下方仅在真人语音连不上时作为备援。",
+    ttsVoiceNote:"真人语音由团契自己的后端提供；连不上时会自动改用手机内建语音，朗读不会中断。",
+    ttsRate:"语速", ttsRateSlow:"慢", ttsRateStd:"标准", ttsRateFast:"快",
+    ttsRateNote:"念慢一点，长辈与眼力吃紧的家人听得更清楚。换了语速会重新取语音。",
+    ttsBg:"背景播放", ttsOn:"开", ttsOff:"关",
+    ttsBgNote:"开启后，整课先接成一段完整音档：锁屏、关屏幕、切换App 都会一路念到底，开始前需要几秒钟预备。关闭则逐段播放，开始得快，朗读时屏幕保持恒亮。",
+    ttsBgOnNote:"已开启背景播放：锁屏也会继续念。",
+    ttsBgOffNote:"已关闭背景播放：朗读时屏幕会保持恒亮。",
+    ttsPause:"暂停", ttsResume:"继续", ttsStop:"停止",
+    ttsSaveOffline:"\u2b07 离线存档", ttsSaving:"存档中… {n}/{t}", ttsSaved:"\u2713 已离线存档",
+    ttsSavedPart:"已存 {n}/{t} · 再按补齐",
+    ttsSavedToast:"这一课的语音已存好，之后离线也听得到。",
+    ttsSavedPartToast:"大部分已存好，再按一次就能补齐剩下的。",
+    ttsNoAudio:"这一课没有可存档的语音。", ttsNeedLesson:"请先打开一课，再存离线语音。",
+    ttsNativeOffline:"目前使用手机内建语音，本来就可以离线朗读。",
+    ttsResumeToast:"从上次停下的地方接着念。", ttsStopToast:"已停止，下次从头开始。",
+    ttsPreparing:"正在接成一段完整音档…", ttsPreparingPct:"正在接成一段完整音档… {p}%",
+    ttsPlayLock:"开始播放 · 锁屏或切换App 都不会中断。",
+    ttsFallbackDevice:"真人语音暂时连不上，改用手机内建语音陪你念。",
   },
   "en": {
     brand:"Kingdom 321 Online Fellowship", brandTag:"T H R E E · T W O · O N E",
@@ -1174,6 +1224,24 @@ var I18N = {
     vidCatZhu:"321 Blessing", vidCatZhen:"Truth", vidCatGe:"Theme Song", vidOpenYT:"Open in YouTube", vidCantPlay:"Video won\u2019t play here? Open it in YouTube",
     ttsRealVoice:"Human-like Voice", ttsUseNative:"Use Device Voice", ttsClearCache:"Clear Voice Cache",
     ttsCacheCleared:"Voice cache cleared", ttsFallbackNote:"The list below is only a fallback if the human-like voice can\u2019t connect.",
+    ttsVoiceNote:"The human-like voice comes from our own fellowship backend. If it can\u2019t connect, your device voice takes over so the reading never stops.",
+    ttsRate:"Reading Speed", ttsRateSlow:"Slower", ttsRateStd:"Normal", ttsRateFast:"Faster",
+    ttsRateNote:"A slower pace is kinder to older family members and tired eyes. Changing the speed fetches fresh audio.",
+    ttsBg:"Background Play", ttsOn:"On", ttsOff:"Off",
+    ttsBgNote:"With this on, the whole lesson is joined into one continuous track, so it keeps reading on the lock screen, with the screen off, or while you use other apps \u2014 it just needs a few seconds to prepare. With it off, playback starts sooner segment by segment, and the screen stays awake while reading.",
+    ttsBgOnNote:"Background play is on \u2014 it keeps reading on the lock screen.",
+    ttsBgOffNote:"Background play is off \u2014 the screen stays awake while reading.",
+    ttsPause:"Pause", ttsResume:"Resume", ttsStop:"Stop",
+    ttsSaveOffline:"\u2b07 Save offline", ttsSaving:"Saving\u2026 {n}/{t}", ttsSaved:"\u2713 Saved for offline",
+    ttsSavedPart:"Saved {n}/{t} \u00b7 tap to finish",
+    ttsSavedToast:"This lesson is saved \u2014 it plays offline from now on.",
+    ttsSavedPartToast:"Mostly saved \u2014 tap again to finish the rest.",
+    ttsNoAudio:"There is nothing to save for this lesson.", ttsNeedLesson:"Open a lesson first, then save it offline.",
+    ttsNativeOffline:"You\u2019re on the device voice, which already reads offline.",
+    ttsResumeToast:"Resuming from where you left off.", ttsStopToast:"Stopped \u2014 it will start from the top next time.",
+    ttsPreparing:"Preparing one continuous track\u2026", ttsPreparingPct:"Preparing one continuous track\u2026 {p}%",
+    ttsPlayLock:"Playing \u2014 it keeps going on the lock screen.",
+    ttsFallbackDevice:"The human-like voice can\u2019t connect right now \u2014 using your device voice instead.",
   }
 };
 var LANG_FALLBACK="zh-Hant";
@@ -5202,6 +5270,7 @@ var IC = {
   download:'<path d="M12 3v12"/><path d="M7 12l5 5 5-5"/><path d="M5 21h14"/>',
   play:'<path d="M6 4l14 8-14 8z"/>',
   stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>',
+  pause:'<path d="M9 5v14"/><path d="M15 5v14"/>',
   sound:'<path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.6a5 5 0 0 1 0 6.8"/><path d="M18.6 5.5a9 9 0 0 1 0 13"/>'
 };
 function icon(name,sz){ sz=sz||24; return '<svg viewBox="0 0 24 24" width="'+sz+'" height="'+sz+'" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(IC[name]||"")+'</svg>'; }
@@ -5517,7 +5586,11 @@ function startCountdowns(){
    絕不會因為沒設定後端就壞掉任何功能。
    ===================================================================== */
 var RV_SILENT="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=";
-var rv={ audio:null, cache:{}, unlocked:false, queue:[], idx:0, active:false, token:0, onDone:null };
+/* 停頓長短（毫秒）：句號與逗號一樣短，頓號稍長，「一、二、三」聽得清楚。
+   與晨讀321英文版同一組數值，同一個 Worker，所以語音風味完全一致。 */
+var RV_SIL_SENTENCE=140, RV_SIL_COMMA=140, RV_SIL_ENUM=260;
+var rv={ audio:null, cache:{}, unlocked:false, queue:[], idx:0, active:false, paused:false,
+         token:0, onDone:null, curId:"", curText:"", lesson:null, joined:false, joinedURL:"" };
 function rvReady(){
   var ep=(window.APP_CONFIG&&window.APP_CONFIG.ttsEndpoint)||"";
   return /^https?:\/\//i.test(ep);
@@ -5567,7 +5640,33 @@ function rvChunks(text){
   var fin=[]; out.forEach(function(seg){ while(seg.length>300){ fin.push(seg.slice(0,300)); seg=seg.slice(300); } if(seg) fin.push(seg); });
   return fin.length?fin:[t];
 }
-/* ---- IndexedDB 永久快取：同一段話同一個聲音，只跟後端要一次 ---- */
+/* ---- 語速：0.85 慢 / 1.0 標準 / 1.15 快；語速也算進快取鍵，換速度不會拿到舊音檔 ---- */
+function rvRate(){
+  var r=1.0;
+  try{ var sv=parseFloat(lsGet("k321_tts_rate")); if(sv>0) r=sv; }catch(e){}
+  return r;
+}
+function rvRateAttr(){
+  var pct=Math.round((rvRate()-1)*100);
+  return (pct>=0?"+":"")+pct+"%";
+}
+window.rvSetRate=function(v){
+  v=Number(v)||1.0;
+  lsSet("k321_tts_rate", String(v));
+  rv.cache={};
+  if(rv.active) rvStop();
+  if(typeof renderVoiceBlock==="function") renderVoiceBlock();
+};
+/* ---- 背景播放：整課接成一段音檔，鎖屏、切換App 都不中斷 ---- */
+function rvBgOn(){ return lsGet("k321_tts_bg")==="1"; }
+window.rvToggleBg=function(){
+  var on=!rvBgOn();
+  lsSet("k321_tts_bg", on?"1":"0");
+  if(rv.active) rvStop();
+  if(typeof renderVoiceBlock==="function") renderVoiceBlock();
+  note(on ? t("ttsBgOnNote") : t("ttsBgOffNote"));
+};
+/* ---- IndexedDB 永久快取：同一段話、同一個聲音、同一個語速，只跟後端要一次 ---- */
 var RV_DB="k321_tts_cache";
 function rvDBOpen(cb){
   try{
@@ -5610,9 +5709,20 @@ function renderVoiceBlock(){
     var v=voices[k];
     return '<button data-ttsv="'+esc(k)+'"'+(k===cur?' class="on"':'')+'>'+esc(v.label||k)+'</button>';
   }).join("");
+  /* 語速：三段就好，長輩一眼看得懂，不用滑桿 */
+  var r=rvRate();
+  function rbtn(v,lbl){ return '<button data-ttsr="'+v+'"'+(Math.abs(r-v)<0.02?' class="on"':'')+'>'+esc(lbl)+'</button>'; }
+  var rateOpts = rbtn(0.85,t("ttsRateSlow"))+rbtn(1,t("ttsRateStd"))+rbtn(1.15,t("ttsRateFast"));
+  var bg=rvBgOn();
+  var bgOpts = '<button data-ttsbg="1"'+(bg?' class="on"':'')+'>'+esc(t("ttsOn"))+'</button>'
+             + '<button data-ttsbg="0"'+(bg?'':' class="on"')+'>'+esc(t("ttsOff"))+'</button>';
   host.innerHTML =
     '<div class="fsrow" style="margin-top:16px"><div>'+esc(t("ttsRealVoice"))+'</div><div class="opts" id="ttsVoiceOpts">'+opts+'</div></div>'
-    +'<p class="note">'+esc(t("ttsFallbackNote"))+'</p>'
+    +'<p class="note">'+esc(t("ttsVoiceNote"))+'</p>'
+    +'<div class="fsrow" style="margin-top:12px"><div>'+esc(t("ttsRate"))+'</div><div class="opts" id="ttsRateOpts">'+rateOpts+'</div></div>'
+    +'<p class="note">'+esc(t("ttsRateNote"))+'</p>'
+    +'<div class="fsrow" style="margin-top:12px"><div>'+esc(t("ttsBg"))+'</div><div class="opts" id="ttsBgOpts">'+bgOpts+'</div></div>'
+    +'<p class="note">'+esc(t("ttsBgNote"))+'</p>'
     +'<button class="btn ghost" id="ttsClearBtn" style="margin-top:4px">'+esc(t("ttsClearCache"))+'</button>';
   var box=$("ttsVoiceOpts");
   if(box){
@@ -5621,88 +5731,296 @@ function renderVoiceBlock(){
       b.onclick=function(){
         lsSet(rvVoiceStoreKey(), b.getAttribute("data-ttsv"));
         rv.cache={};
+        if(rv.active) rvStop();
         renderVoiceBlock();
       };
     })(btns[i]); }
   }
+  var rbox=$("ttsRateOpts");
+  if(rbox){
+    var rb=rbox.querySelectorAll("button");
+    for(var j=0;j<rb.length;j++){ (function(b){
+      b.onclick=function(){ window.rvSetRate(parseFloat(b.getAttribute("data-ttsr"))); };
+    })(rb[j]); }
+  }
+  var gbox=$("ttsBgOpts");
+  if(gbox){
+    var gb=gbox.querySelectorAll("button");
+    for(var m=0;m<gb.length;m++){ (function(b){
+      b.onclick=function(){ var want=(b.getAttribute("data-ttsbg")==="1"); if(want!==rvBgOn()) window.rvToggleBg(); };
+    })(gb[m]); }
+  }
   var cb=$("ttsClearBtn"); if(cb) cb.onclick=function(){ window.rvClearCache(); };
 }
-/* 語速轉成 Worker 需要的百分比字串：1.0 → +0%、0.9 → -10% */
-function rvRateAttr(){
-  var r=1.0;
-  try{ var sv=parseFloat(lsGet("k321_tts_rate")); if(sv>0) r=sv; }catch(e){}
-  var pct=Math.round((r-1)*100);
-  return (pct>=0?"+":"")+pct+"%";
+/* ---- 取語音：先看記憶體，再看 IndexedDB，最後才向後端要 ---- */
+function rvKey(piece){
+  return rvVoiceName()+"|"+rvRateAttr()+"|"+RV_SIL_SENTENCE+"|"+RV_SIL_COMMA+"|"+RV_SIL_ENUM+"|"+piece;
 }
-function rvFetchPiece(piece){
-  var key=rvVoiceName()+"|"+piece;
-  if(rv.cache[key]) return Promise.resolve(rv.cache[key]);
+function rvNetFetch(piece,key){
+  return new Promise(function(resolve,reject){
+    var ep=(window.APP_CONFIG&&window.APP_CONFIG.ttsEndpoint)||"";
+    /* 逾時保護：真人語音伺服器若太久沒回應，12 秒後自動放棄，
+       讓上層改用系統語音接著唸，不會卡住無聲音。 */
+    var settled=false;
+    var ctrl=(typeof AbortController!=="undefined") ? new AbortController() : null;
+    var timer=setTimeout(function(){
+      if(settled) return; settled=true;
+      try{ if(ctrl) ctrl.abort(); }catch(e){}
+      reject(new Error("TTS timeout"));
+    }, 12000);
+    fetch(ep,{ method:"POST", headers:{"Content-Type":"application/json"},
+      signal:(ctrl?ctrl.signal:undefined),
+      body:JSON.stringify({ voice:rvVoiceName(), rate:rvRateAttr(),
+        sil:RV_SIL_SENTENCE, silc:RV_SIL_COMMA, sile:RV_SIL_ENUM, text:piece })
+    }).then(function(res){ if(!res.ok) throw new Error("TTS HTTP "+res.status); return res.blob(); })
+      .then(function(b){
+        if(settled) return; settled=true; clearTimeout(timer);
+        try{ rvCachePut(key,b); }catch(e){}
+        resolve(b);
+      })
+      .catch(function(err){
+        if(settled) return; settled=true; clearTimeout(timer);
+        reject(err);
+      });
+  });
+}
+/* 回傳音檔位元組（背景播放要拿它接成一整段） */
+function rvFetchBlob(piece){
+  var key=rvKey(piece);
   return new Promise(function(resolve,reject){
     rvCacheGet(key,function(blob){
-      if(blob){ try{ var url=URL.createObjectURL(blob); rv.cache[key]=url; resolve(url); return; }catch(e){} }
-      var ep=(window.APP_CONFIG&&window.APP_CONFIG.ttsEndpoint)||"";
-      /* 逾時保護：真人語音伺服器若太久沒回應（例如英文 HD 聲音在後端較慢或暫時不可用），
-         12 秒後自動放棄，讓上層改用系統語音接著唸，不會卡住無聲音。 */
-      var settled=false;
-      var ctrl=(typeof AbortController!=="undefined") ? new AbortController() : null;
-      var timer=setTimeout(function(){
-        if(settled) return; settled=true;
-        try{ if(ctrl) ctrl.abort(); }catch(e){}
-        reject(new Error("TTS timeout"));
-      }, 12000);
-      fetch(ep,{ method:"POST", headers:{"Content-Type":"application/json"},
-        signal:(ctrl?ctrl.signal:undefined),
-        body:JSON.stringify({ voice:rvVoiceName(), rate:rvRateAttr(), sil:140, silc:140, sile:260, text:piece })
-      }).then(function(res){ if(!res.ok) throw new Error("TTS HTTP "+res.status); return res.blob(); })
-        .then(function(b){
-          if(settled) return; settled=true; clearTimeout(timer);
-          try{ rvCachePut(key,b); }catch(e){} var url; try{ url=URL.createObjectURL(b); rv.cache[key]=url; }catch(e){} resolve(url);
-        })
-        .catch(function(err){
-          if(settled) return; settled=true; clearTimeout(timer);
-          reject(err);
-        });
+      if(blob) return resolve(blob);
+      rvNetFetch(piece,key).then(resolve,reject);
     });
   });
 }
-function rvStop(){
-  rv.token++; rv.active=false; rv.queue=[]; rv.idx=0;
-  if(rv.audio){ try{ rv.audio.pause(); }catch(e){} rv.audio.onended=null; rv.audio.onerror=null; }
-  try{ if(navigator.mediaSession) navigator.mediaSession.playbackState="none"; }catch(e){}
+/* 回傳可直接播放的網址（逐段播放用） */
+function rvFetchPiece(piece){
+  var key=rvKey(piece);
+  if(rv.cache[key]) return Promise.resolve(rv.cache[key]);
+  return rvFetchBlob(piece).then(function(b){
+    var url; try{ url=URL.createObjectURL(b); rv.cache[key]=url; }catch(e){}
+    return url;
+  });
 }
-/* 真人語音朗讀一段文字：逐段抓取、逐段接續播放，並預先抓下一段以減少停頓。
-   任何一段抓取失敗，就整段改用瀏覽器內建語音頂上，絕不中斷體驗。 */
-function rvSpeak(text, onDone){
+/* ---- 朗讀時螢幕恆亮；背景播放模式下改讓螢幕可以休息 ---- */
+var RV_WAKE=null;
+function rvWakeAcquire(){
+  try{
+    if(rvBgOn()) return;
+    if(RV_WAKE || !navigator.wakeLock) return;
+    navigator.wakeLock.request("screen").then(function(wl){
+      RV_WAKE=wl;
+      try{ wl.addEventListener("release",function(){ RV_WAKE=null; }); }catch(e){}
+    }).catch(function(){ RV_WAKE=null; });
+  }catch(e){}
+}
+function rvWakeRelease(){
+  try{ if(RV_WAKE){ var wl=RV_WAKE; RV_WAKE=null; wl.release().catch(function(){}); } }catch(e){}
+}
+document.addEventListener("visibilitychange",function(){
+  try{ if(document.visibilityState==="visible" && rv.active && !rv.paused) rvWakeAcquire(); }catch(e){}
+});
+/* ---- 鎖屏／耳機上的播放控制 ---- */
+function rvMedia(act){
+  try{ if(act==="play") rvWakeAcquire(); else rvWakeRelease(); }catch(e){}
+  try{
+    if(!("mediaSession" in navigator)) return;
+    var ms=navigator.mediaSession;
+    if(act==="play"){
+      try{
+        if(typeof MediaMetadata!=="undefined"){
+          var title=(window.APP_CONFIG&&window.APP_CONFIG.appName)||t("brand");
+          if(rv.curId==="lesson" && rv.lesson!=null){
+            var L=(typeof lessonFromCache==="function")?lessonFromCache(rv.lesson):null;
+            var lt=(L&&L.title)?lessonTitleOf(rv.lesson,L.title):"";
+            title=(curLang()==="en"?("Lesson "+rv.lesson):("第"+rv.lesson+"課"))+(lt?("　"+lt):"");
+          }
+          ms.metadata=new MediaMetadata({ title:String(title), artist:t("brand") });
+        }
+      }catch(e){}
+      try{ ms.setActionHandler("play",function(){ rvResumePlay(); }); }catch(e){}
+      try{ ms.setActionHandler("pause",function(){ rvPause(); }); }catch(e){}
+      try{ ms.setActionHandler("stop",function(){ window.rvStopReset(); }); }catch(e){}
+      try{ ms.playbackState="playing"; }catch(e){}
+    } else if(act==="pause"){
+      try{ ms.playbackState="paused"; }catch(e){}
+    } else {
+      try{ ms.playbackState="none"; }catch(e){}
+    }
+  }catch(e){}
+}
+/* ---- 續聽點：停在第幾段就記下來，下次接著唸（照晨讀321的模式） ---- */
+function rvResumeMap(){ try{ return JSON.parse(lsGet("k321_tts_resume")||"{}"); }catch(e){ return {}; } }
+function rvResumeGet(no){
+  if(no==null) return 0;
+  var v=rvResumeMap()[String(no)];
+  return (typeof v==="number" && v>0) ? v : 0;
+}
+function rvResumeSet(no,idx){
+  if(no==null) return;
+  var m=rvResumeMap();
+  if(idx>0) m[String(no)]=idx; else delete m[String(no)];
+  lsSet("k321_tts_resume", JSON.stringify(m));
+}
+window.rvResumeClear=function(no){ rvResumeSet(no,0); };
+function rvPersistResume(){
+  if(rv.lesson!=null && rv.curId==="lesson") rvResumeSet(rv.lesson, Math.max(0, rv.idx-1));
+}
+/* ---- 停止 ---- */
+function rvStop(){
+  rv.token++; rv.active=false; rv.paused=false; rv.joined=false;
+  rv.queue=[]; rv.idx=0; rv.curId=""; rv.curText=""; rv.lesson=null; rv.onDone=null;
+  if(rv.audio){
+    try{ rv.audio.pause(); }catch(e){}
+    rv.audio.onended=null; rv.audio.onerror=null; rv.audio.ontimeupdate=null; rv.audio.onloadedmetadata=null;
+  }
+  try{ if(rv.joinedURL){ URL.revokeObjectURL(rv.joinedURL); rv.joinedURL=""; } }catch(e){}
+  rvMedia("stop");
+  rvUpdateUI();
+}
+/* 整段歸零：停止並清掉續聽點，下次從頭開始 */
+window.rvStopReset=function(){
+  var no=rv.lesson;
+  if(typeof stopSpeak==="function") stopSpeak(); else rvStop();
+  if(no!=null) rvResumeSet(no,0);
+  note(t("ttsStopToast"));
+};
+/* ---- 暫停 / 繼續 ---- */
+function rvPause(){
+  if(!rv.active || rv.paused) return;
+  rv.paused=true;
+  try{ if(rv.audio) rv.audio.pause(); }catch(e){}
+  rvPersistResume();
+  rvMedia("pause");
+  rvUpdateUI();
+}
+function rvResumePlay(){
+  if(!rv.active || !rv.paused) return;
+  rv.paused=false;
+  try{ if(rv.audio){ var p=rv.audio.play(); if(p&&p.catch) p.catch(function(){}); } }catch(e){}
+  rvMedia("play");
+  rvUpdateUI();
+}
+window.rvPauseToggle=function(){ if(rv.paused) rvResumePlay(); else rvPause(); };
+window.rvPause=rvPause;
+window.rvResumePlay=rvResumePlay;
+/* ---- 主入口：唸一段文字 ----
+   opts = { id:"lesson"／"verse"／"aic", lesson:課號, startIdx:從第幾段開始, joinable:可否接成一整段 }
+   舊寫法 rvSpeak(text, cb) 仍然可用，什麼都不會壞。 */
+function rvSpeak(text, onDone, opts){
+  opts=opts||{};
   rvUnlock();
   var chunks=rvChunks(sayNorm(text));   /* 唸出來之前先正規化讀音 */
   if(!chunks.length){ if(onDone) onDone(); return; }
-  rv.queue=chunks; rv.idx=0; rv.active=true; rv.onDone=onDone||null;
+  var start=(opts.startIdx>0 && opts.startIdx<chunks.length)?opts.startIdx:0;
   var my=++rv.token;
-  var a=rvGetAudio();
+  rv.queue=chunks; rv.idx=start; rv.active=true; rv.paused=false;
+  rv.onDone=onDone||null; rv.curId=opts.id||""; rv.curText=text||"";
+  rv.lesson=(opts.lesson!=null?opts.lesson:null);
+  rv.joined=!!(opts.joinable && rvBgOn());
+  /* 換了一課，離線存檔鍵要回到「⬇ 離線存檔」，不要留著上一課的「✓ 已存檔」 */
   try{
-    if(navigator.mediaSession){
-      navigator.mediaSession.metadata=new MediaMetadata({ title:(window.APP_CONFIG&&window.APP_CONFIG.appName)||"國度321空中團契" });
-      navigator.mediaSession.playbackState="playing";
+    var _dl=document.getElementById("rvBarDl");
+    if(_dl && _dl.getAttribute("data-rvlesson")!==String(rv.lesson)){
+      try{ delete _dl.dataset.done; }catch(e2){}
+      _dl.setAttribute("data-rvlesson", String(rv.lesson));
     }
   }catch(e){}
-  function playAt(i){
+  rvMedia("play");
+  rvUpdateUI();
+  if(rv.joined) rvPlayJoined(my,start); else rvPlayChunked(my,start);
+}
+function rvFinish(){
+  var cb=rv.onDone;
+  if(rv.lesson!=null) rvResumeSet(rv.lesson,0);   /* 整段唸完 → 續聽點歸零 */
+  rvStop();
+  if(cb) cb();
+}
+/* 逐段播放：第一段一到就開始唸，同時預抓下一段，開始得快 */
+function rvPlayChunked(my,start){
+  var a=rvGetAudio();
+  function step(i){
     if(my!==rv.token) return;
-    if(i>=rv.queue.length){ rvStop(); if(rv.onDone) rv.onDone(); return; }
+    if(i>=rv.queue.length){ rvFinish(); return; }
+    rv.idx=i+1;
     rvFetchPiece(rv.queue[i]).then(function(url){
       if(my!==rv.token) return;
-      a.onended=null; a.onerror=null;
-      a.src=url;
-      a.onended=function(){ if(my===rv.token) playAt(i+1); };
-      a.onerror=function(){ rvFallbackChunk(rv.queue[i], function(){ if(my===rv.token) playAt(i+1); }); };
-      var p=a.play();
-      if(p && p.catch) p.catch(function(){ rvFallbackChunk(rv.queue[i], function(){ if(my===rv.token) playAt(i+1); }); });
-      /* 提前預抓下一段，減少段落間的停頓 */
       if(rv.queue[i+1]) rvFetchPiece(rv.queue[i+1]).catch(function(){});
+      a.onended=null; a.onerror=null; a.ontimeupdate=null;
+      a.src=url;
+      a.onended=function(){ if(my===rv.token){ rvPersistResume(); step(i+1); } };
+      a.onerror=function(){ rvFallbackChunk(rv.queue[i], function(){ if(my===rv.token) step(i+1); }); };
+      var p=a.play();
+      if(p && p.catch) p.catch(function(){ rvFallbackChunk(rv.queue[i], function(){ if(my===rv.token) step(i+1); }); });
     }).catch(function(){
-      rvFallbackChunk(rv.queue[i], function(){ if(my===rv.token) playAt(i+1); });
+      if(my!==rv.token) return;
+      if(i===start && typeof note==="function") note(t("ttsFallbackDevice"));
+      rvFallbackChunk(rv.queue[i], function(){ if(my===rv.token) step(i+1); });
     });
   }
-  playAt(0);
+  step(start);
+}
+/* 背景播放：把整課的語音一次抓齊、接成「一個音檔」再播。
+   一段完整音檔，鎖屏、關螢幕、切換App 都會一路唸到底；
+   每一小段仍然各自存進 IndexedDB，第二次聽就是秒開、離線可聽。 */
+function rvPlayJoined(my,start){
+  var slice=rv.queue.slice(start);
+  var res=new Array(slice.length), done=0, next=0, running=0, CONC=6, failed=false, lastNote=-1;
+  note(t("ttsPreparing"));
+  function playAll(){
+    if(my!==rv.token) return;
+    var url;
+    try{ url=URL.createObjectURL(new Blob(res,{type:"audio/mpeg"})); }catch(e){ rvStop(); return; }
+    try{ if(rv.joinedURL) URL.revokeObjectURL(rv.joinedURL); }catch(e){}
+    rv.joinedURL=url;
+    var a=rvGetAudio();
+    a.onended=null; a.onerror=null; a.ontimeupdate=null; a.onloadedmetadata=null;
+    a.loop=false; a.src=url;
+    a.ontimeupdate=function(){
+      if(my!==rv.token || !a.duration) return;
+      var ratio=Math.min(1, Math.max(0, a.currentTime/a.duration));
+      rv.idx=start+Math.floor(ratio*slice.length)+1;
+      if(Math.floor(a.currentTime)%10===0) rvPersistResume();
+    };
+    a.onended=function(){ if(my===rv.token) rvFinish(); };
+    a.onerror=function(){ if(my===rv.token) rvStop(); };
+    try{
+      var ms=navigator.mediaSession;
+      if(ms){
+        ms.setActionHandler("seekforward",function(){ try{ a.currentTime=Math.min(a.duration||0, a.currentTime+15); }catch(e){} });
+        ms.setActionHandler("seekbackward",function(){ try{ a.currentTime=Math.max(0, a.currentTime-15); }catch(e){} });
+        try{ ms.setActionHandler("seekto",function(ev){ try{ if(ev.seekTime!=null) a.currentTime=ev.seekTime; }catch(e){} }); }catch(e){}
+      }
+    }catch(e){}
+    note(t("ttsPlayLock"));
+    var p=a.play(); if(p&&p.catch) p.catch(function(){ if(my===rv.token) rvStop(); });
+  }
+  function pump(){
+    while(running<CONC && next<slice.length){
+      (function(i){
+        running++;
+        rvFetchBlob(slice[i]).then(function(b){ res[i]=b; }, function(){ failed=true; }).then(function(){
+          running--; done++;
+          var pct=Math.floor(done/slice.length*100);
+          if(pct>=25 && pct<100 && pct-lastNote>=25){ lastNote=pct; note(t("ttsPreparingPct",{p:pct})); }
+          if(my!==rv.token) return;
+          if(done>=slice.length){
+            if(failed || res.filter(Boolean).length!==slice.length){
+              /* 有段落抓不到 → 改回逐段播放，逐段再各自退回系統語音，絕不中斷 */
+              rv.joined=false;
+              rvPlayChunked(my,start);
+            }else{
+              playAll();
+            }
+            return;
+          }
+          pump();
+        });
+      })(next++);
+    }
+  }
+  pump();
 }
 /* 真人語音這一段抓不到時，改用瀏覽器內建語音把這一段唸完，唸完才繼續下一段 */
 function rvFallbackChunk(piece, cb){
@@ -5712,7 +6030,7 @@ function rvFallbackChunk(piece, cb){
   try{
     var u=new SpeechSynthesisUtterance(piece);
     var lg=(typeof curLang==="function")?curLang():"zh-Hant";
-    u.lang = lg==="en" ? "en-US" : "zh-TW"; u.rate=0.95;
+    u.lang = lg==="en" ? "en-US" : "zh-TW"; u.rate=rvRate()*0.95;
     u.onend=finish; u.onerror=finish;
     /* 保險：某些瀏覽器／WebView 對 speechSynthesis 會靜默不出聲、也不觸發 onend，
        估算朗讀所需時間加上緩衝，逾時就直接往下一段走，不讓畫面卡住。 */
@@ -5721,6 +6039,70 @@ function rvFallbackChunk(piece, cb){
     window.speechSynthesis.speak(u);
   }catch(e){ finish(); }
 }
+/* ---- 朗讀中的浮動控制條：暫停／繼續、離線存檔、停止歸零 ---- */
+function rvRenderBar(){
+  var show = rv.active && rv.curId==="lesson" && CUR_ROUTE==="lesson";
+  var bar=document.getElementById("rvBar");
+  try{ document.body.classList.toggle("rv-playing", !!show); }catch(e){}
+  if(!show){ if(bar) bar.style.display="none"; return; }
+  if(!bar){
+    bar=document.createElement("div");
+    bar.id="rvBar";
+    bar.innerHTML='<div class="rvbar-in">'
+      +'<button class="rvpill" id="rvBarPP" onclick="rvPauseToggle()"></button>'
+      +'<button class="rvpill" id="rvBarDl" onclick="rvPreloadLesson()"></button>'
+      +'<button class="rvpill stop" id="rvBarStop" onclick="rvStopReset()"></button>'
+    +'</div>';
+    document.body.appendChild(bar);
+    var d=document.getElementById("rvBarDl"); if(d) d.textContent=t("ttsSaveOffline");
+    var s=document.getElementById("rvBarStop"); if(s) s.textContent=t("ttsStop");
+  }
+  bar.style.display="block";
+  var pp=document.getElementById("rvBarPP");
+  if(pp) pp.innerHTML=(rv.paused?(icon("play",16)+" "+esc(t("ttsResume"))):(icon("pause",16)+" "+esc(t("ttsPause"))));
+  var dl=document.getElementById("rvBarDl");
+  if(dl){ dl.style.display=rvReady()?"inline-flex":"none"; if(!window.__rvPreloadBusy && !dl.dataset.done) dl.textContent=t("ttsSaveOffline"); }
+}
+window.rvRenderBar=rvRenderBar;
+/* 三態按鈕與浮動條一起更新：未播＝朗讀、播放中＝暫停、暫停中＝繼續 */
+function rvUpdateUI(){
+  if(typeof markLessonSpeak==="function"){
+    if(rv.active && rv.curId==="lesson") markLessonSpeak(rv.paused?"paused":"playing");
+  }
+  rvRenderBar();
+}
+window.addEventListener("hashchange", function(){ setTimeout(rvRenderBar, 80); });
+/* ---- 離線存檔：把整課語音一次抓進 IndexedDB，之後離線可聽、也不再耗用後端 ---- */
+window.rvPreloadLesson=function(){
+  if(!rvReady()){ note(t("ttsNativeOffline")); return; }
+  var no=(typeof LESSON_NO!=="undefined")?LESSON_NO:null;
+  if(no==null){ note(t("ttsNeedLesson")); return; }
+  var txt=(typeof lessonSpeakText==="function")?lessonSpeakText(no):"";
+  var chunks=txt?rvChunks(sayNorm(txt)):[];
+  if(!chunks.length){ note(t("ttsNoAudio")); return; }
+  if(window.__rvPreloadBusy) return;
+  window.__rvPreloadBusy=true;
+  var total=chunks.length, ok=0, fail=0, started=0, running=0, CONC=3;
+  function btn(){ return document.getElementById("rvBarDl"); }
+  function label(x){ var b=btn(); if(b) b.textContent=x; }
+  function disable(d){ var b=btn(); if(b) b.disabled=!!d; }
+  disable(true); label(t("ttsSaving",{n:0,t:total}));
+  function pump(){
+    while(running<CONC && started<chunks.length){
+      var piece=chunks[started++]; running++;
+      rvFetchBlob(piece).then(function(){ ok++; }, function(){ fail++; }).then(function(){
+        running--; label(t("ttsSaving",{n:(ok+fail),t:total})); pump();
+      });
+    }
+    if(running===0 && started>=chunks.length){
+      window.__rvPreloadBusy=false; disable(false);
+      var b=btn();
+      if(fail){ label(t("ttsSavedPart",{n:ok,t:total})); note(t("ttsSavedPartToast")); }
+      else { label(t("ttsSaved")); if(b) b.dataset.done="1"; note(t("ttsSavedToast")); }
+    }
+  }
+  pump();
+};
 
 /* ---- 朗讀今日金句：眼力吃緊的家人，需要的不只是放大字級 ---- */
 function ttsOK(){ return ("speechSynthesis" in window) && ("SpeechSynthesisUtterance" in window); }
@@ -5730,10 +6112,13 @@ function markSpeak(on){
 }
 var RV_ACTIVE_ID=""; /* "" 表示目前是原生語音在念；非空表示真人語音在念的段落代號 */
 function stopSpeak(){
+  /* 停止前先記下續聽點：家人臨時被打斷，下次還能接著聽 */
+  try{ if(typeof rvPersistResume==="function") rvPersistResume(); }catch(e){}
   SPEAK_Q=[]; SPEAK_I=0; RV_ACTIVE_ID="";
   try{ if(ttsOK()) window.speechSynthesis.cancel(); }catch(e){}
   if(typeof rvStop==="function") rvStop();
   markSpeak(false); markLessonSpeak(false);
+  if(typeof rvRenderBar==="function") rvRenderBar();
 }
 function speakVerse(){
   var already = (RV_ACTIVE_ID==="verse") || (ttsOK() && (window.speechSynthesis.speaking||window.speechSynthesis.pending));
@@ -5743,7 +6128,7 @@ function speakVerse(){
   var txt=v.text+sep+v.ref+(v.motto?(sep+v.motto):"");
   if(rvReady()){
     RV_ACTIVE_ID="verse"; markSpeak(true);
-    rvSpeak(txt, function(){ RV_ACTIVE_ID=""; markSpeak(false); });
+    rvSpeak(txt, function(){ RV_ACTIVE_ID=""; markSpeak(false); }, { id:"verse" });
     return;
   }
   if(!ttsOK()){ note(isEn?"This device does not support voice reading.":"這台裝置不支援語音朗讀。"); return; }
@@ -6299,10 +6684,9 @@ function openLesson(no){ LESSON_NO=no; try{ k3track("lesson_open"); nsMark("word
 
 /* 整課朗讀：分段送進語音佇列，避免一次送太長被瀏覽器截斷 */
 var SPEAK_Q=[], SPEAK_I=0;
-function speakLesson(){
-  var already = (RV_ACTIVE_ID==="lesson") || (ttsOK() && window.speechSynthesis.speaking) || SPEAK_Q.length;
-  if(already){ stopSpeak(); return; }
-  var L=lessonFromCache(LESSON_NO); if(!L) return;
+/* 整課要唸的內容（朗讀與離線存檔共用同一份文字 → 存好的語音播放時必定命中快取） */
+function lessonSpeakParts(no){
+  var L=lessonFromCache(no); if(!L) return [];
   var isEn=(curLang()==="en"); var sep=isEn?". ":"。";
   var q=isEn?["Lesson "+L.no+". "+lessonTitleOf(L.no, L.title)+". "]:["第"+L.no+"課。"+L.title+"。"];
   if(L.scripture && L.scripture.text) q.push(L.scripture.text+sep+L.scripture.ref+sep);
@@ -6311,9 +6695,22 @@ function speakLesson(){
   if(L.tip) q.push((isEn?"A brief reminder. ":"小提醒。")+L.tip);
   if(L.declaration) q.push((isEn?"A declaration of faith. ":"信心宣告。")+L.declaration);
   if(L.closing) q.push((isEn?"Closing. ":"結語。")+L.closing);
+  return q;
+}
+function lessonSpeakText(no){ return lessonSpeakParts(no).join(" "); }
+function speakLesson(){
+  /* 照晨讀321的模式：同一顆鍵三態——朗讀 → 暫停 → 繼續 */
+  if(RV_ACTIVE_ID==="lesson" && rv.active){ window.rvPauseToggle(); return; }
+  var already = (ttsOK() && window.speechSynthesis.speaking) || SPEAK_Q.length;
+  if(already){ stopSpeak(); return; }
+  var q=lessonSpeakParts(LESSON_NO); if(!q.length) return;
+  var isEn=(curLang()==="en");
   if(rvReady()){
-    RV_ACTIVE_ID="lesson"; markLessonSpeak(true);
-    rvSpeak(q.join(" "), function(){ RV_ACTIVE_ID=""; markLessonSpeak(false); });
+    RV_ACTIVE_ID="lesson"; markLessonSpeak("playing");
+    var startIdx=rvResumeGet(LESSON_NO);
+    if(startIdx>0) note(t("ttsResumeToast"));
+    rvSpeak(q.join(" "), function(){ RV_ACTIVE_ID=""; markLessonSpeak(false); rvRenderBar(); },
+            { id:"lesson", lesson:LESSON_NO, startIdx:startIdx, joinable:true });
     return;
   }
   if(!ttsOK()){ note(isEn?"This device does not support voice reading.":"這台裝置不支援語音朗讀。"); return; }
@@ -6414,9 +6811,14 @@ window.closeVideo=function(){
   if(!document.querySelector(".vlist-overlay")){ try{ document.documentElement.style.overflow=""; }catch(e){} }
 };
 
+/* 三態：未播＝🔊朗讀整課、播放中＝⏸暫停、暫停中＝▶繼續（真人朗讀才有暫停／繼續） */
 function markLessonSpeak(on){
   var b=document.querySelector("[data-lspeak]");
-  if(b) b.innerHTML = on ? (icon("stop",18)+" "+esc(t("stopSpeak"))) : (icon("sound",18)+" "+esc(t("speakLesson")));
+  if(!b) return;
+  if(on==="playing")     b.innerHTML = icon("pause",18)+" "+esc(t("ttsPause"));
+  else if(on==="paused") b.innerHTML = icon("play",18)+" "+esc(t("ttsResume"));
+  else if(on)            b.innerHTML = icon("stop",18)+" "+esc(t("stopSpeak"));
+  else                   b.innerHTML = icon("sound",18)+" "+esc(t("speakLesson"));
 }
 
 /* =====================================================================
@@ -6725,7 +7127,7 @@ window.aicSpeakToggle=function(text,id){
   aicSpeakStop();
   if(rvReady()){
     AIC_SPK.active=true; AIC_SPK.id=id; aicUpdateSpkButtons();
-    rvSpeak(text, function(){ AIC_SPK.active=false; AIC_SPK.id=""; aicUpdateSpkButtons(); });
+    rvSpeak(text, function(){ AIC_SPK.active=false; AIC_SPK.id=""; aicUpdateSpkButtons(); }, { id:"aic" });
     return;
   }
   if(!ttsOK()){ note("這台裝置不支援語音朗讀。"); return; }
