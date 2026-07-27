@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#12233F">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob: https://i.ytimg.com https://*.ytimg.com; media-src 'self' blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://youtube.com; base-uri 'self'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob: https://i.ytimg.com https://*.ytimg.com; media-src 'self' blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://youtube.com; base-uri 'self'; form-action 'none'; object-src 'none'">
 <title>321空中團契</title>
 <meta name="description" content="國度321空中團契：每天一句今日金句、171課晨讀課文、線上聚會與屬靈同行。落實321——耶穌是我的榜樣、聖經是我的準則、聖靈是我的引導。">
 <!-- 分享預覽（貼到 LINE、FB、群組時的樣子） -->
@@ -457,7 +457,10 @@ body.rv-playing .toast{bottom:calc(148px + env(safe-area-inset-bottom));}
 #rvBar{position:fixed;left:50%;transform:translateX(-50%);z-index:36;display:none;
   bottom:calc(78px + env(safe-area-inset-bottom));
   width:100%;max-width:var(--maxw);padding:0 12px;pointer-events:none;}
-#rvBar .rvbar-in{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;pointer-events:auto;}
+/* 靠左排列並留出右側 128px，避開「小智」與「我需要幫助」兩顆浮動鍵 */
+#rvBar .rvbar-in{display:flex;gap:8px;justify-content:flex-start;flex-wrap:wrap;
+  padding-right:128px;pointer-events:auto;}
+body.rv-playing .help-fab{bottom:calc(178px + env(safe-area-inset-bottom));}
 #rvBar .rvpill{display:inline-flex;align-items:center;gap:6px;min-height:44px;
   border:1px solid var(--line);background:var(--white);color:var(--head);
   border-radius:999px;padding:8px 16px;font-size:calc(15px * var(--fs));font-weight:700;
@@ -1104,6 +1107,13 @@ var I18N = {
     vidCatZhu:"321祝福", vidCatZhen:"真理傳遞", vidCatGe:"主題曲", vidOpenYT:"在 YouTube 開啟", vidCantPlay:"影片無法在這裡播放？改用 YouTube 開啟",
     ttsRealVoice:"真人語音", ttsUseNative:"使用系統語音", ttsClearCache:"清空語音快取",
     ttsCacheCleared:"已清空語音快取", ttsFallbackNote:"下方僅在真人語音連不上時作為備援。",
+    ttsLocked:"音訊尚未解鎖",
+    ttsTest:"語音連線測試", ttsTesting:"測試中…",
+    ttsTestNote:"聽不到聲音時先按這裡：能連上後端就會立刻試播一句。若顯示成功卻仍沒聲音，請檢查手機側邊的靜音鍵與音量。",
+    ttsTestOk:"連線正常（{s} 秒 · {k} KB），正在試播。沒聽到聲音請看手機側邊靜音鍵與音量。",
+    ttsTestFail:"真人語音連不上：{e}。目前會改用手機內建語音。",
+    ttsTestTimeout:"等候超過 25 秒沒有回應",
+    ttsTestNoPlay:"已取得語音，但這台裝置擋住了自動播放。請再按一次朗讀。",
     ttsVoiceNote:"真人語音由團契自己的後端提供；連不上時會自動改用手機內建語音，朗讀不會中斷。",
     ttsRate:"語速", ttsRateSlow:"慢", ttsRateStd:"標準", ttsRateFast:"快",
     ttsRateNote:"唸慢一點，長輩與眼力吃緊的家人聽得更清楚。換了語速會重新取語音。",
@@ -1166,6 +1176,13 @@ var I18N = {
     vidCatZhu:"321祝福", vidCatZhen:"真理传递", vidCatGe:"主题曲", vidOpenYT:"在 YouTube 打开", vidCantPlay:"视频无法在这里播放？改用 YouTube 打开",
     ttsRealVoice:"真人语音", ttsUseNative:"使用系统语音", ttsClearCache:"清空语音缓存",
     ttsCacheCleared:"已清空语音缓存", ttsFallbackNote:"下方仅在真人语音连不上时作为备援。",
+    ttsLocked:"音讯尚未解锁",
+    ttsTest:"语音连线测试", ttsTesting:"测试中…",
+    ttsTestNote:"听不到声音时先按这里：能连上后端就会立刻试播一句。若显示成功却仍没声音，请检查手机侧边的静音键与音量。",
+    ttsTestOk:"连线正常（{s} 秒 · {k} KB），正在试播。没听到声音请看手机侧边静音键与音量。",
+    ttsTestFail:"真人语音连不上：{e}。目前会改用手机内建语音。",
+    ttsTestTimeout:"等候超过 25 秒没有回应",
+    ttsTestNoPlay:"已取得语音，但这台装置挡住了自动播放。请再按一次朗读。",
     ttsVoiceNote:"真人语音由团契自己的后端提供；连不上时会自动改用手机内建语音，朗读不会中断。",
     ttsRate:"语速", ttsRateSlow:"慢", ttsRateStd:"标准", ttsRateFast:"快",
     ttsRateNote:"念慢一点，长辈与眼力吃紧的家人听得更清楚。换了语速会重新取语音。",
@@ -1228,6 +1245,13 @@ var I18N = {
     vidCatZhu:"321 Blessing", vidCatZhen:"Truth", vidCatGe:"Theme Song", vidOpenYT:"Open in YouTube", vidCantPlay:"Video won\u2019t play here? Open it in YouTube",
     ttsRealVoice:"Human-like Voice", ttsUseNative:"Use Device Voice", ttsClearCache:"Clear Voice Cache",
     ttsCacheCleared:"Voice cache cleared", ttsFallbackNote:"The list below is only a fallback if the human-like voice can\u2019t connect.",
+    ttsLocked:"audio not unlocked",
+    ttsTest:"Test Voice Connection", ttsTesting:"Testing\u2026",
+    ttsTestNote:"Tap here first if you hear nothing: if the backend answers, a sample plays right away. If it says success but you still hear nothing, check your phone\u2019s silent switch and volume.",
+    ttsTestOk:"Connected ({s}s \u00b7 {k} KB) \u2014 playing a sample. If you hear nothing, check the silent switch and volume.",
+    ttsTestFail:"The human-like voice can\u2019t connect: {e}. Your device voice will be used instead.",
+    ttsTestTimeout:"no response after 25 seconds",
+    ttsTestNoPlay:"Audio arrived, but this device blocked autoplay. Please tap Read Aloud again.",
     ttsVoiceNote:"The human-like voice comes from our own fellowship backend. If it can\u2019t connect, your device voice takes over so the reading never stops.",
     ttsRate:"Reading Speed", ttsRateSlow:"Slower", ttsRateStd:"Normal", ttsRateFast:"Faster",
     ttsRateNote:"A slower pace is kinder to older family members and tired eyes. Changing the speed fetches fresh audio.",
@@ -5589,7 +5613,18 @@ function startCountdowns(){
    所有朗讀功能自動走瀏覽器內建語音（也就是現在你看到的「朗讀」按鈕），
    絕不會因為沒設定後端就壞掉任何功能。
    ===================================================================== */
-var RV_SILENT="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=";
+var RV_SILENT="data:audio/wav;base64,UklGRmQGAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YUAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";   /* 解鎖 iOS 音訊用的靜音片段（與晨讀321同一段，確定可解碼） */
+/* 轉成 blob: 播放——CSP 對 blob: 一律放行，就算舊快取的 CSP 還沒更新也解得開 */
+var RV_SILENT_URL="";
+function rvSilentURL(){
+  if(RV_SILENT_URL) return RV_SILENT_URL;
+  try{
+    var b64=RV_SILENT.split(",")[1], bin=atob(b64), n=bin.length, arr=new Uint8Array(n);
+    for(var i=0;i<n;i++) arr[i]=bin.charCodeAt(i);
+    RV_SILENT_URL=URL.createObjectURL(new Blob([arr],{type:"audio/wav"}));
+  }catch(e){ RV_SILENT_URL=RV_SILENT; }
+  return RV_SILENT_URL;
+}
 /* 停頓長短（毫秒）：句號與逗號一樣短，頓號稍長，「一、二、三」聽得清楚。
    與晨讀321英文版同一組數值，同一個 Worker，所以語音風味完全一致。 */
 var RV_SIL_SENTENCE=140, RV_SIL_COMMA=140, RV_SIL_ENUM=260;
@@ -5603,13 +5638,15 @@ function rvGetAudio(){
   if(!rv.audio){
     rv.audio=new Audio(); rv.audio.preload="auto";
     try{ rv.audio.playsInline=true; rv.audio.setAttribute("playsinline",""); rv.audio.setAttribute("webkit-playsinline",""); }catch(e){}
+    /* 掛進文件裡：iOS 對脫離文件的 <audio> 較挑剔，鎖屏資訊也比較穩 */
+    try{ rv.audio.setAttribute("aria-hidden","true"); rv.audio.style.display="none"; document.body.appendChild(rv.audio); }catch(e){}
   }
   return rv.audio;
 }
 function rvUnlock(){
   if(rv.unlocked) return;
   try{
-    var a=rvGetAudio(); a.loop=false; a.src=RV_SILENT;
+    var a=rvGetAudio(); a.loop=false; a.src=rvSilentURL();
     var p=a.play();
     if(p && p.then){ p.then(function(){ rv.unlocked=true; try{ a.pause(); }catch(e){} }).catch(function(){}); }
     else rv.unlocked=true;
@@ -5727,6 +5764,8 @@ function renderVoiceBlock(){
     +'<p class="note">'+esc(t("ttsRateNote"))+'</p>'
     +'<div class="fsrow" style="margin-top:12px"><div>'+esc(t("ttsBg"))+'</div><div class="opts" id="ttsBgOpts">'+bgOpts+'</div></div>'
     +'<p class="note">'+esc(t("ttsBgNote"))+'</p>'
+    +'<button class="btn ghost" id="ttsTestBtn" style="margin-top:4px">'+esc(t("ttsTest"))+'</button>'
+    +'<p class="note">'+esc(t("ttsTestNote"))+'</p>'
     +'<button class="btn ghost" id="ttsClearBtn" style="margin-top:4px">'+esc(t("ttsClearCache"))+'</button>';
   var box=$("ttsVoiceOpts");
   if(box){
@@ -5754,6 +5793,7 @@ function renderVoiceBlock(){
       b.onclick=function(){ var want=(b.getAttribute("data-ttsbg")==="1"); if(want!==rvBgOn()) window.rvToggleBg(); };
     })(gb[m]); }
   }
+  var tb=$("ttsTestBtn"); if(tb) tb.onclick=function(){ window.rvTestVoice(); };
   var cb=$("ttsClearBtn"); if(cb) cb.onclick=function(){ window.rvClearCache(); };
 }
 /* ---- 取語音：先看記憶體，再看 IndexedDB，最後才向後端要 ---- */
@@ -5771,7 +5811,7 @@ function rvNetFetch(piece,key){
       if(settled) return; settled=true;
       try{ if(ctrl) ctrl.abort(); }catch(e){}
       reject(new Error("TTS timeout"));
-    }, 12000);
+    }, 25000);   /* HD 聲音冷啟動較慢，給足時間再退回系統語音 */
     fetch(ep,{ method:"POST", headers:{"Content-Type":"application/json"},
       signal:(ctrl?ctrl.signal:undefined),
       body:JSON.stringify({ voice:rvVoiceName(), rate:rvRateAttr(),
@@ -6076,6 +6116,42 @@ function rvUpdateUI(){
   rvRenderBar();
 }
 window.addEventListener("hashchange", function(){ setTimeout(rvRenderBar, 80); });
+/* ---- 語音連線測試：一鍵確認「連得上後端嗎」與「這台手機出得了聲嗎」 ---- */
+window.rvTestVoice=function(){
+  var btn=$("ttsTestBtn");
+  if(!rvReady()){ note(t("ttsTestFail",{e:"endpoint"})); return; }
+  rvUnlock();                                   /* 在點擊手勢內解鎖 iOS 音訊 */
+  if(btn){ btn.disabled=true; btn.textContent=t("ttsTesting"); }
+  function done(){ if(btn){ btn.disabled=false; btn.textContent=t("ttsTest"); } }
+  var ep=(window.APP_CONFIG&&window.APP_CONFIG.ttsEndpoint)||"";
+  var txt=(curLang()==="en")?"Peace to you. This is a voice test.":"平安，這是真人語音測試。";
+  var t0=Date.now();
+  var ctrl=(typeof AbortController!=="undefined")?new AbortController():null;
+  var timer=setTimeout(function(){ try{ if(ctrl) ctrl.abort(); }catch(e){} },25000);
+  fetch(ep,{ method:"POST", headers:{"Content-Type":"application/json"},
+    signal:(ctrl?ctrl.signal:undefined),
+    body:JSON.stringify({ voice:rvVoiceName(), rate:rvRateAttr(),
+      sil:RV_SIL_SENTENCE, silc:RV_SIL_COMMA, sile:RV_SIL_ENUM, text:txt })
+  }).then(function(res){
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    return res.blob();
+  }).then(function(b){
+    clearTimeout(timer);
+    if(!b || b.size<500) throw new Error("empty audio ("+(b?b.size:0)+"B)");
+    var secs=((Date.now()-t0)/1000).toFixed(1);
+    var a=rvGetAudio(); a.onended=null; a.onerror=null; a.ontimeupdate=null;
+    try{ a.src=URL.createObjectURL(b); }catch(e){}
+    var pr=a.play();
+    note(t("ttsTestOk",{s:secs,k:Math.round(b.size/1024)})+(rv.unlocked?"":" ["+t("ttsLocked")+"]"));
+    if(pr && pr.catch) pr.catch(function(){ note(t("ttsTestNoPlay")); });
+    done();
+  }).catch(function(err){
+    clearTimeout(timer);
+    var msg=(err && err.name==="AbortError") ? t("ttsTestTimeout") : String((err&&err.message)||err);
+    note(t("ttsTestFail",{e:msg}));
+    done();
+  });
+};
 /* ---- 離線存檔：把整課語音一次抓進 IndexedDB，之後離線可聽、也不再耗用後端 ---- */
 window.rvPreloadLesson=function(){
   if(!rvReady()){ note(t("ttsNativeOffline")); return; }
