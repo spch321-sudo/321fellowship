@@ -7,7 +7,7 @@
    ★ 每次更新 index.html，只要把下面的 VER 往上跳一號即可。
      舊快取會自動清掉，家人下次開啟會拿到新內容。
    ===================================================================== */
-var VER   = "v3.1.0";
+var VER   = "v3.6.0";
 var SHELL = "k321-shell-" + VER;   /* App 本體：HTML／圖示／manifest */
 var DATA  = "k321-data-"  + VER;   /* 內容：data.json 等 */
 var IMG   = "k321-img-"   + VER;   /* 圖片：縮圖、QR */
@@ -78,6 +78,13 @@ self.addEventListener("fetch", function(e){
 
   /* 只處理自己網域；YouTube、Worker API 一律讓瀏覽器自己走網路 */
   if(url.origin!==self.location.origin) return;
+
+  /* 同網域底下還住著其他 321 App（晨讀321、每日得勝、夫妻成長營…），
+     它們各自有自己的 Service Worker。本 SW 只負責自己這個資料夾，
+     其餘一律放行——否則家人在 App 裡點進去，離線時會看到團契的畫面，
+     而不是他想開的那支 App。 */
+  var myBase = new URL("./", self.location.href).pathname;
+  if(url.pathname.indexOf(myBase)!==0) return;
 
   /* 頁面導覽：先試網路（拿最新），失敗就用快取的 App 本體 —— 飛航模式也打得開 */
   if(isNav(req)){
