@@ -7,7 +7,7 @@
    ★ 每次更新 index.html，只要把下面的 VER 往上跳一號即可。
      舊快取會自動清掉，家人下次開啟會拿到新內容。
    ===================================================================== */
-var VER   = "v3.6.1";
+var VER   = "v3.9.7";
 var SHELL = "k321-shell-" + VER;   /* App 本體：HTML／圖示／manifest */
 var DATA  = "k321-data-"  + VER;   /* 內容：data.json 等 */
 var IMG   = "k321-img-"   + VER;   /* 圖片：縮圖、QR */
