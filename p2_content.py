@@ -73,9 +73,35 @@ def apply(s):
           (a.bank?'<div class="od">'+esc(a.bank)+'</div>':'')+
           (a.account?'<div class="oa">'+esc(a.account)+'</div>':'')+noteHtml+copyBtn+qrhtml+'</div>';"""
     assert o2 in s; s = s.replace(o2, n2)
+    o4 = 'esc(f9("晨讀321、每日得勝、健康新生活…都在這裡","Morning Devotion, Daily Victory, Healthy Living and more"))'
+    assert o4 in s
+    s = s.replace(o4, 'esc(f9("晨讀321、321互動聖經、生活操練六個 App…都在這裡","Morning Devotion 321, the Interactive Bible and six Living-It-Out apps"))')
+    o5 = '      D.announcements.map(function(a){return \'<div class="card"><h3>\'+esc(a.title)+\'</h3><p>\'+esc(a.body)+\'</p></div>\';}).join("")'
+    assert o5 in s
+    s = s.replace(o5, '      D.announcements.map(function(a){return \'<div class="card news"><h3>\'+esc(a.title||"")+\'</h3>\'+(a.date?\'<div class="news-d">\'+esc(a.date)+\'</div>\':\'\')+(a.body?\'<p>\'+esc(a.body).split(/\\\\n|\\n/).join("<br>")+\'</p>\':\'\')+(a.link?\'<a class="btn ghost news-l" href="\'+esc(safeUrl(a.link))+\'" target="_blank" rel="noopener">\'+esc(a.linkText||f9("了解更多","Learn more"))+\'</a>\':\'\')+\'</div>\';}).join("")')
+    # 最新消息永遠讀 data.json（不受內容版本閘門影響）
+    o6 = 'CONTENT_SRC.mode="embedded"; CONTENT_SRC.note="外部 data.json 版本較舊，已略過";'
+    assert o6 in s
+    s = s.replace(o6, o6 + ' if(j.announcements && j.announcements.length!==undefined){ window.APP_DATA.announcements=j.announcements; D=window.APP_DATA; applyLangData(); }')
     for bad in ('郭麗淑', 'Jonathan kifli', 'Wong Seet Ting', '6217359901008264673'):
         assert bad not in s, bad
     return s
+
+
+def data_json_min(path_out, embed_ver):
+    """data.json 只留「最新消息」放最上面，方便在手機上編輯；其他內容都已內嵌在 index.html"""
+    d = {
+        "announcements": [],
+        "contentVersion": embed_ver,
+        "_說明": [
+            "最新消息寫在最上面的 announcements，每一則用大括號包起來，兩則之間用半形逗號隔開。",
+            "欄位：title＝標題、date＝日期（可不寫）、body＝內文（換行用 \\n）、link＝報名或詳情網址（可不寫）、linkText＝按鈕文字（可不寫）。",
+            "範例：{\"title\": \"321夫妻成長營開始報名\", \"date\": \"2026-11-01\", \"body\": \"11月15日線上舉行。\", \"link\": \"https://spch321-sudo.github.io/321couples/\"}",
+            "沒有消息時改回 \"announcements\": []",
+            "contentVersion 不要改。"
+        ]
+    }
+    json.dump(d, open(path_out, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
 
 def data_json(path_in, path_out):

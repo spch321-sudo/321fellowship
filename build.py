@@ -30,7 +30,7 @@ s = rd(ORIG)
 s = p1_names.apply(s)
 p1_names.check(s)
 s = p2_content.apply(s)
-p2_content.data_json('/home/claude/repos/321fellowship/data.json', os.path.join(DIST, 'data.json'))
+p2_content.data_json_min(os.path.join(DIST, 'data.json'), re.search(r'contentVersion: "([^"]+)"', s).group(1))
 
 # CSP：朗讀解鎖用的靜音 wav（data:）、Pexels 圖庫縮圖
 s = rep(s, "media-src 'self' blob:", "media-src 'self' blob: data:")
@@ -53,6 +53,12 @@ s = rep(s, 'thDark:"Dark",', 'thDark:"Dark", thSepia:"Sepia",')
 # 舊的 SW 註冊交給新的自動更新模組（updateViaCache:'none'）
 s = rep(s, '  if("serviceWorker" in navigator){\n    try{\n      navigator.serviceWorker.register("sw.js")',
         '  if(false && "serviceWorker" in navigator){\n    try{\n      navigator.serviceWorker.register("sw.js")')
+
+# 刪除「我需要幫助」浮動鈕與面板
+import re as _re
+s, _n = _re.subn(r'  <div class="help-fab">.*?</div>\n', '', s, count=1, flags=_re.S); assert _n == 1
+s, _n = _re.subn(r'<!-- 求助面板 -->\n<div class="sheet" id="helpSheet">.*?\n  </div>\n</div>\n', '', s, count=1, flags=_re.S); assert _n == 1
+s = rep(s, '  initHelp();\n', '')
 
 # ---------- 3. 組裝功能模組 ----------
 xi = json.load(open(os.path.join(REF, 'ext_i18n.json'), encoding='utf-8'))

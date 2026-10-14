@@ -276,8 +276,15 @@ function initUpdate() {
         reg.addEventListener('updatefound', function () { track(reg.installing); });
       })['catch'](function () { });
     } catch (e) { }
-    sw.addEventListener('message', function (e) { var d = e.data || {}; if (d.t === 'sw-updated' && d.v && d.v !== APPVER) onNewVersion(d.v); });
-    sw.addEventListener('controllerchange', function () { if (UPD.target && !updBusy()) reloadFresh(); });
+    /* 同網域還有其他 321 App（互動聖經等），它們的 SW 也會廣播 sw-updated；只接受自己這支 sw.js 的通知 */
+    sw.addEventListener('message', function (e) {
+      var d = e.data || {}; if (d.t !== 'sw-updated' || !d.v || d.v === APPVER) return;
+      var src = e.source && e.source.scriptURL, mine = new URL('sw.js', location.href).href;
+      if (src && src !== mine) return;
+      if (d.app && d.app !== 'k321') return;
+      onNewVersion(d.v);
+    });
+    sw.addEventListener('controllerchange', function () { if (UPD.target && UPD.target !== APPVER && !updBusy()) reloadFresh(); });
   }
   setTimeout(function () { checkUpdate(0); }, 2500);
   setInterval(function () { checkUpdate(0); }, 30 * 60 * 1000);
@@ -318,3 +325,19 @@ PAGES.apps = function () {
       ecoCards(first, list.length) : '') +
     aiToolsBlock();
 };
+
+/* 在團契 App 裡開啟的子 App：記住開的是哪一個，頁面重新載入（自動更新、iOS 回到前景）也能接著開，不會「找不到這個 App」 */
+var _openApp0 = openApp;
+openApp = function (i) { try { sessionStorage.setItem('k321_appview', String(i)); } catch (e) { } _openApp0(i); };
+var _appview0 = PAGES.appview;
+PAGES.appview = function () {
+  var list = D.ecosystem || [];
+  if (APP_VIEW == null || !list[APP_VIEW]) {
+    var k = -1; try { k = parseInt(sessionStorage.getItem('k321_appview'), 10); } catch (e) { }
+    if (k >= 0 && list[k]) APP_VIEW = k;
+    else { setTimeout(function () { go('apps'); }, 0); return ''; }
+  }
+  return _appview0();
+};
+var _closeApp0 = closeApp;
+closeApp = function () { try { sessionStorage.removeItem('k321_appview'); } catch (e) { } _closeApp0(); };

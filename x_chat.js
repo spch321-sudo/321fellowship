@@ -83,10 +83,10 @@ function sendChat(text, src) {
   try { k3track('ai_ask'); } catch (e) { }
   var msgs = []; eachA(aic.msgs, function (m) { if (!m.wait && m.text && !m.err) msgs.push({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text }); });
   msgs = msgs.slice(-12); while (msgs.length && msgs[0].role !== 'user') msgs.shift();
-  var acc = '', sys = aicSystem(), guessed = 0;
+  var acc = '', sys = aicSystem(), guessed = 0, lastErr = '';
   function done(r, st) {
     last.wait = false; last.cont = false; foldOld(); last.fold = false;
-    if (r) { last.text = r; last.ok = true; } else { last.text = T('chatErr') + (st ? '（' + (st > 0 ? 'http ' + st : (st < 0 ? 'timeout' : 'network')) + '）' : ''); last.err = true; }
+    if (r) { last.text = r; last.ok = true; } else { last.text = T('chatErr') + (st ? '（' + (st > 0 ? 'http ' + st : (st < 0 ? 'timeout' : 'network')) + (lastErr ? ' · ' + lastErr : '') + '）' : '') + (st === 403 ? '\n' + T('xz403') : ''); last.err = true; }
     aic.busy = false; BUSY = BUSY_OTHER(); chatSave();
     if (aic.open) { renderAIC(); var el = document.getElementById('msg' + (aic.msgs.length - 1)); if (el) try { el.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { } }
     else toast(T('xzReplied'));
@@ -100,7 +100,7 @@ function sendChat(text, src) {
         var r = '', d = null;
         if (st === 200) { try { d = JSON.parse(txt); r = extractReply(d); } catch (e) { r = txt; } }
         if (!r && n < 2) { setTimeout(function () { attempt(n + 1); }, 900 * (n + 1)); return; }
-        if (!r) { done(acc, acc ? 0 : st); return; }
+        if (!r) { if (st > 0 && st !== 200) { try { var ej = JSON.parse(txt); lastErr = (ej.error && (ej.error.message || ej.error.type)) || ej.message || ''; } catch (e) { lastErr = String(txt || '').slice(0, 80); } } done(acc, acc ? 0 : st); return; }
         acc = k ? joinCont(acc, r) : r;
         var c = cutOff(d, acc);
         if ((c.sure && k < 4) || (c.guess && !guessed && k < 4)) {

@@ -229,3 +229,4 @@ input,textarea,select{min-width:0;max-width:100%;}
 .vtag{font-weight:700;color:var(--muted);font-size:13px;}
 @media(max-width:360px){.xpills{gap:3px;}.xpill{min-width:26px;padding:0 5px;font-size:11px;height:22px;line-height:20px;}.appbar{gap:6px;padding-left:10px;padding-right:10px;}}
 .qrimg.photo{width:min(250px,100%);height:auto;image-rendering:auto;}
+.news-d{font-size:calc(13px * var(--fs));color:var(--gold-text);margin:-4px 0 6px;font-weight:600;}.news .news-l{margin-top:10px;padding:11px 16px;}

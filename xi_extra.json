@@ -116,7 +116,8 @@
   "voiceTest": "試聽",
   "voiceNote": "真人語音連不上時，會自動改用手機內建的聲音，朗讀不會中斷。",
   "voiceSample": "我們一起朗讀神的話：與主同行，讓耶穌作王。",
-  "fontB2": ""
+  "fontB2": "",
+  "xz403": "伺服器拒絕了這次連線，常見於部分行動網路。請改用 Wi‑Fi 或稍後再試；若一直如此，請通知同工檢查小智的連線設定。"
  },
  "en": {
   "fellowshipName": "Kingdom 321 Online Fellowship",
@@ -235,6 +236,7 @@
   "voiceTest": "Try it",
   "voiceNote": "If the human-like voice cannot connect, the phone’s own voice takes over so reading never stops.",
   "voiceSample": "Let us read God’s word together: walk with the Lord and let Jesus be King.",
-  "fontB2": ""
+  "fontB2": "",
+  "xz403": "The server refused this connection — this happens on some mobile networks. Please try Wi-Fi or try again later; if it keeps happening, let the team know."
  }
 }

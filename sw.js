@@ -7,7 +7,7 @@
            音訊、影片與帶 Range 的請求一律不攔截（試聽、拖曳、錄影混音才不會壞）
    ‧ 同網域底下還有其他 321 App，本 SW 只管自己這個資料夾
    ===================================================================== */
-var VER = '@@VER@@';
+var VER = '4.0.202610141345';
 var V = 'k321-' + VER;
 var SHELL = ['./', './index.html', './manifest.json', './media.js', './data.json', './icon-192.png?v=3', './icon-512.png?v=3', './apple-touch-icon.png?v=3'];
 
@@ -25,8 +25,10 @@ self.addEventListener('activate', function (e) {
   }).then(function () { return self.clients.claim(); }).then(function () {
     return self.clients.matchAll({ type: 'window', includeUncontrolled: true });
   }).then(function (cs) {
+    var scope = self.registration.scope;
     cs.forEach(function (c) {
-      try { c.postMessage({ t: 'sw-updated', v: VER }); } catch (x) { }
+      if (c.url.indexOf(scope) !== 0) return;   /* 同網域其他 321 App 的視窗不要動 */
+      try { c.postMessage({ t: 'sw-updated', v: VER, app: 'k321' }); } catch (x) { }
       if (c.visibilityState === 'hidden' && c.navigate) { try { c.navigate(c.url); } catch (x) { } }
     });
   }));
