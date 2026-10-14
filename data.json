@@ -1,5 +1,5 @@
 {
- "announcements": [],
+ "announcements": [十月19日晨讀321正式開始，歡迎邀請新朋友參加],
  "contentVersion": "3.10.0",
  "_說明": [
   "最新消息寫在最上面的 announcements，每一則用大括號包起來，兩則之間用半形逗號隔開。",
