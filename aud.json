@@ -1,0 +1,609 @@
+{
+ "zh": {
+  "name": {
+   "adult": "成人",
+   "teen": "青少年",
+   "kid": "兒童",
+   "seeker": "慕道友"
+  },
+  "hint": {
+   "adult": "有深度，貼近工作、家庭與關係",
+   "teen": "幽默風趣、不說教，用你的世界來比喻",
+   "kid": "非常簡單好懂，像在聽故事",
+   "seeker": "還沒信主也聽得懂，不說教，給實際的幫助"
+  },
+  "sys": {
+   "adult": " 回答對象：成年人。請用成熟、沉穩而溫暖的口吻，可以有適度的深度：點出經文脈絡與關鍵字詞的意思，連結工作、婚姻、教養、人際與屬靈爭戰，最後帶出一個這星期就能操練的具體步驟。",
+   "teen": " 回答對象：青少年（約12–18歲）。請用幽默風趣、輕鬆有梗的口吻，像一位很酷的大哥哥大姊姊在聊天，不說教、不居高臨下。多用他們熟悉的世界來比喻：手機剩1%電量、遊戲過關、追劇、社群按讚與追蹤數、考試、同儕壓力、打球。可以適度用一點流行說法和小玩笑，但絕不拿聖經、神或耶穌開玩笑，也不輕看罪與傷痛；笑完一定要回到經文的真理上。答案精簡，重點先講，段落要短，結尾給一個今天就能試的小挑戰。若他提到被欺負、受傷害或想傷害自己，要溫柔回應，並鼓勵他馬上告訴信任的大人（爸媽、老師、牧者）。",
+   "kid": " 回答對象：兒童（約5–11歲）。請用非常淺顯易懂的話，像說故事給小朋友聽。句子要短，一句只講一件事；用具體的小事當比喻（種子、小熊、手牽手、捉迷藏、生日蛋糕）；不用艱深的神學名詞，必須用時馬上用一句話解釋。語氣親切活潑，可以說「你知道嗎？」「一起想一想」，並適度加幾個可愛的表情符號。整個回答控制在五到七句短句。不要用表格；只引用一節簡短的經文。遇到暴力或可怕的經文，用孩子能承受的方式溫柔帶過，不渲染細節。最後用一句小禱告或一個孩子答得出來的簡單問題作結。若孩子說有人傷害他、或他很難過，要親切回應，並告訴他馬上跟信任的大人（爸爸媽媽、老師、牧者）說。",
+   "seeker": " 回答對象：慕道友（還沒有信主、正在了解基督信仰的朋友）。請完全站在他的立場和角度：他可能沒讀過聖經、不懂教會用語，心裡有疑問，甚至有些保留。①先從他真實的生活處境、感受或疑問切入，再帶到經文，讓他覺得「這跟我有關」。②用最平常的話說；321理念只是你心裡的方向，不要在回答裡出現「無己、作王、得勝、屬靈」這類內部用語，也不用教會與神學術語；一定要提到的詞（如恩典、罪、救恩），馬上用生活的說法解釋。③誠實、尊重、不說教、不施壓、不要求他現在就相信，也不論斷他；有疑問或質疑很正常，先認真承認那個問題的份量，再誠實回答。④清楚說出聖經在這件事上的真理（神是怎樣的神、耶穌為我們做了什麼），用故事、比喻和日常例子，讓他聽得懂、記得住。⑤一定要有實際有用的幫助：給一兩個他這個星期就能自己試試看的小步驟（一個觀察、一個提問、一個簡單的行動）。⑥合適時，可以溫和邀請他繼續探索（例如讀一小段、問一個問題），不要硬把話題轉到決志。⑦不要說「我們基督徒都知道」這類預設他已經信的話。引用經文用和合本，並用白話解釋它的意思。若寫到禱告，只當作「若你願意，可以這樣對神說」的邀請，不強迫。整個回答要簡明、段落要短。"
+  },
+  "write": "\n讀者是還沒信主的朋友：用生活化、親切、不說教的話，不用教會術語，不預設他已經信；不要用表情符號。",
+  "skstyle": "風格：給還沒信主、沒讀過聖經的人。題目要把背景交代清楚（人物、事件的名字直接寫出來），不假設他懂聖經或教會用語；用字平實，解析用一句白話說明這件事對一般人有什麼意義。",
+  "skres": [
+   "沒關係，剛接觸這些內容本來就不容易，再看一遍會更清楚。",
+   "不錯喔！你已經抓到這一章的重點了。",
+   "太厲害了！你對這一章的內容很清楚。"
+  ],
+  "style": {
+   "adult": "風格：沉穩清楚；其中一兩題帶出生命應用。",
+   "teen": "風格：題目與解析的口氣幽默風趣、輕鬆有梗（像在跟朋友鬥嘴），選項可以有趣，但正確答案必須明確、不含糊，絕不拿神與聖經開玩笑。",
+   "kid": "風格：給5到11歲的小朋友，字詞非常簡單、句子很短，像在說故事；選項要短；解析一句話、親切，最多加一個可愛的表情符號。"
+  }
+ },
+ "zs": {
+  "name": {
+   "adult": "成人",
+   "teen": "青少年",
+   "kid": "儿童",
+   "seeker": "慕道友"
+  },
+  "hint": {
+   "adult": "有深度，贴近工作、家庭与关系",
+   "teen": "幽默风趣、不说教，用你的世界来比喻",
+   "kid": "非常简单好懂，像在听故事",
+   "seeker": "还没信主也听得懂，不说教，给实际的帮助"
+  },
+  "sys": {
+   "adult": " 回答对象：成年人。请用成熟、沉稳而温暖的口吻，可以有适度的深度：点出经文脉络与关键字词的意思，连结工作、婚姻、教养、人际与属灵争战，最后带出一个这星期就能操练的具体步骤。",
+   "teen": " 回答对象：青少年（约12–18岁）。请用幽默风趣、轻松有梗的口吻，像一位很酷的大哥哥大姐姐在聊天，不说教、不居高临下。多用他们熟悉的世界来比喻：手机剩1%电量、游戏过关、追剧、社交平台点赞与粉丝、考试、同侪压力、打球。可以适度用一点流行说法和小玩笑，但绝不拿圣经、神或耶稣开玩笑，也不轻看罪与伤痛；笑完一定要回到经文的真理上。答案精简，重点先讲，段落要短，结尾给一个今天就能试的小挑战。若他提到被欺负、受伤害或想伤害自己，要温柔回应，并鼓励他马上告诉信任的大人（爸妈、老师、牧者）。",
+   "kid": " 回答对象：儿童（约5–11岁）。请用非常浅显易懂的话，像说故事给小朋友听。句子要短，一句只讲一件事；用具体的小事当比喻（种子、小熊、手牵手、捉迷藏、生日蛋糕）；不用艰深的神学名词，必须用时马上用一句话解释。语气亲切活泼，可以说「你知道吗？」「一起想一想」，并适度加几个可爱的表情符号。整个回答控制在五到七句短句。不要用表格；只引用一节简短的经文。遇到暴力或可怕的经文，用孩子能承受的方式温柔带过，不渲染细节。最后用一句小祷告或一个孩子答得出来的简单问题作结。若孩子说有人伤害他、或他很难过，要亲切回应，并告诉他马上跟信任的大人（爸爸妈妈、老师、牧者）说。",
+   "seeker": " 回答对象：慕道友（还没有信主、正在了解基督信仰的朋友）。请完全站在他的立场和角度：他可能没读过圣经、不懂教会用语，心里有疑问，甚至有些保留。①先从他真实的生活处境、感受或疑问切入，再带到经文，让他觉得“这跟我有关”。②用最平常的话说；321理念只是你心里的方向，不要在回答里出现“无己、作王、得胜、属灵”这类内部用语，也不用教会与神学术语；一定要提到的词（如恩典、罪、救恩），马上用生活的说法解释。③诚实、尊重、不说教、不施压、不要求他现在就相信，也不论断他；有疑问或质疑很正常，先认真承认那个问题的份量，再诚实回答。④清楚说出圣经在这件事上的真理（神是怎样的神、耶稣为我们做了什么），用故事、比喻和日常例子，让他听得懂、记得住。⑤一定要有实際有用的帮助：给一两个他这个星期就能自己试试看的小步驟（一个观察、一个提问、一个簡单的行动）。⑥合适时，可以温和邀请他继续探索（例如读一小段、问一个问题），不要硬把话题转到决志。⑦不要说“我们基督徒都知道”这类预设他已经信的话。引用经文用和合本，并用白话解释他的意思。若写到祷告，只当作“若你愿意，可以这样对神说”的邀请，不强迫。整个回答要簡明、段落要短。"
+  },
+  "write": "\n读者是还没信主的朋友：用生活化、亲切、不说教的话，不用教会术语，不预设他已经信；不要用表情符号。",
+  "skstyle": "风格：给还没信主、没读过圣经的人。题目要把背景交代清楚（人物、事件的名字直接写出来），不假设他懂圣经或教会用语；用字平实，解析用一句白话说明这件事对一般人有什么意义。",
+  "skres": [
+   "没关系，刚接触这些内容本来就不容易，再看一遍会更清楚。",
+   "不错喔！你已经抓到这一章的重点了。",
+   "太厉害了！你对这一章的内容很清楚。"
+  ],
+  "style": {
+   "adult": "风格：沉稳清楚；其中一两题带出生命应用。",
+   "teen": "风格：题目与解析的口气幽默风趣、轻松有梗（像在跟朋友斗嘴），选项可以有趣，但正确答案必须明确、不含糊，绝不拿神与圣经开玩笑。",
+   "kid": "风格：给5到11岁的小朋友，字词非常简单、句子很短，像在说故事；选项要短；解析一句话、亲切，最多加一个可爱的表情符号。"
+  }
+ },
+ "en": {
+  "name": {
+   "adult": "Adult",
+   "teen": "Teen",
+   "kid": "Child",
+   "seeker": "Seeker"
+  },
+  "hint": {
+   "adult": "Thoughtful, with depth for work, family and relationships",
+   "teen": "Funny and real — no lecturing, pictures from your world",
+   "kid": "Super simple, like a story",
+   "seeker": "Plain words for someone exploring faith — no pressure, practical help"
+  },
+  "sys": {
+   "adult": " Audience: an adult. Speak with a mature, steady and warm voice. You may go a little deeper — note the context and the meaning of key words — and connect the passage to work, marriage, parenting, relationships and spiritual battle. Close with one concrete step the reader can practise this week.",
+   "teen": " Audience: a teenager (about 12–18). Be funny, witty and real — like a cool older brother or sister chatting, never lecturing or talking down. Use pictures from their world: phone at 1% battery, game levels, binge-watching, likes and followers, exams, peer pressure, sports. A light joke or current slang now and then is welcome, but NEVER joke about God, Jesus or Scripture itself, and never be flippant about sin or pain; after the laugh, land firmly on the truth. Keep it short, put the main point first, use short paragraphs, and end with one small challenge they can try today. If they mention being hurt, bullied, or wanting to harm themselves, answer gently and encourage them to tell a trusted adult (parent, teacher, pastor) right away.",
+   "kid": " Audience: a young child (about 5–11). Use VERY simple words, like telling a story to a little one. Short sentences, one idea each. Use concrete everyday pictures (a seed, a teddy bear, holding hands, hide-and-seek, a birthday cake). Avoid theological terms; if one is needed, explain it in one simple sentence. Be warm and lively — you may ask \"Did you know?\" or \"Let's think!\" and add a few cute emojis. Keep the whole answer to about 5–7 short sentences. Do NOT use tables. Quote only one short verse. For violent or frightening passages, tell it gently without graphic detail. End with a tiny prayer or one simple question the child can answer. If the child says someone hurts them or they are very sad, answer kindly and tell them to talk to a trusted grown-up (mom, dad, teacher, pastor) right away.",
+   "seeker": " Audience: a seeker — a friend who is not yet a believer and is exploring the Christian faith. Stand fully in their shoes: they may never have read the Bible, do not know church language, and may have questions or reservations. (1) Start from their real situation, feelings or question, then bring in the passage, so they feel \"this is about me\". (2) Use plain everyday words; the 321 vision is only your inner compass — never use insider words like \"self-emptied\", \"let Jesus reign\", \"overcomer\" or \"spiritual\", and no church or theological jargon; if a word like grace, sin or salvation is unavoidable, explain it at once in everyday terms. (3) Be honest and respectful — no preaching, no pressure, no demand to believe now, no judging; doubts and objections are normal, so acknowledge the weight of the question first, then answer it honestly. (4) State clearly what the Bible says about it (what God is like, what Jesus did for us) through stories, pictures and everyday examples they can understand and remember. (5) Always give practical help: one or two small steps they can try this week by themselves (something to notice, a question to ask, a simple action). (6) When it fits, gently invite them to keep exploring (read a short passage, ask a question) — never force the conversation toward a decision. (7) Never say things like \"we Christians all know\", which assumes they already believe. Quote the World English Bible and explain it in plain words. If you include a prayer, offer it only as \"if you like, you could say something like this to God\" — never forced. Keep the whole answer concise, with short paragraphs."
+  },
+  "write": "\nThe reader is a friend who is not yet a believer: everyday, warm, never preachy, no church jargon, never assuming they already believe. No emoji.",
+  "skstyle": "Style: for someone who is not a believer and has never read the Bible. State the background in the question itself (name the person or event), assume no Bible or church vocabulary, use plain words, and make the explanation one plain sentence on why it matters to an ordinary person.",
+  "skres": [
+   "That is okay — it takes time with new material. Another look will make it clearer.",
+   "Nice! You have caught the main points of this chapter.",
+   "Excellent! You know this chapter really well."
+  ],
+  "style": {
+   "adult": "Style: steady and clear; one or two questions should bring out a life application.",
+   "teen": "Style: the questions and explanations are funny and witty, like friendly banter; the options may be playful, but the correct answer must be unambiguous, and never joke about God or Scripture itself.",
+   "kid": "Style: for children aged 5–11 — very simple words, very short sentences, like telling a story; keep options short; one warm sentence of explanation, with at most one cute emoji."
+  }
+ },
+ "qbank": {
+  "seeker": {
+   "zh": [
+    "這段話跟我現在的生活有什麼關係？",
+    "我還不是基督徒，這段話對我有什麼意義？",
+    "神真的存在嗎？有什麼理由可以相信？",
+    "聖經為什麼說每個人都需要耶穌？",
+    "我壓力很大，聖經能給我什麼實際的幫助？",
+    "這段話裡的「罪」是什麼意思？跟我有關嗎？",
+    "基督徒常說的「恩典」，用白話說是什麼？",
+    "如果我想多了解，可以從哪裡開始？"
+   ],
+   "zs": [
+    "这段话跟我现在的生活有什么关系？",
+    "我还不是基督徒，这段话对我有什么意义？",
+    "神真的存在吗？有什么理由可以相信？",
+    "圣经为什么说每个人都需要耶稣？",
+    "我压力很大，圣经能给我什么实際的帮助？",
+    "这段话里的“罪”是什么意思？跟我有关吗？",
+    "基督徒常说的“恩典”，用白话说是什么？",
+    "如果我想多了解，可以从哪里开始？"
+   ],
+   "en": [
+    "How does this passage connect to my life right now?",
+    "I am not a Christian — what could this mean for me?",
+    "Is there a God? What reasons are there to believe?",
+    "Why does the Bible say everyone needs Jesus?",
+    "I am under a lot of stress — what practical help does the Bible offer?",
+    "What does \"sin\" mean here, and does it apply to me?",
+    "Christians talk about \"grace\" — what does it mean in plain words?",
+    "If I want to know more, where can I start?"
+   ]
+  },
+  "teen": {
+   "zh": [
+    "這段經文跟我的日常（學校、朋友、手機）有什麼關係？",
+    "如果這段經文是神傳給我的一則訊息，它想說什麼？",
+    "朋友都那樣做，我不跟會不會很怪？經文怎麼看？",
+    "用遊戲或電影來比喻這段經文，可以嗎？",
+    "這段經文有什麼讓人意外、很少人知道的地方？",
+    "考試壓力好大，這段經文能給我什麼力量？",
+    "我很難原諒一個人，這段經文能幫我什麼？",
+    "神真的看得到我嗎？我哪裡值得被愛？"
+   ],
+   "zs": [
+    "这段经文跟我的日常（学校、朋友、手机）有什么关系？",
+    "如果这段经文是神传给我的一则信息，它想说什么？",
+    "朋友都那样做，我不跟会不会很怪？经文怎么看？",
+    "用游戏或电影来比喻这段经文，可以吗？",
+    "这段经文有什么让人意外、很少人知道的地方？",
+    "考试压力好大，这段经文能给我什么力量？",
+    "我很难原谅一个人，这段经文能帮我什么？",
+    "神真的看得到我吗？我哪里值得被爱？"
+   ],
+   "en": [
+    "How does this passage connect to my everyday life — school, friends, my phone?",
+    "If this passage were a message from God to me, what would it say?",
+    "Everyone is doing it — is it weird if I don't? What does Scripture say?",
+    "Can you explain this passage with a game or a movie?",
+    "What's surprising or little-known about this passage?",
+    "Exam stress is huge — what strength does this passage give me?",
+    "I can't forgive someone. How does this passage help?",
+    "Does God really see me? What makes me worth loving?"
+   ]
+  },
+  "kid": {
+   "zh": [
+    "這段故事在說什麼？請講給我聽。",
+    "神在這個故事裡做了什麼事？",
+    "耶穌愛我嗎？我怎麼知道？",
+    "這個故事裡誰最勇敢？為什麼？",
+    "我可以怎樣學習故事裡的人？",
+    "請教我一句可以背起來的短經文。",
+    "我跟好朋友吵架了，耶穌會怎麼做？",
+    "可以教我做一個小禱告嗎？"
+   ],
+   "zs": [
+    "这段故事在说什么？请讲给我听。",
+    "神在这个故事里做了什么事？",
+    "耶稣爱我吗？我怎么知道？",
+    "这个故事里谁最勇敢？为什么？",
+    "我可以怎样学习故事里的人？",
+    "请教我一句可以背起来的短经文。",
+    "我跟好朋友吵架了，耶稣会怎么做？",
+    "可以教我做一个小祷告吗？"
+   ],
+   "en": [
+    "What is this story about? Tell it to me.",
+    "What did God do in this story?",
+    "Does Jesus love me? How do I know?",
+    "Who is the bravest in this story? Why?",
+    "How can I be like the people in this story?",
+    "Teach me one short verse I can remember.",
+    "I had a fight with my best friend. What would Jesus do?",
+    "Can you teach me a little prayer?"
+   ]
+  }
+ },
+ "fu": {
+  "zh": {
+   "adult": [
+    [
+     "💍",
+     "婚姻",
+     "請針對你剛才的回答，說明怎麼把它應用在夫妻關係與婚姻裡，並給我一個這個星期可以做的具體小步驟。"
+    ],
+    [
+     "👨‍👩‍👧",
+     "家庭",
+     "請針對你剛才的回答，說明怎麼把它應用在家庭與教養孩子（或與父母相處）上，並給我一個這個星期可以做的具體小步驟。"
+    ],
+    [
+     "💼",
+     "職場",
+     "請針對你剛才的回答，說明怎麼把它應用在工作與職場上（同事、主管、壓力、誠信），並給我一個這個星期可以做的具體小步驟。"
+    ],
+    [
+     "🏡",
+     "日常",
+     "請針對你剛才的回答，說明怎麼把它應用在日常生活的小事上（時間、金錢、習慣），並給我一個這個星期可以做的具體小步驟。"
+    ],
+    [
+     "💭",
+     "內心",
+     "請針對你剛才的回答，說明怎麼把它應用在面對內心的情緒與軟弱上（焦慮、憤怒、驕傲），並給我一個這個星期可以做的具體小步驟。"
+    ],
+    [
+     "🙏",
+     "禱告",
+     "請把你剛才說的重點，寫成一段簡短、真誠的禱告，讓我可以拿來禱告。"
+    ]
+   ],
+   "teen": [
+    [
+     "🏫",
+     "學校",
+     "用你剛才講的，幫我想想怎麼用在學校與課業上，給我一個今天就能試的小招。"
+    ],
+    [
+     "🤝",
+     "朋友",
+     "用你剛才講的，幫我想想怎麼用在朋友相處上，給我一個今天就能試的小招。"
+    ],
+    [
+     "🏠",
+     "家人",
+     "用你剛才講的，幫我想想怎麼用在跟爸媽、家人的相處上，給我一個今天就能試的小招。"
+    ],
+    [
+     "📱",
+     "手機網路",
+     "用你剛才講的，幫我想想怎麼用在手機、網路與社群上，給我一個今天就能試的小招。"
+    ],
+    [
+     "💭",
+     "壓力",
+     "用你剛才講的，幫我想想怎麼用在壓力和情緒上，給我一個今天就能試的小招。"
+    ],
+    [
+     "🌟",
+     "未來",
+     "用你剛才講的，幫我想想怎麼用在未來和夢想上，給我一個今天就能試的小招。"
+    ],
+    [
+     "🎯",
+     "今天挑戰",
+     "請給我一個跟剛才有關、今天就能完成的小挑戰，要具體、有點好玩。"
+    ]
+   ],
+   "kid": [
+    [
+     "🏠",
+     "在家",
+     "剛剛講的，我在家裡可以怎麼做呢？請用簡單的話告訴我。"
+    ],
+    [
+     "🏫",
+     "在學校",
+     "剛剛講的，我在學校可以怎麼做呢？請用簡單的話告訴我。"
+    ],
+    [
+     "🤝",
+     "跟朋友",
+     "剛剛講的，我在跟好朋友相處時可以怎麼做呢？請用簡單的話告訴我。"
+    ],
+    [
+     "🙏",
+     "小禱告",
+     "請教我一個很短的小禱告，我可以跟耶穌說。"
+    ],
+    [
+     "📖",
+     "小故事",
+     "可以再講一個跟這個有關的小故事給我聽嗎？"
+    ]
+   ],
+   "seeker": [
+    [
+     "🤝",
+     "人際",
+     "剛才說的放在人際關係裡（家人、朋友、同事），對一個還不是基督徒的人有什麼實際的幫助？請舉一個生活的例子。"
+    ],
+    [
+     "💍",
+     "婚姻家庭",
+     "剛才說的放在婚姻與家庭裡，對一個還不是基督徒的人有什麼實際的幫助？請舉一個生活的例子。"
+    ],
+    [
+     "💼",
+     "工作",
+     "剛才說的放在工作與職場裡，對一個還不是基督徒的人有什麼實際的幫助？請舉一個生活的例子。"
+    ],
+    [
+     "😟",
+     "壓力焦慮",
+     "剛才說的放在壓力與焦慮裡，對一個還不是基督徒的人有什麼實際的幫助？請舉一個生活的例子。"
+    ],
+    [
+     "🌍",
+     "人生意義",
+     "剛才說的放在尋找人生的意義與方向裡，對一個還不是基督徒的人有什麼實際的幫助？請舉一個生活的例子。"
+    ],
+    [
+     "❓",
+     "我的疑問",
+     "我心裡還有疑問，請誠實告訴我：信耶穌對一個人的生活到底有什麼實際的幫助？也請告訴我可以怎麼自己去查證。"
+    ],
+    [
+     "🌱",
+     "下一步",
+     "如果我想進一步了解，下一步可以做什麼？請給我一兩個不會有壓力的建議。"
+    ]
+   ]
+  },
+  "zs": {
+   "adult": [
+    [
+     "💍",
+     "婚姻",
+     "请针对你刚才的回答，说明怎么把他应用在夫妻关系与婚姻里，并给我一个这个星期可以做的具体小步驟。"
+    ],
+    [
+     "👨‍👩‍👧",
+     "家庭",
+     "请针对你刚才的回答，说明怎么把他应用在家庭与教养孩子（或与父母相处）上，并给我一个这个星期可以做的具体小步驟。"
+    ],
+    [
+     "💼",
+     "职场",
+     "请针对你刚才的回答，说明怎么把他应用在工作与职场上（同事、主管、压力、诚信），并给我一个这个星期可以做的具体小步驟。"
+    ],
+    [
+     "🏡",
+     "日常",
+     "请针对你刚才的回答，说明怎么把他应用在日常生活的小事上（时间、金钱、习惯），并给我一个这个星期可以做的具体小步驟。"
+    ],
+    [
+     "💭",
+     "内心",
+     "请针对你刚才的回答，说明怎么把他应用在面对内心的情緒与软弱上（焦虑、愤怒、骄傲），并给我一个这个星期可以做的具体小步驟。"
+    ],
+    [
+     "🙏",
+     "祷告",
+     "请把你刚才说的重点，写成一段簡短、真诚的祷告，让我可以拿来祷告。"
+    ]
+   ],
+   "teen": [
+    [
+     "🏫",
+     "学校",
+     "用你刚才讲的，帮我想想怎么用在学校与课业上，给我一个今天就能试的小招。"
+    ],
+    [
+     "🤝",
+     "朋友",
+     "用你刚才讲的，帮我想想怎么用在朋友相处上，给我一个今天就能试的小招。"
+    ],
+    [
+     "🏠",
+     "家人",
+     "用你刚才讲的，帮我想想怎么用在跟爸妈、家人的相处上，给我一个今天就能试的小招。"
+    ],
+    [
+     "📱",
+     "手机网路",
+     "用你刚才讲的，帮我想想怎么用在手机、网路与社群上，给我一个今天就能试的小招。"
+    ],
+    [
+     "💭",
+     "压力",
+     "用你刚才讲的，帮我想想怎么用在压力和情緒上，给我一个今天就能试的小招。"
+    ],
+    [
+     "🌟",
+     "未来",
+     "用你刚才讲的，帮我想想怎么用在未来和梦想上，给我一个今天就能试的小招。"
+    ],
+    [
+     "🎯",
+     "今天挑战",
+     "请给我一个跟刚才有关、今天就能完成的小挑战，要具体、有点好玩。"
+    ]
+   ],
+   "kid": [
+    [
+     "🏠",
+     "在家",
+     "刚刚讲的，我在家里可以怎么做呢？请用簡单的话告诉我。"
+    ],
+    [
+     "🏫",
+     "在学校",
+     "刚刚讲的，我在学校可以怎么做呢？请用簡单的话告诉我。"
+    ],
+    [
+     "🤝",
+     "跟朋友",
+     "刚刚讲的，我在跟好朋友相处时可以怎么做呢？请用簡单的话告诉我。"
+    ],
+    [
+     "🙏",
+     "小祷告",
+     "请教我一个很短的小祷告，我可以跟耶稣说。"
+    ],
+    [
+     "📖",
+     "小故事",
+     "可以再讲一个跟这个有关的小故事给我听吗？"
+    ]
+   ],
+   "seeker": [
+    [
+     "🤝",
+     "人際",
+     "刚才说的放在人際关系里（家人、朋友、同事），对一个还不是基督徒的人有什么实際的帮助？请举一个生活的例子。"
+    ],
+    [
+     "💍",
+     "婚姻家庭",
+     "刚才说的放在婚姻与家庭里，对一个还不是基督徒的人有什么实際的帮助？请举一个生活的例子。"
+    ],
+    [
+     "💼",
+     "工作",
+     "刚才说的放在工作与职场里，对一个还不是基督徒的人有什么实際的帮助？请举一个生活的例子。"
+    ],
+    [
+     "😟",
+     "压力焦虑",
+     "刚才说的放在压力与焦虑里，对一个还不是基督徒的人有什么实際的帮助？请举一个生活的例子。"
+    ],
+    [
+     "🌍",
+     "人生意义",
+     "刚才说的放在寻找人生的意义与方向里，对一个还不是基督徒的人有什么实際的帮助？请举一个生活的例子。"
+    ],
+    [
+     "❓",
+     "我的疑问",
+     "我心里还有疑问，请诚实告诉我：信耶稣对一个人的生活到底有什么实際的帮助？也请告诉我可以怎么自己去查证。"
+    ],
+    [
+     "🌱",
+     "下一步",
+     "如果我想进一步了解，下一步可以做什么？请给我一两个不会有压力的建议。"
+    ]
+   ]
+  },
+  "en": {
+   "adult": [
+    [
+     "💍",
+     "Marriage",
+     "Based on your answer, explain how to apply it in my marriage, and give me one concrete step I can take this week."
+    ],
+    [
+     "👨‍👩‍👧",
+     "Family",
+     "Based on your answer, explain how to apply it in my family and parenting (or with my parents), and give me one concrete step I can take this week."
+    ],
+    [
+     "💼",
+     "Work",
+     "Based on your answer, explain how to apply it at work (colleagues, boss, pressure, integrity), and give me one concrete step I can take this week."
+    ],
+    [
+     "🏡",
+     "Daily life",
+     "Based on your answer, explain how to apply it in everyday life (time, money, habits), and give me one concrete step I can take this week."
+    ],
+    [
+     "💭",
+     "Inner life",
+     "Based on your answer, explain how to apply it in facing my inner struggles (anxiety, anger, pride), and give me one concrete step I can take this week."
+    ],
+    [
+     "🙏",
+     "Prayer",
+     "Please turn the key point of your answer into a short, sincere prayer I can pray."
+    ]
+   ],
+   "teen": [
+    [
+     "🏫",
+     "School",
+     "Using what you just said, help me think through how to use it at school and with my studies — give me one small move I can try today."
+    ],
+    [
+     "🤝",
+     "Friends",
+     "Using what you just said, help me think through how to use it with my friends — give me one small move I can try today."
+    ],
+    [
+     "🏠",
+     "Family",
+     "Using what you just said, help me think through how to use it with my parents and family — give me one small move I can try today."
+    ],
+    [
+     "📱",
+     "Phone & online",
+     "Using what you just said, help me think through how to use it on my phone, online and on social media — give me one small move I can try today."
+    ],
+    [
+     "💭",
+     "Stress",
+     "Using what you just said, help me think through how to use it with stress and emotions — give me one small move I can try today."
+    ],
+    [
+     "🌟",
+     "Future",
+     "Using what you just said, help me think through how to use it for my future and dreams — give me one small move I can try today."
+    ],
+    [
+     "🎯",
+     "Challenge",
+     "Give me one small, specific, slightly fun challenge related to this that I can finish today."
+    ]
+   ],
+   "kid": [
+    [
+     "🏠",
+     "At home",
+     "About what you just said — what can I do at home? Please tell me in simple words."
+    ],
+    [
+     "🏫",
+     "At school",
+     "About what you just said — what can I do at school? Please tell me in simple words."
+    ],
+    [
+     "🤝",
+     "With friends",
+     "About what you just said — what can I do with my friends? Please tell me in simple words."
+    ],
+    [
+     "🙏",
+     "Little prayer",
+     "Please teach me a very short little prayer I can say to Jesus."
+    ],
+    [
+     "📖",
+     "Story",
+     "Can you tell me another little story about this?"
+    ]
+   ],
+   "seeker": [
+    [
+     "🤝",
+     "Relationships",
+     "Applying what you just said in relationships (family, friends, colleagues), what practical help would it be for someone who is not yet a Christian? Please give an everyday example."
+    ],
+    [
+     "💍",
+     "Marriage & family",
+     "Applying what you just said in marriage and family, what practical help would it be for someone who is not yet a Christian? Please give an everyday example."
+    ],
+    [
+     "💼",
+     "Work",
+     "Applying what you just said at work, what practical help would it be for someone who is not yet a Christian? Please give an everyday example."
+    ],
+    [
+     "😟",
+     "Stress",
+     "Applying what you just said in stress and anxiety, what practical help would it be for someone who is not yet a Christian? Please give an everyday example."
+    ],
+    [
+     "🌍",
+     "Meaning",
+     "Applying what you just said in searching for meaning and direction in life, what practical help would it be for someone who is not yet a Christian? Please give an everyday example."
+    ],
+    [
+     "❓",
+     "My doubts",
+     "I still have doubts. Please tell me honestly: what practical difference does faith in Jesus make to a person's life? And how could I check it out for myself?"
+    ],
+    [
+     "🌱",
+     "Next step",
+     "If I want to learn more, what could my next step be? Please give one or two no-pressure suggestions."
+    ]
+   ]
+  }
+ },
+ "icon": {
+  "adult": "🧑",
+  "teen": "🧒",
+  "kid": "🧸",
+  "seeker": "🌱"
+ }
+}

@@ -1,131 +1,70 @@
 /* =====================================================================
-   國度321空中團契 · Service Worker
-   ------------------------------------------------------------------
-   目標：讓弱網、飛航模式、流量吃緊的家人也打得開。
-   「打不開」等於「這個信仰的門關著」——所以離線是牧養問題，不是技術問題。
-
-   ★ 每次更新 index.html，只要把下面的 VER 往上跳一號即可。
-     舊快取會自動清掉，家人下次開啟會拿到新內容。
+   國度321空中團契 · Service Worker（自動更新版）
+   ‧ 每次發佈 VER 都不同 → 瀏覽器偵測到 sw.js 改變就安裝新 SW
+   ‧ install：skipWaiting；預載用 cache:'reload' 繞過 GitHub Pages 約 10 分鐘的 HTTP 快取
+   ‧ activate：刪舊快取、clients.claim，通知所有頁面；背景中的舊頁面直接帶到新版
+   ‧ fetch：網頁／JS／JSON 網路優先（no-cache），離線才用快取；圖片快取優先；
+           音訊、影片與帶 Range 的請求一律不攔截（試聽、拖曳、錄影混音才不會壞）
+   ‧ 同網域底下還有其他 321 App，本 SW 只管自己這個資料夾
    ===================================================================== */
-var VER   = "v3.9.8";
-var SHELL = "k321-shell-" + VER;   /* App 本體：HTML／圖示／manifest */
-var DATA  = "k321-data-"  + VER;   /* 內容：data.json 等 */
-var IMG   = "k321-img-"   + VER;   /* 圖片：縮圖、QR */
+var VER = '@@VER@@';
+var V = 'k321-' + VER;
+var SHELL = ['./', './index.html', './manifest.json', './media.js', './data.json', './icon-192.png?v=3', './icon-512.png?v=3', './apple-touch-icon.png?v=3'];
 
-/* 首次安裝就先存起來的檔案。找不到的檔案不會讓整個安裝失敗。 */
-var PRECACHE = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./icon-192.png?v=3",
-  "./icon-512.png?v=3",
-  "./apple-touch-icon.png?v=3"
-];
-
-self.addEventListener("install", function(e){
-  e.waitUntil(
-    caches.open(SHELL).then(function(c){
-      return Promise.all(PRECACHE.map(function(u){
-        return c.add(new Request(u, {cache:"reload"}))["catch"](function(){ /* 缺檔就跳過 */ });
-      }));
-    }).then(function(){ return self.skipWaiting(); })
-  );
+self.addEventListener('install', function (e) {
+  self.skipWaiting();
+  e.waitUntil(caches.open(V).then(function (c) {
+    return Promise.all(SHELL.map(function (u) {
+      return fetch(new Request(u, { cache: 'reload' })).then(function (r) { if (r && r.ok) return c.put(u, r); })['catch'](function () { });
+    }));
+  }));
 });
-
-self.addEventListener("activate", function(e){
-  e.waitUntil(
-    caches.keys().then(function(keys){
-      return Promise.all(keys.map(function(k){
-        if(k===SHELL || k===DATA || k===IMG) return null;
-        return caches["delete"](k);          /* 清掉上一版 */
-      }));
-    }).then(function(){ return self.clients.claim(); })
-  );
-});
-
-/* 讓頁面可以要求立即接管（配合「內容已更新，點此重整」的提示） */
-self.addEventListener("message", function(e){
-  if(e && e.data && e.data.type==="SKIP_WAITING") self.skipWaiting();
-});
-
-function isNav(req){
-  return req.mode==="navigate" || (req.method==="GET" && (req.headers.get("accept")||"").indexOf("text/html")>=0);
-}
-
-/* 內容檔：先給舊的、背景抓新的（stale-while-revalidate）——秒開又不會停在舊內容 */
-function swr(e, cacheName){
-  return caches.open(cacheName).then(function(c){
-    return c.match(e.request).then(function(hit){
-      var net = fetch(e.request).then(function(res){
-        if(res && res.ok) c.put(e.request, res.clone());
-        /* 檔案已被移除（例如同工刪掉了舊的 data.json）→ 快取也要跟著清，
-           否則會永遠回舊內容，怎麼刪都沒用。 */
-        else if(res && (res.status===404 || res.status===410)) c["delete"](e.request);
-        return res;
-      })["catch"](function(){ return hit; });
-      if(hit){ e.waitUntil(net); return hit; }
-      return net;
+self.addEventListener('activate', function (e) {
+  e.waitUntil(caches.keys().then(function (ks) {
+    return Promise.all(ks.filter(function (k) { return k !== V && k.indexOf('k321-') === 0; }).map(function (k) { return caches['delete'](k); }));
+  }).then(function () { return self.clients.claim(); }).then(function () {
+    return self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+  }).then(function (cs) {
+    cs.forEach(function (c) {
+      try { c.postMessage({ t: 'sw-updated', v: VER }); } catch (x) { }
+      if (c.visibilityState === 'hidden' && c.navigate) { try { c.navigate(c.url); } catch (x) { } }
     });
-  });
-}
+  }));
+});
+self.addEventListener('message', function (e) { if (e.data === 'skip' || (e.data && e.data.type === 'SKIP_WAITING')) self.skipWaiting(); });
 
-self.addEventListener("fetch", function(e){
-  var req=e.request;
-  if(req.method!=="GET") return;
+var OFFLINE = "<meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><div style=\"font-family:-apple-system,sans-serif;padding:40px;line-height:2;color:#16294A\"><h2>目前沒有網路</h2><p>連上網路後再打開就好。<br>神的話語不受網路限制——今天仍然可以禱告、可以親近祂。</p></div>";
 
-  var url;
-  try{ url=new URL(req.url); }catch(err){ return; }
-
-  /* 只處理自己網域；YouTube、Worker API 一律讓瀏覽器自己走網路 */
-  if(url.origin!==self.location.origin) return;
-
-  /* 同網域底下還住著其他 321 App（晨讀321、每日得勝、夫妻成長營…），
-     它們各自有自己的 Service Worker。本 SW 只負責自己這個資料夾，
-     其餘一律放行——否則家人在 App 裡點進去，離線時會看到團契的畫面，
-     而不是他想開的那支 App。 */
-  var myBase = new URL("./", self.location.href).pathname;
-  if(url.pathname.indexOf(myBase)!==0) return;
-
-  /* 頁面導覽：先試網路（拿最新），失敗就用快取的 App 本體 —— 飛航模式也打得開 */
-  if(isNav(req)){
-    e.respondWith(
-      fetch(req).then(function(res){
-        if(res && res.ok){
-          caches.open(SHELL).then(function(c){ c.put("./index.html", res.clone()); });
-        }
-        return res;
-      })["catch"](function(){
-        return caches.match("./index.html").then(function(hit){
-          return hit || caches.match("./") || new Response(
-            "<meta charset='utf-8'><div style=\"font-family:-apple-system,sans-serif;padding:40px;line-height:2;color:#16294A\">"
-            +"<h2>目前沒有網路</h2><p>連上網路後再打開就好。<br>神的話語不受網路限制——今天仍然可以禱告、可以親近祂。</p></div>",
-            {headers:{"Content-Type":"text/html; charset=utf-8"}});
+self.addEventListener('fetch', function (e) {
+  var r = e.request; if (r.method !== 'GET') return;
+  var u; try { u = new URL(r.url); } catch (x) { return; }
+  if (u.origin !== self.location.origin) return;
+  var base = new URL('./', self.location.href).pathname;
+  if (u.pathname.indexOf(base) !== 0) return;
+  var p = u.pathname;
+  if (/\.(mp3|m4a|aac|wav|ogg|opus|mp4|mov|webm)$/i.test(p) || r.headers.get('range')) return;
+  if (/version\.json$/.test(p)) {
+    e.respondWith(fetch(p + '?t=' + Date.now(), { cache: 'no-store' })['catch'](function () { return new Response('{}', { headers: { 'Content-Type': 'application/json' } }); }));
+    return;
+  }
+  var nav = r.mode === 'navigate' || /\.html$/.test(p) || /\/$/.test(p);
+  var key = nav ? './index.html' : (/\.(json|js|css)$/.test(p) ? u.origin + p : r);
+  if (nav || /\.(json|js|css)$/.test(p)) {
+    e.respondWith(fetch(nav ? u.origin + p + u.search : r.url, { cache: 'no-cache', credentials: 'same-origin' }).then(function (resp) {
+      if (resp && resp.ok) { var cp = resp.clone(); caches.open(V).then(function (c) { c.put(key, cp); }); }
+      return resp;
+    })['catch'](function () {
+      return caches.match(key).then(function (h) {
+        return h || caches.match(r, { ignoreSearch: true }).then(function (h2) {
+          if (h2) return h2;
+          if (nav) return caches.match('./index.html').then(function (h3) { return h3 || new Response(OFFLINE, { headers: { 'Content-Type': 'text/html; charset=utf-8' } }); });
+          return Response.error();
         });
-      })
-    );
+      });
+    }));
     return;
   }
-
-  /* 內容 JSON：stale-while-revalidate */
-  if(/\.json($|\?)/i.test(url.pathname+url.search)){
-    e.respondWith(swr(e, DATA));
-    return;
-  }
-
-  /* 圖片：先用快取（省流量），沒有才抓 */
-  if(/\.(png|jpg|jpeg|webp|gif|svg|ico)($|\?)/i.test(url.pathname)){
-    e.respondWith(
-      caches.match(req).then(function(hit){
-        if(hit) return hit;
-        return fetch(req).then(function(res){
-          if(res && res.ok) caches.open(IMG).then(function(c){ c.put(req, res.clone()); });
-          return res;
-        })["catch"](function(){ return hit; });
-      })
-    );
-    return;
-  }
-
-  /* 其他同網域靜態檔：快取優先，背景更新 */
-  e.respondWith(swr(e, SHELL));
+  e.respondWith(caches.match(r, { ignoreSearch: true }).then(function (h) {
+    return h || fetch(r).then(function (resp) { if (resp && resp.ok) { var cp = resp.clone(); caches.open(V).then(function (c) { c.put(r, cp); }); } return resp; });
+  }));
 });
