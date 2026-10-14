@@ -3,7 +3,7 @@
 輸入：原始 index.html（單檔）；輸出：dist/ 下的 index.html、media.js、sw.js、version.json"""
 import json, os, re, sys, time, subprocess
 sys.path.insert(0, os.path.dirname(__file__))
-import p1_names
+import p1_names, p2_content
 from t2s import t2s
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -29,6 +29,8 @@ s = rd(ORIG)
 # ---------- 1. 刪除人名 ----------
 s = p1_names.apply(s)
 p1_names.check(s)
+s = p2_content.apply(s)
+p2_content.data_json('/home/claude/repos/321fellowship/data.json', os.path.join(DIST, 'data.json'))
 
 # CSP：朗讀解鎖用的靜音 wav（data:）、Pexels 圖庫縮圖
 s = rep(s, "media-src 'self' blob:", "media-src 'self' blob: data:")
@@ -63,6 +65,27 @@ for lg in ('zh', 'zs', 'en'):
     aud[lg]['style']['seeker'] = aud[lg]['skstyle']
     for a in aud[lg]['sys']:
         aud[lg]['sys'][a] = aud[lg]['sys'][a].replace('經文脈絡', '經文與課文的脈絡').replace('经文脉络', '经文与课文的脉络')
+aud2 = json.load(open(os.path.join(HERE, 'aud2.json'), encoding='utf-8'))
+NEW_AUD = {
+ 'elder': ['👴', ('長輩', '长辈', 'Elder'), ('尊敬溫和、慢慢說，句子清楚好懂', '尊敬温和、慢慢说，句子清楚好懂', 'Respectful, gentle and unhurried, in clear words')],
+ 'parent': ['👨‍👩‍👧', ('父母', '父母', 'Parent'), ('貼近養兒育女的日常：溝通、管教、陪伴與禱告', '贴近养儿育女的日常：沟通、管教、陪伴与祷告', 'Close to raising children: talking, discipline, presence and prayer')],
+ 'couple': ['💑', ('夫妻', '夫妻', 'Couple'), ('夫妻同行：溝通、饒恕、同心與一起禱告', '夫妻同行：沟通、饶恕、同心与一起祷告', 'Walking together: talking, forgiving, unity and praying as a couple')],
+ 'single_parent': ['👩‍👧', ('單親', '单亲', 'Single parent'), ('先接住你的辛苦，給做得到的小步驟與盼望', '先接住你的辛苦，给做得到的小步骤与盼望', 'Hear your weariness first — small doable steps and hope')],
+ 'single': ['🙋', ('單身', '单身', 'Single'), ('真誠平等，不催婚，談身分、等待與使命', '真诚平等，不催婚，谈身分、等待与使命', 'Sincere and equal — no pressure about marriage; identity, waiting and purpose')],
+ 'pastor': ['⛪', ('牧者', '牧者', 'Pastor'), ('同工口吻：牧養、講道預備、團隊與不倦怠', '同工口吻：牧养、讲道预备、团队与不倦怠', 'As a fellow worker: shepherding, sermon prep, team and avoiding burnout')],
+}
+aud.setdefault('write2', {'zh': {}, 'zs': {}, 'en': {}}); aud.setdefault('res2', {'zh': {}, 'zs': {}, 'en': {}})
+for k, (ic, nm, hint) in NEW_AUD.items():
+    aud['icon'][k] = ic
+    aud['qbank'][k] = {}
+    for li, lg in enumerate(('zh', 'zs', 'en')):
+        d = aud2[k][lg]
+        aud[lg]['name'][k] = nm[li]; aud[lg]['hint'][k] = hint[li]
+        aud[lg]['sys'][k] = d['sys']; aud[lg]['style'][k] = d['style']
+        aud['write2'][lg][k] = d['write']
+        aud['res2'][lg][k] = [x.replace('這一章', '這一課').replace('这一章', '这一课').replace('this chapter', 'this lesson') for x in d['res']]
+        aud['qbank'][k][lg] = d['q']
+        aud['fu'][lg][k] = d['fu']
 order = ['x_core.js', 'x_tts.js', 'x_md.js', 'x_marks.js', 'x_chat.js', 'x_card.js', 'x_studio.js', 'x_play.js', 'x_ui.js']
 mod = '\n'.join(rd(os.path.join(SRC, f)) for f in order)
 mod = mod.replace('@@XI18N@@', json.dumps({'zh': xi['zh'], 'en': xi['en']}, ensure_ascii=False))

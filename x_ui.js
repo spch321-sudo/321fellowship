@@ -295,3 +295,26 @@ function initUpdate() {
   initUpdate();
   try { if (CUR_ROUTE) afterRender(CUR_ROUTE, true); } catch (e) { }
 })();
+
+/* ---------- 321 App 生態：上面 晨讀321、321互動聖經；下面 六個生活操練 App ---------- */
+function ecoCards(from, to) {
+  var list = D.ecosystem || [], out = '<div class="apps">';
+  for (var i = from; i < Math.min(to, list.length); i++) {
+    var a = list[i], bw = String(a.badge || '').length > 1 ? ' wide' : '';
+    var head = a.img ? '<span class="appicon"><img src="' + a.img + '" alt=""></span>' : '<span class="badge' + bw + '">' + esc(a.badge) + '</span>';
+    out += '<a class="appcard" href="' + esc(safeUrl(ecoUrl(a))) + '" data-openapp="' + i + '" target="_blank" rel="noopener">' + head + '<b>' + esc(a.name) + '</b><span>' + esc(a.desc + ecoLangNote(a)) + '</span></a>';
+  }
+  return out + '</div>';
+}
+PAGES.apps = function () {
+  var list = D.ecosystem || [], first = 0;
+  for (var i = 0; i < list.length; i++) { if (list[i].group === 'life') { first = i; break; } first = i + 1; }
+  return pageHead(f9('工具 · 每天用得上', 'TOOLS · FOR EVERY DAY'), f9('321 App', '321 Apps'), f9('點一下就打開，會自動用你現在的語言', 'Tap to open — in the language you are using')) +
+    sect('生', f9('321 App 生態系', 'The 3-2-1 App Ecosystem')) +
+    '<p class="note" style="margin-bottom:10px">' + esc(f9('每天晨讀、讀經，親近神。點一下就在這裡打開：', 'Morning devotion and Bible reading, to draw near to God every day. Tap one to open it right here:')) + '</p>' +
+    ecoCards(0, first) +
+    (first < list.length ? sect('活', f9('321 生活操練', '321 Living It Out')) +
+      '<p class="note" style="margin-bottom:10px">' + esc(f9('把 321 活在每一個生活領域：屬靈、家庭、婚姻、職場、教會、社交。', 'Living out 3-2-1 in every part of life: spiritual life, family, marriage, work, church and friendships.')) + '</p>' +
+      ecoCards(first, list.length) : '') +
+    aiToolsBlock();
+};

@@ -52,7 +52,6 @@ ZH_TEAM = '''    groups: [
       areas:[
         { a:"台灣夫妻成長營" },
         { a:"沙巴夫妻成長營" },
-        { a:"中國大陸夫妻成長營" },
         { a:"紐西蘭夫妻成長營" },
         { a:"新加坡夫妻成長營" }
       ]
@@ -110,7 +109,6 @@ EN_TEAM = '''  groups: [
     areas:[
       { a:"Taiwan" },
       { a:"Sabah" },
-      { a:"Mainland China" },
       { a:"New Zealand" },
       { a:"Singapore" }
     ]

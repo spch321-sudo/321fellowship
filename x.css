@@ -114,8 +114,8 @@ input,textarea,select{min-width:0;max-width:100%;}
 
 /* 小智 */
 .aic-aud{padding:6px 14px 2px;background:var(--white);border-bottom:1px solid var(--line);flex-shrink:0;}
-.aic-aud .audbar{margin:0;flex-wrap:nowrap;overflow-x:auto;}
-.aic-aud .audb{flex:0 0 auto;padding:4px 10px;}
+.aic-aud .audbar{margin:0 0 4px;flex-wrap:wrap;gap:5px;}
+.aic-aud .audb{flex:0 0 auto;padding:3px 9px;font-size:12.5px;}
 .aic-aud .audhint{display:none;}
 .aic-hbtn.txt{width:auto;padding:0 10px;font-size:12.5px;font-weight:700;border-radius:999px;}
 .aic-bubble{font-size:calc(15px * var(--fs));line-height:1.8;}
@@ -228,3 +228,4 @@ input,textarea,select{min-width:0;max-width:100%;}
 @media (prefers-reduced-motion:reduce){.rw-rays,.rw-shine,.rw-tw,.rw-conf,.rw-card{animation:none}.rw-conf{display:none}}
 .vtag{font-weight:700;color:var(--muted);font-size:13px;}
 @media(max-width:360px){.xpills{gap:3px;}.xpill{min-width:26px;padding:0 5px;font-size:11px;height:22px;line-height:20px;}.appbar{gap:6px;padding-left:10px;padding-right:10px;}}
+.qrimg.photo{width:min(250px,100%);height:auto;image-rendering:auto;}

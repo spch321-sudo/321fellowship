@@ -67,7 +67,7 @@ var S = (function () {
   for (var c in d.card) if (!(c in s.card)) s.card[c] = d.card[c];
   if (Object.prototype.toString.call(s.quizWrong) !== '[object Array]') s.quizWrong = [];
   if (!s.play || typeof s.play.best !== 'object') s.play = d.play;
-  if (['adult', 'teen', 'kid', 'seeker'].indexOf(s.aud) < 0) s.aud = 'adult';
+  if (['adult', 'teen', 'kid', 'seeker', 'elder', 'parent', 'couple', 'single_parent', 'single', 'pastor'].indexOf(s.aud) < 0) s.aud = 'adult';
   return s;
 })();
 function save() { try { lsSet(XS_KEY, JSON.stringify(S)); } catch (e) { } }
@@ -94,11 +94,12 @@ function uid() { return now().toString(36) + Math.random().toString(36).slice(2,
 
 /* ---------- 回答對象（成人／青少年／兒童／慕道友） ---------- */
 var AUD = @@AUD@@;
-var AUD_KEYS = ['adult', 'teen', 'kid', 'seeker'];
+var AUD_KEYS = ['adult', 'teen', 'kid', 'seeker', 'elder', 'parent', 'couple', 'single_parent', 'single', 'pastor'];
 function audL() { return AUD[L()] || AUD.zh; }
 function AUD_SYS() { return audL().sys[S.aud] || ''; }
 function AUD_WRITE() {
   if (S.aud === 'seeker') return audL().write;
+  var w2 = AUD.write2 && AUD.write2[L()] && AUD.write2[L()][S.aud]; if (w2) return w2;
   if (S.aud === 'kid') return isEN() ? '\nThe reader is a young child: very simple words and short sentences. No emoji.' : f9('\n讀者是小朋友：用很簡單的字、很短的句子。不要用表情符號。', '');
   if (S.aud === 'teen') return isEN() ? '\nThe reader is a teenager: warm, real and a little playful, never preachy. No emoji.' : f9('\n讀者是青少年：親切真誠、可以有一點幽默，不說教。不要用表情符號。', '');
   return isEN() ? '\nNo emoji.' : f9('\n不要用表情符號。', '');

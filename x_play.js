@@ -118,6 +118,7 @@ function plFinish() {
 function plResultMsg(pct) {
   var k = pct >= 90 ? 2 : (pct >= 60 ? 1 : 0);
   if (S.aud === 'seeker') return audL().skres[k];
+  var r2 = AUD.res2 && AUD.res2[L()] && AUD.res2[L()][S.aud]; if (r2) return r2[k];
   return T(['plRes0', 'plRes1', 'plRes2'][k] + (S.aud === 'kid' ? 'k' : (S.aud === 'teen' ? 't' : '')));
 }
 function playPage() {
