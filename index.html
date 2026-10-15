@@ -21649,6 +21649,8 @@ function loadNews(){
     var isArr=function(a){ return Object.prototype.toString.call(a)==="[object Array]"; };
     var paint=function(){ if(currentRoute()==="home"){ try{ render("home"); }catch(e){} } };
     var fromFile=function(){
+      /* 連不上 Worker：先用上次成功取得的消息（離線也看得到真正的最新消息），沒有才讀 news.json */
+      try{ var c=JSON.parse(window.localStorage.getItem("k321_news_cache")||"null"); if(c && isArr(c)){ NEWS = c; NEWS_SRC = "cache"; paint(); return; } }catch(e){}
       fetch("news.json?t="+new Date().getTime(), { cache:"no-store" }).then(function(r){ return r.ok ? r.json() : null; }).then(function(j){
         var arr = j && (j.news || j.announcements);
         if(isArr(arr)){ NEWS = arr; NEWS_SRC = "file"; paint(); }
@@ -21656,7 +21658,7 @@ function loadNews(){
     };
     /* 先問 Cloudflare Worker；連不上（或還沒設好）就退回 news.json */
     fetch(NEWS_URL + "/news", { cache:"no-store" }).then(function(r){ return r.ok ? r.json() : null; }).then(function(j){
-      if(j && j.ok && isArr(j.news)){ NEWS = j.news; NEWS_SRC = "worker"; paint(); } else fromFile();
+      if(j && j.ok && isArr(j.news)){ NEWS = j.news; NEWS_SRC = "worker"; try{ window.localStorage.setItem("k321_news_cache", JSON.stringify(j.news)); }catch(e){} paint(); } else fromFile();
     })["catch"](fromFile);
   }catch(e){}
 }
@@ -21828,7 +21830,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610152328';
+var APPVER = '4.0.202610152349';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -23665,6 +23667,6 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202610152328";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202610152349";</script>
 </body>
 </html>
