@@ -1,0 +1,13 @@
+{
+  "說明": "最新消息。每一則用 { } 包起來，則與則之間用逗號隔開。date 日期（新的排前面）；title 標題；body 內容（換行打 \\n）；until 下架日期（過了自動不顯示，可不填）；link 連結（可不填）；pin 設 true 置頂。title_en、body_en 是英文版（可不填，不填就顯示中文）。簡體版會自動轉換，不必另外寫。",
+  "news": [
+    {
+      "date": "2026-10-16",
+      "title": "App 開通授權碼",
+      "body": "國度321空中團契 App 現在需要輸入授權碼開通。\n還沒有授權碼的家人，請向邀請你的同工或小家長索取。",
+      "title_en": "App access code",
+      "body_en": "The Kingdom 321 Online Fellowship app now needs an access code.\nIf you don’t have one yet, please ask the co-worker or small-group leader who invited you.",
+      "until": "2026-11-30"
+    }
+  ]
+}

@@ -7,7 +7,7 @@
            音訊、影片與帶 Range 的請求一律不攔截（試聽、拖曳、錄影混音才不會壞）
    ‧ 同網域底下還有其他 321 App，本 SW 只管自己這個資料夾
    ===================================================================== */
-var VER = '4.0.202610152157';
+var VER = '4.0.202610152222';
 var V = 'k321-' + VER;
 var SHELL = ['./', './index.html', './manifest.json', './media.js', './data.json', './icon-192.png?v=3', './icon-512.png?v=3', './apple-touch-icon.png?v=3'];
 
@@ -48,6 +48,8 @@ self.addEventListener('fetch', function (e) {
     return;
   }
   var nav = r.mode === 'navigate' || /\.html$/.test(p) || /\/$/.test(p);
+  /* 有網路時，頁面本身不經過 SW（避免更新交接時 SW 被終止、3.5MB 頁面被截斷而整頁空白）；離線才用快取 */
+  if (nav && self.navigator && self.navigator.onLine !== false) return;
   var key = nav ? './index.html' : (/\.(json|js|css)$/.test(p) ? u.origin + p : r);
   if (nav || /\.(json|js|css)$/.test(p)) {
     e.respondWith(fetch(nav ? u.origin + p + u.search : r.url, { cache: 'no-cache', credentials: 'same-origin' }).then(function (resp) {

@@ -1163,6 +1163,16 @@ input,textarea,select{min-width:0;max-width:100%;}
 .vtag{font-weight:700;color:var(--muted);font-size:13px;}
 @media(max-width:360px){.xpills{gap:3px;}.xpill{min-width:26px;padding:0 5px;font-size:11px;height:22px;line-height:20px;}.appbar{gap:6px;padding-left:10px;padding-right:10px;}}
 .qrimg.photo{width:min(250px,100%);height:auto;image-rendering:auto;}
+.newscard .newsdate{font-size:calc(13px * var(--fs));color:var(--gold-text);font-weight:700;margin-bottom:4px}
+.newscard .newslink{display:inline-block;margin-top:8px;font-weight:700;color:var(--gold-text)}
+.nadmbar{display:flex;align-items:center;gap:12px;margin:0 0 12px}.nadmbar .btn{width:auto;padding:10px 18px}
+.nadmrow{display:flex;gap:8px;margin-top:10px}.nadmrow .btn{width:auto;padding:6px 14px;font-size:calc(13px * var(--fs))}
+#nadmModal{position:fixed;top:0;right:0;bottom:0;left:0;z-index:9000;display:flex;align-items:flex-end;justify-content:center}
+#nadmModal .nm-mask{position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,.45)}
+#nadmModal .nm-panel{position:relative;width:100%;max-width:var(--maxw);max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg,#fff);color:var(--ink,#1D2433);border-radius:20px 20px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom))}
+#nadmModal h3{margin:0 0 12px}#nadmModal .fld{display:block;margin-bottom:10px}#nadmModal .fld span{display:block;font-weight:700;margin-bottom:4px}
+#nadmModal input[type=text],#nadmModal input[type=url],#nadmModal input[type=date],#nadmModal input[type=password],#nadmModal select,#nadmModal textarea{width:100%;box-sizing:border-box;font-size:16px;padding:10px;border:1.5px solid #C9D3E6;border-radius:10px;background:#fff;color:#1D2433}
+#nadmModal .nm-btns{display:flex;gap:10px;margin-top:14px}#nadmModal .nm-btns .btn{flex:1}
 </style>
 </head>
 <body>
@@ -1218,11 +1228,11 @@ var K321_GATE = { hash: 'dbd788bb', key: 'k321_auth' };
   G.ok = function(){ return sessionOk || lsGet(G.key) === G.hash; };
   var TX = {
     'zh-Hant': { title:'國度321空中團契', sub:'請輸入授權碼開通 App', label:'授權碼', ph:'請輸入授權碼', btn:'開通', empty:'請先輸入授權碼', bad:'授權碼不正確，請再確認一次', bad3:'授權碼還是不正確。請向邀請你的同工確認。', good:'開通成功，感謝主！', help:'還沒有授權碼？<br>請向邀請你的同工、小家長或空中團契服侍團隊索取。', verse:'「看哪，弟兄和睦同居是何等地善，何等地美！」', ref:'詩篇 133:1',
-      sTitle:'授權碼', sOk:'✓ 這支手機已開通', sRe:'重新輸入授權碼', sConfirm:'確定要讓這支手機回到未開通狀態嗎？之後要再輸入授權碼才能使用。', sGen:'同工專用：更換授權碼', sGenPh:'輸入新的授權碼', sGenBtn:'產生雜湊值', sGenOut:'新雜湊值：', sGenNote:'把這組雜湊值交給 App 維護同工，替換 index.html 裡的 K321_GATE.hash。換了之後，所有手機都要重新輸入新的授權碼。' },
+      sTitle:'授權碼', sOk:'✓ 這支手機已開通', sRe:'重新輸入授權碼', sNews:'負責人（發佈最新消息）', sNewsIn:'負責人（已登入）', sConfirm:'確定要讓這支手機回到未開通狀態嗎？之後要再輸入授權碼才能使用。', sGen:'同工專用：更換授權碼', sGenPh:'輸入新的授權碼', sGenBtn:'產生雜湊值', sGenOut:'新雜湊值：', sGenNote:'把這組雜湊值交給 App 維護同工，替換 index.html 裡的 K321_GATE.hash。換了之後，所有手機都要重新輸入新的授權碼。' },
     'zh-Hans': { title:'国度321空中团契', sub:'请输入授权码开通 App', label:'授权码', ph:'请输入授权码', btn:'开通', empty:'请先输入授权码', bad:'授权码不正确，请再确认一次', bad3:'授权码还是不正确。请向邀请你的同工确认。', good:'开通成功，感谢主！', help:'还没有授权码？<br>请向邀请你的同工、小家长或空中团契服侍团队索取。', verse:'「看哪，弟兄和睦同居是何等地善，何等地美！」', ref:'诗篇 133:1',
-      sTitle:'授权码', sOk:'✓ 这部手机已开通', sRe:'重新输入授权码', sConfirm:'确定要让这部手机回到未开通状态吗？之后要再输入授权码才能使用。', sGen:'同工专用：更换授权码', sGenPh:'输入新的授权码', sGenBtn:'产生哈希值', sGenOut:'新哈希值：', sGenNote:'把这组哈希值交给 App 维护同工，替换 index.html 里的 K321_GATE.hash。换了之后，所有手机都要重新输入新的授权码。' },
+      sTitle:'授权码', sOk:'✓ 这部手机已开通', sRe:'重新输入授权码', sNews:'负责人（发布最新消息）', sNewsIn:'负责人（已登录）', sConfirm:'确定要让这部手机回到未开通状态吗？之后要再输入授权码才能使用。', sGen:'同工专用：更换授权码', sGenPh:'输入新的授权码', sGenBtn:'产生哈希值', sGenOut:'新哈希值：', sGenNote:'把这组哈希值交给 App 维护同工，替换 index.html 里的 K321_GATE.hash。换了之后，所有手机都要重新输入新的授权码。' },
     'en': { title:'Kingdom 321 Online Fellowship', sub:'Enter your access code to activate the app', label:'Access code', ph:'Enter access code', btn:'Activate', empty:'Please enter the access code', bad:'That code isn’t right — please check and try again', bad3:'Still not right. Please check with the co-worker who invited you.', good:'Activated — thank God!', help:'Don’t have a code yet?<br>Ask the co-worker or small-group leader who invited you, or the fellowship’s serving team.', verse:'“See how good and how pleasant it is for brothers to live together in unity!”', ref:'Psalm 133:1',
-      sTitle:'Access code', sOk:'✓ Activated on this phone', sRe:'Enter the code again', sConfirm:'Return this phone to the not-activated state? The access code will be needed again.', sGen:'For co-workers: change the access code', sGenPh:'New access code', sGenBtn:'Make hash', sGenOut:'New hash: ', sGenNote:'Give this hash to the app maintainer to replace K321_GATE.hash in index.html. After the change, every phone must enter the new code.' }
+      sTitle:'Access code', sOk:'✓ Activated on this phone', sRe:'Enter the code again', sNews:'Leader (post news)', sNewsIn:'Leader (signed in)', sConfirm:'Return this phone to the not-activated state? The access code will be needed again.', sGen:'For co-workers: change the access code', sGenPh:'New access code', sGenBtn:'Make hash', sGenOut:'New hash: ', sGenNote:'Give this hash to the app maintainer to replace K321_GATE.hash in index.html. After the change, every phone must enter the new code.' }
   };
   function lang(){ var l = lsGet('k321_lang'); return TX[l] ? l : 'zh-Hant'; }
   function tx(){ return TX[lang()]; }
@@ -1300,9 +1310,10 @@ var K321_GATE = { hash: 'dbd788bb', key: 'k321_auth' };
     var t = tx();
     box.innerHTML =
       '<div class="fsrow ka-row"><div>' + t.sTitle + '</div><span class="ka-ok">' + t.sOk + '</span></div>' +
-      '<div style="margin-top:10px"><button type="button" id="k321relock">' + t.sRe + '</button></div>' +
+      '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="k321relock">' + t.sRe + '</button><button type="button" id="k321newsadm">' + ((window.k321NewsAdm && window.k321NewsAdm()) ? t.sNewsIn : t.sNews) + '</button></div>' +
       (STAFF ? '<details open><summary>' + t.sGen + '</summary><div class="ka-gen"><input id="k321new" type="text" autocomplete="off" placeholder="' + t.sGenPh + '"><button type="button" id="k321mk">' + t.sGenBtn + '</button></div>' +
       '<div class="ka-out" id="k321out"></div><p class="note" style="margin-top:6px">' + t.sGenNote + '</p></details>' : '');
+    document.getElementById('k321newsadm').onclick = function(){ var sh = document.getElementById('setSheet'); if (sh) sh.classList.remove('open'); if (window.k321NewsLogin) window.k321NewsLogin(); };
     document.getElementById('k321relock').onclick = function(){ if (window.confirm(tx().sConfirm)) G.lock(); };
     if (STAFF) document.getElementById('k321mk').onclick = function(){ var c = norm(document.getElementById('k321new').value); document.getElementById('k321out').innerHTML = c ? (tx().sGenOut + '<b>' + fnv(c) + '</b>（' + c + '）') : ''; };
   }
@@ -1312,6 +1323,65 @@ var K321_GATE = { hash: 'dbd788bb', key: 'k321_auth' };
     var lo = document.getElementById('langOpts'); if (lo) lo.addEventListener('click', function(){ setTimeout(setBlock, 60); });
   }
   if (document.readyState !== 'loading') hook(); else document.addEventListener('DOMContentLoaded', hook);
+})();
+</script>
+
+<script>
+/* 國度321空中團契 · 載入看門狗（ES5）
+   頁面檔很大（約 3.5MB），App 的程式都在檔案最後面。更新時若下載被中斷，只會出現上半部的靜態畫面、整頁空白。
+   檢查：檔尾旗標 K321_TAIL（被截斷就不會有）＋ 底部分頁列是否已畫出。
+   沒載好 → 自動重新載入一次；仍不行 → 顯示「重新載入／清除暫存後重新載入」畫面與錯誤摘要。 */
+(function(){
+  var errs = [];
+  try { window.addEventListener('error', function(e){ try { errs.push(String(e.message || 'error') + (e.lineno ? ' @' + e.lineno : '')); } catch(x) {} }); } catch(x) {}
+  function ss(k, v){ try { if (v === undefined) return window.sessionStorage.getItem(k); if (v === null) window.sessionStorage.removeItem(k); else window.sessionStorage.setItem(k, v); } catch(x) { return null; } }
+  function ready(){ var tb = document.getElementById('tabbar'); return !!window.K321_TAIL && !!tb && tb.children.length > 0; }
+  function cleanUrl(){ if (/[?&]r=\d+/.test(location.search) && window.history && history.replaceState) { try { history.replaceState(null, '', location.pathname + location.hash); } catch(x) {} } }
+  function fresh(){ location.replace(location.pathname + '?r=' + new Date().getTime() + '#/home'); }
+  function hardReset(){
+    var go = function(){ fresh(); }, n = 0;
+    try {
+      var tasks = [];
+      if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) tasks.push(navigator.serviceWorker.getRegistrations().then(function(rs){ for (var i = 0; i < rs.length; i++) { if (rs[i].scope.indexOf('/321fellowship/') >= 0) rs[i].unregister(); } }));
+      if (window.caches && caches.keys) tasks.push(caches.keys().then(function(ks){ for (var i = 0; i < ks.length; i++) { if (ks[i].indexOf('k321-') === 0) caches['delete'](ks[i]); } }));
+      if (tasks.length && window.Promise) { Promise.all(tasks).then(go, go); setTimeout(go, 2500); return; }
+    } catch(x) {}
+    go();
+  }
+  function panel(){
+    var L = 'zh-Hant'; try { L = window.localStorage.getItem('k321_lang') || L; } catch(x) {}
+    var T = {
+      'zh-Hant': ['畫面沒有完整載入', '可能是更新時網路中斷了。請按下面的按鈕再試一次。', '重新載入', '清除暫存後重新載入', '如果一直這樣，請把這個畫面截圖傳給 App 維護同工。'],
+      'zh-Hans': ['画面没有完整加载', '可能是更新时网络中断了。请按下面的按钮再试一次。', '重新加载', '清除缓存后重新加载', '如果一直这样，请把这个画面截图发给 App 维护同工。'],
+      'en': ['The page didn’t finish loading', 'The connection may have dropped during an update. Please try again.', 'Reload', 'Clear cache and reload', 'If this keeps happening, send a screenshot of this screen to the app maintainer.']
+    }[L] || null;
+    if (!T) T = ['畫面沒有完整載入', '可能是更新時網路中斷了。請按下面的按鈕再試一次。', '重新載入', '清除暫存後重新載入', '如果一直這樣，請把這個畫面截圖傳給 App 維護同工。'];
+    var info = 'tail:' + (window.K321_TAIL ? 1 : 0) + ' tabs:' + ((document.getElementById('tabbar') || {}).children ? document.getElementById('tabbar').children.length : '-') + ' v:' + (window.K321_VER || '?') + (errs.length ? ' · ' + errs.slice(0, 3).join(' | ') : '');
+    var d = document.createElement('div');
+    d.id = 'k321rescue';
+    d.setAttribute('style', 'position:fixed;top:0;right:0;bottom:0;left:0;z-index:2147483600;background:#0E2A5C;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;text-align:center;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif');
+    var b = 'display:block;width:100%;max-width:340px;margin:10px auto 0;border:none;border-radius:14px;padding:16px;font-size:20px;font-weight:800;';
+    d.innerHTML = '<img src="icon-192.png?v=3" alt="" style="width:88px;height:88px;border-radius:20px;margin-bottom:18px">' +
+      '<div style="font-size:24px;font-weight:900;margin-bottom:10px">' + T[0] + '</div>' +
+      '<div style="font-size:17px;line-height:1.6;color:#D8E2F5;max-width:360px">' + T[1] + '</div>' +
+      '<button type="button" id="k321r1" style="' + b + 'margin-top:22px;color:#fff;background:linear-gradient(135deg,#D9B25C,#9A7426)">' + T[2] + '</button>' +
+      '<button type="button" id="k321r2" style="' + b + 'color:#E8C877;background:transparent;border:1.5px solid #E8C877">' + T[3] + '</button>' +
+      '<div style="font-size:14px;color:#AFC0E0;margin-top:20px;max-width:360px;line-height:1.5">' + T[4] + '</div>' +
+      '<div style="font-size:11px;color:#7F93BD;margin-top:8px;word-break:break-all;max-width:360px">' + info.replace(/</g, '&lt;') + '</div>';
+    document.body.appendChild(d);
+    document.getElementById('k321r1').onclick = fresh;
+    document.getElementById('k321r2').onclick = hardReset;
+  }
+  function check(final){
+    if (ready()) { ss('k321_retry', null); cleanUrl(); return; }
+    if (!final) { setTimeout(function(){ check(true); }, 4000); return; }
+    var n = +(ss('k321_retry') || 0);
+    if (n < 1) { ss('k321_retry', String(n + 1)); fresh(); return; }
+    ss('k321_retry', null);
+    panel();
+  }
+  function start(){ setTimeout(function(){ check(false); }, 5000); }
+  if (document.readyState !== 'loading') start(); else document.addEventListener('DOMContentLoaded', start);
 })();
 </script>
 
@@ -1329,12 +1399,6 @@ var K321_GATE = { hash: 'dbd788bb', key: 'k321_auth' };
 
   <main id="view"><!-- 由 JS 渲染 --></main>
 
-  <div class="help-fab">
-    <button id="helpBtn">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <span id="helpBtnLbl">我需要幫助</span>
-    </button>
-  </div>
 
   <nav class="tabbar" id="tabbar"><!-- 由 JS 渲染 --></nav>
 
@@ -1382,18 +1446,6 @@ var K321_GATE = { hash: 'dbd788bb', key: 'k321_auth' };
   </div>
 </div>
 
-<!-- 求助面板 -->
-<div class="sheet" id="helpSheet">
-  <div class="mask" data-close="1"></div>
-  <div class="panel">
-    <h3 id="helpTitle">我需要幫助</h3>
-    <p class="note" id="helpIntro" style="margin-bottom:14px">你不孤單，有神、也有我們。請選擇你現在的情況：</p>
-    <button class="btn" id="helpUrgent" style="background:#C0392B;margin-bottom:10px" data-help="urgent">我現在很危險，需要立刻幫助</button>
-    <button class="btn gold" id="helpCare" style="margin-bottom:10px" data-help="care">我心裡很難過，想找人陪</button>
-    <button class="btn ghost" id="helpPray" data-help="pray">我想要有人為我禱告</button>
-    <p class="note" id="helpFoot" style="margin-top:14px">（各項的實際求助專線與接待同工，將於內容階段依各國補齊。）</p>
-  </div>
-</div>
 
 <!-- 接待表單 -->
 <div class="sheet" id="contactSheet">
@@ -18956,9 +19008,16 @@ var PAGES = {
       q("give",esc(f9("奉獻","Give")),"meet",null)+
       q("heart",esc(f9("新朋友","New Friend")),"newfriend",null)+'</div>';
 
-    var news = (D.announcements&&D.announcements.length)?
-      D.announcements.map(function(a){return '<div class="card"><h3>'+esc(a.title)+'</h3><p>'+esc(a.body)+'</p></div>';}).join("")
-      : slot(esc(f9("目前沒有新消息。","No news right now."))+'<br>'+esc(f9("營會、專題、代禱事項將顯示在這裡。","Camps, special topics and prayer requests will appear here.")));
+    var NL = newsList();
+    var news = newsTop() + (NL.length ?
+      NL.map(function(a){
+        var en = curLang()==="en";
+        var ti = (en && a.title_en) ? a.title_en : a.title, bo = (en && a.body_en) ? a.body_en : a.body;
+        return '<div class="card newscard">'+(a.date?'<div class="newsdate">'+esc(a.date)+'</div>':'')+
+          '<h3>'+esc(ti||"")+'</h3>'+(bo?'<p style="white-space:pre-line">'+esc(bo)+'</p>':'')+
+          (a.link?'<a class="newslink" href="'+esc(safeUrl(a.link))+'" target="_blank" rel="noopener">'+esc((en&&a.link_text_en)?a.link_text_en:(a.link_text||f9("查看詳情 ›","Details ›")))+'</a>':'')+newsCardTail(a)+'</div>';
+      }).join("")
+      : slot(esc(f9("目前沒有新消息。","No news right now."))+'<br>'+esc(f9("營會、專題、代禱事項將顯示在這裡。","Camps, special topics and prayer requests will appear here."))));
 
     var vc=(window.APP_CONFIG&&window.APP_CONFIG.verseChannelUrl)||"";
     var remind = vc ?
@@ -21383,7 +21442,6 @@ function init(){
   var _r3=$("recShare"); if(_r3) _r3.onclick=recShare;
   var _r4=$("recRedo"); if(_r4) _r4.onclick=openRec;
   var _r5=$("recVideo"); if(_r5) _r5.onclick=makeVerseVideo;
-  initHelp();
   purgeOldQueue();
   flushOutbox();
   try{
@@ -21397,6 +21455,8 @@ function init(){
   applyLangData();              /* 再依語言挑資料 */
   // 先嘗試讀外部 data.json（同工可自行更新內容），讀不到則用內嵌備援
   loadContent(function(){ render(); });
+  loadNews();
+  document.addEventListener("visibilitychange", function(){ if(document.visibilityState==="visible") loadNews(); });
   watchDayChange();
   // Service Worker：離線可用 + 內容更新後溫和提示（沙箱可能失敗，故 try/catch）
   if(false && "serviceWorker" in navigator){
@@ -21417,6 +21477,148 @@ function init(){
 }
 
 /* 版本比較："2.8.0" → [2,8,0]；回傳 1 / 0 / -1 */
+/* 最新消息：Cloudflare Worker（fellowship-news）＋ 負責人在 App 內發佈／修改／刪除 */
+var NEWS_URL = (window.APP_CONFIG && window.APP_CONFIG.newsEndpoint) || "https://fellowship-news.spch321.workers.dev";
+var NEWS_SRC = "";
+var NADM_KEY = "k321_newspin";
+function nPin(){ try{ return window.localStorage.getItem(NADM_KEY) || ""; }catch(e){ return ""; } }
+function nSetPin(p){ try{ if(p) window.localStorage.setItem(NADM_KEY, p); else window.localStorage.removeItem(NADM_KEY); }catch(e){} }
+function nAdm(){ return !!nPin(); }
+function nPost(path, body, cb){
+  try{
+    var x = new XMLHttpRequest();
+    x.open("POST", NEWS_URL + path, true);
+    x.setRequestHeader("Content-Type", "application/json");
+    x.timeout = 15000;
+    x.onreadystatechange = function(){
+      if(x.readyState !== 4) return;
+      var j = null; try{ j = JSON.parse(x.responseText); }catch(e){}
+      if(j && j.ok) cb(j, ""); else cb(null, (j && j.err) ? j.err : (x.status ? "http" + x.status : "net"));
+    };
+    x.ontimeout = function(){ cb(null, "net"); };
+    x.send(JSON.stringify(body));
+  }catch(e){ cb(null, "net"); }
+}
+function nErr(e){
+  var M = { badpin:f9("負責人密碼不對","Wrong leader password"), locked:f9("密碼錯太多次，請 15 分鐘後再試","Too many wrong tries — try again in 15 minutes"),
+    nopin:f9("消息服務還沒設定負責人密碼","The news service has no leader password yet"), nodb:f9("消息服務還沒綁定資料庫（KV）","The news service has no KV storage bound yet"),
+    empty:f9("請寫標題或內容","Please write a title or message"), url:f9("連結要以 http:// 或 https:// 開頭","Links must start with http:// or https://"),
+    date:f9("日期格式不對","The date format is not right") };
+  return M[e] || (f9("連不上消息服務，請稍後再試","Can't reach the news service — please try again later") + (e ? "（" + e + "）" : ""));
+}
+function newsTop(){
+  if(!nAdm()) return "";
+  return '<div class="nadmbar"><button class="btn" data-nadm="new">＋ '+esc(f9("發佈消息","Post news"))+'</button>'+
+    '<span class="note">'+esc(f9("負責人模式","Leader mode"))+(NEWS_SRC==="worker"?"":" · "+esc(f9("消息服務未連線","news service offline")))+'</span></div>';
+}
+function newsCardTail(a){
+  if(!nAdm() || !a.id || NEWS_SRC!=="worker") return "";
+  return '<div class="nadmrow"><button class="btn ghost" data-nadm="edit" data-nid="'+esc(a.id)+'">'+esc(f9("修改","Edit"))+'</button>'+
+    '<button class="btn ghost" data-nadm="del" data-nid="'+esc(a.id)+'">'+esc(f9("刪除","Delete"))+'</button></div>';
+}
+function nFind(id){ var L=NEWS||[]; for(var i=0;i<L.length;i++){ if(L[i].id===id) return L[i]; } return null; }
+function nClose(){ var m=document.getElementById("nadmModal"); if(m&&m.parentNode) m.parentNode.removeChild(m); }
+function nModal(inner){
+  nClose();
+  var m=document.createElement("div"); m.id="nadmModal";
+  m.innerHTML='<div class="nm-mask"></div><div class="nm-panel">'+inner+'</div>';
+  document.body.appendChild(m);
+  m.querySelector(".nm-mask").onclick=nClose;
+  return m;
+}
+function nEdit(id){
+  var a = id ? (nFind(id)||{}) : {};
+  var d=new Date(), td=d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);
+  var K=[["news",f9("公告","Notice")],["meet",f9("聚會","Meeting")],["event",f9("活動","Event")],["pray",f9("代禱","Prayer")]], ks="";
+  for(var i=0;i<K.length;i++) ks+='<option value="'+K[i][0]+'"'+((a.kind||"news")===K[i][0]?" selected":"")+'>'+esc(K[i][1])+'</option>';
+  var m=nModal('<h3>'+esc(id?f9("修改消息","Edit news"):f9("發佈消息","Post news"))+'</h3>'+
+    '<label class="fld"><span>'+esc(f9("類別","Type"))+'</span><select id="nKind">'+ks+'</select></label>'+
+    '<label class="fld"><span>'+esc(f9("標題","Title"))+'</span><input id="nTitle" type="text" maxlength="120" value="'+esc(a.title||"")+'"></label>'+
+    '<label class="fld"><span>'+esc(f9("內容","Message"))+'</span><textarea id="nBody" rows="5" maxlength="3000">'+esc(a.body||"")+'</textarea></label>'+
+    '<label class="fld"><span>'+esc(f9("日期","Date"))+'</span><input id="nDate" type="date" value="'+esc(a.date||td)+'"></label>'+
+    '<label class="fld"><span>'+esc(f9("顯示到哪一天（過了自動收起，可不填）","Show until (optional)"))+'</span><input id="nUntil" type="date" value="'+esc(a.until||"")+'"></label>'+
+    '<label class="fld"><span>'+esc(f9("連結（可不填）","Link (optional)"))+'</span><input id="nLink" type="url" placeholder="https://" value="'+esc(a.link||"")+'"></label>'+
+    '<label class="chk"><input type="checkbox" id="nTop"'+(a.top?" checked":"")+'><span>'+esc(f9("置頂","Pin to top"))+'</span></label>'+
+    '<details'+((a.title_en||a.body_en)?" open":"")+'><summary class="note">'+esc(f9("英文版（可不填，不填就顯示中文；簡體會自動轉換）","English version (optional)"))+'</summary>'+
+    '<label class="fld"><span>Title (English)</span><input id="nTitleEn" type="text" maxlength="160" value="'+esc(a.title_en||"")+'"></label>'+
+    '<label class="fld"><span>Message (English)</span><textarea id="nBodyEn" rows="4" maxlength="4000">'+esc(a.body_en||"")+'</textarea></label></details>'+
+    '<div class="nm-btns"><button class="btn ghost" id="nCancel">'+esc(f9("取消","Cancel"))+'</button><button class="btn" id="nSave">'+esc(id?f9("儲存","Save"):f9("發佈","Publish"))+'</button></div>');
+  m.querySelector("#nCancel").onclick=nClose;
+  m.querySelector("#nSave").onclick=function(){
+    var g=function(x){ var el=document.getElementById(x); return el?el.value:""; };
+    var it={ id:id||"", kind:g("nKind"), title:g("nTitle"), body:g("nBody"), date:g("nDate"), until:g("nUntil"), link:g("nLink"),
+      top:!!(document.getElementById("nTop")||{}).checked, title_en:g("nTitleEn"), body_en:g("nBodyEn") };
+    var btn=this; btn.disabled=true;
+    nPost("/news", { pin:nPin(), item:it }, function(j,e){
+      btn.disabled=false;
+      if(!j){ note(nErr(e)); if(e==="badpin"){ nSetPin(""); nClose(); render(); } return; }
+      nClose(); note(id?f9("已儲存","Saved"):f9("已發佈，大家打開 App 就會看到","Published — everyone will see it when they open the app")); loadNews();
+    });
+  };
+}
+function nDel(id, btn){
+  if(btn.getAttribute("data-arm")!=="1"){ btn.setAttribute("data-arm","1"); btn.textContent=f9("再按一次刪除","Tap again to delete"); return; }
+  nPost("/del", { pin:nPin(), id:id }, function(j,e){ if(!j){ note(nErr(e)); return; } note(f9("已刪除","Deleted")); loadNews(); });
+}
+function nLogin(){
+  if(nAdm()){
+    var m0=nModal('<h3>'+esc(f9("負責人（發佈最新消息）","Leader (post news)"))+'</h3><p class="note">'+esc(f9("這支手機已用負責人身分登入，首頁「最新消息」可以發佈、修改、刪除。","This phone is signed in as leader. You can post, edit and delete news on Home."))+'</p>'+
+      '<div class="nm-btns"><button class="btn ghost" id="nOut">'+esc(f9("這支手機登出","Sign out on this phone"))+'</button><button class="btn" id="nOk">'+esc(f9("好","OK"))+'</button></div>');
+    m0.querySelector("#nOk").onclick=nClose;
+    m0.querySelector("#nOut").onclick=function(){ nSetPin(""); nClose(); note(f9("已登出負責人","Signed out")); render(); };
+    return;
+  }
+  var m=nModal('<h3>'+esc(f9("負責人登入","Leader sign-in"))+'</h3><p class="note">'+esc(f9("輸入負責人密碼後，這支手機就能在首頁發佈與管理最新消息。","Enter the leader password so this phone can post and manage news on Home."))+'</p>'+
+    '<label class="fld"><span>'+esc(f9("負責人密碼","Leader password"))+'</span><input id="nPin" type="password" autocomplete="current-password"></label>'+
+    '<div class="nm-btns"><button class="btn ghost" id="nCancel">'+esc(f9("取消","Cancel"))+'</button><button class="btn" id="nGo">'+esc(f9("登入","Sign in"))+'</button></div>');
+  m.querySelector("#nCancel").onclick=nClose;
+  m.querySelector("#nGo").onclick=function(){
+    var p=(document.getElementById("nPin")||{}).value||"";
+    if(p.length<4){ note(f9("密碼至少 4 碼","At least 4 characters")); return; }
+    var btn=this; btn.disabled=true;
+    nPost("/auth", { pin:p }, function(j,e){
+      btn.disabled=false;
+      if(!j){ note(nErr(e)); return; }
+      nSetPin(p); nClose(); note(f9("已用負責人身分登入，到首頁「最新消息」發佈","Signed in — post news from Home")); loadNews(); go("home");
+    });
+  };
+}
+window.k321NewsLogin = nLogin;
+window.k321NewsAdm = nAdm;
+document.addEventListener("click", function(ev){
+  var t=ev.target; while(t && t!==document && !(t.getAttribute && t.getAttribute("data-nadm"))) t=t.parentNode;
+  if(!t || t===document) return;
+  var a=t.getAttribute("data-nadm"), id=t.getAttribute("data-nid")||"";
+  if(a==="new") nEdit(""); else if(a==="edit") nEdit(id); else if(a==="del") nDel(id, t);
+});
+
+/* 最新消息：讀取 news.json（同工直接在 GitHub 編輯這個小檔案即可發佈）；讀不到時用內嵌 announcements */
+var NEWS = null;
+function newsList(){
+  var src = (NEWS && NEWS.length) ? NEWS : ((D && D.announcements) || []);
+  var d = new Date(), today = d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);
+  var out = [];
+  for (var i=0;i<src.length;i++){ var a=src[i]; if(!a||!a.title) continue; if(a.until && String(a.until)<today) continue; if(a.from && String(a.from)>today) continue; out.push(a); }
+  out.sort(function(x,y){ var px=x.pin?1:0, py=y.pin?1:0; if(px!==py) return py-px; return String(y.date||"")<String(x.date||"")?-1:(String(y.date||"")>String(x.date||"")?1:0); });
+  return out.slice(0, 8);
+}
+function loadNews(){
+  try{
+    if(!window.fetch) return;
+    var isArr=function(a){ return Object.prototype.toString.call(a)==="[object Array]"; };
+    var paint=function(){ if(currentRoute()==="home"){ try{ render("home"); }catch(e){} } };
+    var fromFile=function(){
+      fetch("news.json?t="+new Date().getTime(), { cache:"no-store" }).then(function(r){ return r.ok ? r.json() : null; }).then(function(j){
+        var arr = j && (j.news || j.announcements);
+        if(isArr(arr)){ NEWS = arr; NEWS_SRC = "file"; paint(); }
+      })["catch"](function(){});
+    };
+    /* 先問 Cloudflare Worker；連不上（或還沒設好）就退回 news.json */
+    fetch(NEWS_URL + "/news", { cache:"no-store" }).then(function(r){ return r.ok ? r.json() : null; }).then(function(j){
+      if(j && j.ok && isArr(j.news)){ NEWS = j.news; NEWS_SRC = "worker"; paint(); } else fromFile();
+    })["catch"](fromFile);
+  }catch(e){}
+}
 function verCmp(a,b){
   function pa(v){ return String(v==null?"":v).split(".").map(function(x){ var n=parseInt(x,10); return isNaN(n)?0:n; }); }
   var A=pa(a), B=pa(b), n=Math.max(A.length,B.length);
@@ -21585,7 +21787,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610152157';
+var APPVER = '4.0.202610152222';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -23422,5 +23624,6 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202610152222";</script>
 </body>
 </html>
