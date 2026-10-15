@@ -19606,7 +19606,10 @@ function renderTabs(active){
 /* ---- 路由 ---- */
 var TAB_ROUTES={home:1,resources:1,apps:1,meet:1,newfriend:1,more:1};
 function go(route){ if(location.hash!=="#/"+route) location.hash="#/"+route; else render(route); }
-function currentRoute(){ var h=location.hash.replace(/^#\//,""); return PAGES[h]?h:"home"; }
+function currentRoute(){ var h=location.hash.replace(/^#\//,"");
+  /* 重新載入後 APP_VIEW 已遺失（自動更新、開通授權碼後）：不要停在空白的內嵌檢視，回首頁 */
+  if(h==="appview" && (APP_VIEW===null || !((D&&D.ecosystem)||[])[APP_VIEW])){ try{ history.replaceState(null,"",location.pathname+location.search+"#/home"); }catch(e){} return "home"; }
+  return PAGES[h]?h:"home"; }
 /* 每個路由記住：捲動位置 + 哪些 <details> 是展開的。
    否則家人展開三層分類、點進去再返回，一切歸零，要重找一次。 */
 var VIEW_STATE={}, CUR_ROUTE=null;
@@ -21575,7 +21578,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610151623';
+var APPVER = '4.0.202610151652';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
