@@ -1206,7 +1206,7 @@ input,textarea,select{min-width:0;max-width:100%;}
 <body>
 <style id="k321gateCss">
 html.k321-locked,html.k321-locked body{overflow:hidden!important;height:100%}
-html.k321-locked body>*:not(#k321gate){visibility:hidden!important;pointer-events:none!important}
+html.k321-locked body>*:not(#k321gate):not(#k321cel){visibility:hidden!important;pointer-events:none!important}
 #k321gate{position:fixed;top:0;right:0;bottom:0;left:0;z-index:2147483000;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#12233F;background:radial-gradient(ellipse at 50% 18%,#1E4A9A 0%,#12306B 45%,#0A1A3C 100%);color:#fff;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;display:flex;flex-direction:column;align-items:center;padding:max(28px,env(safe-area-inset-top)) 22px max(28px,env(safe-area-inset-bottom));box-sizing:border-box}
 #k321gate *{box-sizing:border-box}
 #k321gate .g-lang{display:flex;gap:8px;align-self:flex-end;margin-bottom:6px}
@@ -1228,6 +1228,15 @@ html.k321-locked body>*:not(#k321gate){visibility:hidden!important;pointer-event
 #k321gate .g-help{margin-top:6px;font-size:16px;line-height:1.6;color:#4A5468;text-align:center}
 #k321gate .g-verse{max-width:420px;margin-top:22px;text-align:center;color:#D8E2F5;font-size:16px;line-height:1.7}
 #k321gate .g-verse b{display:block;color:#E8C877;font-weight:600;font-size:14px;margin-top:2px}
+#k321cel{position:fixed;top:0;right:0;bottom:0;left:0;z-index:2147483500;background:radial-gradient(ellipse at 50% 40%,#1E4A9A 0%,#12306B 45%,#081634 100%);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .35s ease;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#k321cel.in{opacity:1}#k321cel.out{opacity:0}
+#k321cel canvas{position:absolute;top:0;left:0;pointer-events:none}
+#k321cel .c-box{position:relative;text-align:center;padding:0 24px;transform:scale(.6);opacity:0;transition:transform .7s cubic-bezier(.2,1.4,.4,1) .15s,opacity .5s ease .15s}
+#k321cel.in .c-box{transform:scale(1);opacity:1}
+#k321cel .c-h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-weight:900;font-size:46px;line-height:1.15;letter-spacing:3px;color:#FFE9A8;text-shadow:0 0 18px rgba(246,210,122,.85),0 0 42px rgba(232,176,74,.55)}
+#k321cel .c-h2{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-weight:900;font-size:40px;line-height:1.2;letter-spacing:3px;color:#fff;margin-top:6px;text-shadow:0 0 16px rgba(255,255,255,.6)}
+#k321cel .c-sub{margin-top:18px;font-size:18px;color:#D8E2F5;letter-spacing:1px}
+#k321cel .c-tap{margin-top:26px;font-size:14px;color:rgba(216,226,245,.6)}
 #k321gate .shake{animation:k321shake .4s}
 @keyframes k321shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
 #k321auth{margin-top:16px}
@@ -1302,14 +1311,79 @@ var K321_GATE = { hash: 'dbd788bb', key: 'k321_auth' };
     if (!lsSet(G.key, G.hash)) sessionOk = true;
     msg.className = 'g-msg ok'; msg.innerHTML = t.good;
     if (inp.blur) inp.blur();
-    setTimeout(function(){
+    setTimeout(function(){ celebrate(function(){
       if (langChanged) { location.reload(); return; }
       var el = document.getElementById('k321gate'); if (el && el.parentNode) el.parentNode.removeChild(el);
       root.className = root.className.replace(/\s*k321-locked/g, '');
       try { window.scrollTo(0, 0); window.dispatchEvent(new Event('resize')); } catch(x) {}
-    }, 700);
+    }); }, 450);
     return false;
   }
+  /* 開通慶祝：煙火＋「哈利路亞！開通了！」約 4 秒，點一下可略過 */
+  var CEL = {
+    'zh-Hant': ['哈利路亞！', '開通了！', '歡迎回家，願主賜福你每一天', '點一下進入'],
+    'zh-Hans': ['哈利路亚！', '开通了！', '欢迎回家，愿主赐福你每一天', '点一下进入'],
+    'en': ['Hallelujah!', 'You\u2019re in!', 'Welcome home \u2014 may the Lord bless your every day', 'Tap to enter']
+  };
+  function celebrate(done){
+    var L = CEL[lang()] || CEL['zh-Hant'], finished = false, raf = 0, timer = 0;
+    var ov = document.createElement('div'); ov.id = 'k321cel';
+    ov.innerHTML = '<canvas id="k321fw"></canvas><div class="c-box"><div class="c-h1">' + L[0] + '</div><div class="c-h2">' + L[1] + '</div><div class="c-sub">' + L[2] + '</div><div class="c-tap">' + L[3] + '</div></div>';
+    document.body.appendChild(ov);
+    var reduce = false; try { reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(x) {}
+    function end(){
+      if (finished) return; finished = true;
+      if (raf && window.cancelAnimationFrame) window.cancelAnimationFrame(raf);
+      clearTimeout(timer);
+      ov.className = 'out';
+      setTimeout(function(){ if (ov.parentNode) ov.parentNode.removeChild(ov); }, 450);
+      done();
+    }
+    ov.onclick = end;
+    timer = setTimeout(end, reduce ? 2600 : 4200);
+    setTimeout(function(){ ov.className = 'in'; }, 20);
+    try { if (navigator.vibrate) navigator.vibrate([60, 40, 90]); } catch(x) {}
+    var cv = document.getElementById('k321fw'), cx = cv && cv.getContext && cv.getContext('2d');
+    if (!cx || reduce || !window.requestAnimationFrame) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2), W = 0, H = 0;
+    function size(){ W = window.innerWidth; H = window.innerHeight; cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    size();
+    var COLORS = ['#F6D27A', '#FFE9A8', '#FFFFFF', '#E8B04A', '#FFB7C5', '#9AD1FF', '#C9F2C7', '#FFD36E'];
+    var rockets = [], sparks = [], t0 = new Date().getTime(), launched = 0;
+    function launch(){
+      var x = W * (0.18 + Math.random() * 0.64);
+      rockets.push({ x: x, y: H + 10, vx: (Math.random() - 0.5) * 1.2, vy: -(H * 0.0145 + Math.random() * 3.2), ty: H * (0.16 + Math.random() * 0.28), c: COLORS[(Math.random() * COLORS.length) | 0] });
+      launched++;
+    }
+    function burst(x, y, c){
+      var n = 70 + ((Math.random() * 40) | 0), ring = Math.random() < 0.35;
+      for (var i = 0; i < n; i++) {
+        var a = (Math.PI * 2 * i) / n + Math.random() * 0.08, sp = ring ? 4.2 : (1.2 + Math.random() * 4.2);
+        sparks.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, decay: 0.011 + Math.random() * 0.012, c: Math.random() < 0.25 ? '#FFFFFF' : c, s: 1.4 + Math.random() * 1.8 });
+      }
+    }
+    function frame(){
+      if (finished) return;
+      var el = new Date().getTime() - t0;
+      if (el < 3300 && launched < 9 && (launched === 0 || el > launched * 330 + Math.random() * 120)) launch();
+      cx.globalCompositeOperation = 'destination-out'; cx.fillStyle = 'rgba(0,0,0,0.22)'; cx.fillRect(0, 0, W, H);
+      cx.globalCompositeOperation = 'lighter';
+      for (var i = rockets.length - 1; i >= 0; i--) {
+        var r = rockets[i]; r.x += r.vx; r.y += r.vy; r.vy += 0.06;
+        cx.fillStyle = r.c; cx.beginPath(); cx.arc(r.x, r.y, 2.2, 0, Math.PI * 2); cx.fill();
+        if (r.y <= r.ty || r.vy >= -0.5) { burst(r.x, r.y, r.c); rockets.splice(i, 1); }
+      }
+      for (var j = sparks.length - 1; j >= 0; j--) {
+        var p = sparks[j]; p.vx *= 0.975; p.vy = p.vy * 0.975 + 0.045; p.x += p.vx; p.y += p.vy; p.life -= p.decay;
+        if (p.life <= 0) { sparks.splice(j, 1); continue; }
+        cx.globalAlpha = p.life; cx.fillStyle = p.c; cx.beginPath(); cx.arc(p.x, p.y, p.s, 0, Math.PI * 2); cx.fill();
+      }
+      cx.globalAlpha = 1;
+      raf = window.requestAnimationFrame(frame);
+    }
+    raf = window.requestAnimationFrame(frame);
+  }
+  G.celebrate = celebrate;
   G.lock = function(){ lsDel(G.key); sessionOk = false; location.reload(); };
   /* 同工產生器只在網址加上 ?staff321 時顯示；同一個分頁內記住（sessionStorage），關掉分頁就隱藏 */
   function staff(){
@@ -21830,7 +21904,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610152349';
+var APPVER = '4.0.202610160533';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -23667,6 +23741,6 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202610152349";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202610160533";</script>
 </body>
 </html>
