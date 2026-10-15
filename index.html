@@ -1273,6 +1273,13 @@ var K321_GATE = { hash: 'dbd788bb', key: 'k321_auth' };
     return false;
   }
   G.lock = function(){ lsDel(G.key); sessionOk = false; location.reload(); };
+  /* 同工產生器只在網址加上 ?staff321 時顯示；同一個分頁內記住（sessionStorage），關掉分頁就隱藏 */
+  function staff(){
+    var on = /[?&]staff321(?:[=&]|$)/.test(location.search);
+    try { if (on) window.sessionStorage.setItem('k321_staff', '1'); else on = window.sessionStorage.getItem('k321_staff') === '1'; } catch(e) {}
+    return on;
+  }
+  var STAFF = staff();
 
   if (!G.ok()) {
     root.className += ' k321-locked';
@@ -1294,10 +1301,10 @@ var K321_GATE = { hash: 'dbd788bb', key: 'k321_auth' };
     box.innerHTML =
       '<div class="fsrow ka-row"><div>' + t.sTitle + '</div><span class="ka-ok">' + t.sOk + '</span></div>' +
       '<div style="margin-top:10px"><button type="button" id="k321relock">' + t.sRe + '</button></div>' +
-      '<details><summary>' + t.sGen + '</summary><div class="ka-gen"><input id="k321new" type="text" autocomplete="off" placeholder="' + t.sGenPh + '"><button type="button" id="k321mk">' + t.sGenBtn + '</button></div>' +
-      '<div class="ka-out" id="k321out"></div><p class="note" style="margin-top:6px">' + t.sGenNote + '</p></details>';
+      (STAFF ? '<details open><summary>' + t.sGen + '</summary><div class="ka-gen"><input id="k321new" type="text" autocomplete="off" placeholder="' + t.sGenPh + '"><button type="button" id="k321mk">' + t.sGenBtn + '</button></div>' +
+      '<div class="ka-out" id="k321out"></div><p class="note" style="margin-top:6px">' + t.sGenNote + '</p></details>' : '');
     document.getElementById('k321relock').onclick = function(){ if (window.confirm(tx().sConfirm)) G.lock(); };
-    document.getElementById('k321mk').onclick = function(){ var c = norm(document.getElementById('k321new').value); document.getElementById('k321out').innerHTML = c ? (tx().sGenOut + '<b>' + fnv(c) + '</b>（' + c + '）') : ''; };
+    if (STAFF) document.getElementById('k321mk').onclick = function(){ var c = norm(document.getElementById('k321new').value); document.getElementById('k321out').innerHTML = c ? (tx().sGenOut + '<b>' + fnv(c) + '</b>（' + c + '）') : ''; };
   }
   function hook(){
     setBlock();
@@ -21578,7 +21585,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610151652';
+var APPVER = '4.0.202610152157';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
