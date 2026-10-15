@@ -1166,6 +1166,148 @@ input,textarea,select{min-width:0;max-width:100%;}
 </style>
 </head>
 <body>
+<style id="k321gateCss">
+html.k321-locked,html.k321-locked body{overflow:hidden!important;height:100%}
+html.k321-locked body>*:not(#k321gate){visibility:hidden!important;pointer-events:none!important}
+#k321gate{position:fixed;top:0;right:0;bottom:0;left:0;z-index:2147483000;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#12233F;background:radial-gradient(ellipse at 50% 18%,#1E4A9A 0%,#12306B 45%,#0A1A3C 100%);color:#fff;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;display:flex;flex-direction:column;align-items:center;padding:max(28px,env(safe-area-inset-top)) 22px max(28px,env(safe-area-inset-bottom));box-sizing:border-box}
+#k321gate *{box-sizing:border-box}
+#k321gate .g-lang{display:flex;gap:8px;align-self:flex-end;margin-bottom:6px}
+#k321gate .g-lang button{background:transparent;color:#D8E2F5;border:1.5px solid rgba(232,200,119,.55);border-radius:20px;padding:5px 13px;font-size:15px;font-weight:700}
+#k321gate .g-lang button.on{background:#E8C877;color:#0A1A3C;border-color:#E8C877}
+#k321gate .g-icon{width:112px;height:112px;border-radius:26px;margin:14px 0 18px;box-shadow:0 12px 30px rgba(0,0,0,.45),0 0 40px rgba(232,200,119,.25)}
+#k321gate h1{font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-weight:900;font-size:30px;letter-spacing:2px;margin:0;text-align:center;line-height:1.25}
+#k321gate .g-sub{color:#E8C877;font-size:19px;margin:10px 0 24px;text-align:center;letter-spacing:1px}
+#k321gate .g-card{width:100%;max-width:420px;background:rgba(255,255,255,.97);color:#1D2433;border-radius:22px;padding:22px 20px 20px;box-shadow:0 14px 36px rgba(0,0,0,.35)}
+#k321gate label{display:block;font-size:19px;font-weight:800;color:#12285C;margin-bottom:10px;text-align:center}
+#k321gate input{width:100%;font-size:30px;font-weight:800;letter-spacing:6px;text-align:center;padding:14px 10px;border:2px solid #C9D3E6;border-radius:14px;color:#12285C;background:#F6F8FC;outline:none;-webkit-appearance:none}
+#k321gate input::placeholder{font-size:19px;letter-spacing:1px;font-weight:600;color:#8A93A6}
+#k321gate input::-webkit-input-placeholder{font-size:19px;letter-spacing:1px;font-weight:600;color:#8A93A6}
+#k321gate input:focus{border-color:#C9A04A;background:#fff}
+#k321gate .g-btn{width:100%;margin-top:16px;border:none;border-radius:14px;padding:16px;font-size:21px;font-weight:800;color:#fff;background:linear-gradient(135deg,#D9B25C,#9A7426);box-shadow:0 6px 14px rgba(154,116,38,.35)}
+#k321gate .g-btn:active{transform:translateY(1px)}
+#k321gate .g-msg{min-height:26px;margin-top:12px;text-align:center;font-size:17px;font-weight:700;color:#B42318}
+#k321gate .g-msg.ok{color:#2F7D32}
+#k321gate .g-help{margin-top:6px;font-size:16px;line-height:1.6;color:#4A5468;text-align:center}
+#k321gate .g-verse{max-width:420px;margin-top:22px;text-align:center;color:#D8E2F5;font-size:16px;line-height:1.7}
+#k321gate .g-verse b{display:block;color:#E8C877;font-weight:600;font-size:14px;margin-top:2px}
+#k321gate .shake{animation:k321shake .4s}
+@keyframes k321shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+#k321auth{margin-top:16px}
+#k321auth .ka-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+#k321auth .ka-ok{color:#2F7D32;font-weight:800}
+#k321auth button{border:1.5px solid #C9A04A;background:transparent;color:#9A7426;border-radius:12px;padding:7px 14px;font-weight:700;font-size:15px}
+#k321auth details{margin-top:12px;font-size:14px}
+#k321auth summary{cursor:pointer;color:#6B7486}
+#k321auth .ka-gen{display:flex;gap:8px;margin-top:8px}
+#k321auth .ka-gen input{flex:1;min-width:0;font-size:16px;padding:8px 10px;border:1.5px solid #C9D3E6;border-radius:10px}
+#k321auth .ka-out{margin-top:8px;font-family:monospace;font-size:15px;word-break:break-all;color:#12285C}
+</style>
+<script>
+/* 國度321空中團契 · 授權碼開通（ES5）
+   ‧ 雜湊方式與 321學神院 相同：fnv('321|' + 正規化後代碼)，正規化 = 去空白與連字號、轉大寫
+   ‧ 更換授權碼：到「設定 → 授權碼 → 同工專用」產生新雜湊值，替換下面 K321_GATE.hash（舊的開通會失效，需要重新輸入）*/
+var K321_GATE = { hash: 'dbd788bb', key: 'k321_auth' };
+(function(){
+  var G = K321_GATE, sessionOk = false;
+  function lsGet(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } }
+  function lsSet(k,v){ try{ window.localStorage.setItem(k,v); return true; }catch(e){ return false; } }
+  function lsDel(k){ try{ window.localStorage.removeItem(k); }catch(e){} }
+  function fnv(str){ var h = 0x811c9dc5; str = unescape(encodeURIComponent('321|' + str)); for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0; } return ('0000000' + h.toString(16)).slice(-8); }
+  function norm(s){ return String(s || '').replace(/[\s\-－—_]/g, '').toUpperCase(); }
+  G.fnv = fnv; G.norm = norm;
+  G.ok = function(){ return sessionOk || lsGet(G.key) === G.hash; };
+  var TX = {
+    'zh-Hant': { title:'國度321空中團契', sub:'請輸入授權碼開通 App', label:'授權碼', ph:'請輸入授權碼', btn:'開通', empty:'請先輸入授權碼', bad:'授權碼不正確，請再確認一次', bad3:'授權碼還是不正確。請向邀請你的同工確認。', good:'開通成功，感謝主！', help:'還沒有授權碼？<br>請向邀請你的同工、小家長或空中團契服侍團隊索取。', verse:'「看哪，弟兄和睦同居是何等地善，何等地美！」', ref:'詩篇 133:1',
+      sTitle:'授權碼', sOk:'✓ 這支手機已開通', sRe:'重新輸入授權碼', sConfirm:'確定要讓這支手機回到未開通狀態嗎？之後要再輸入授權碼才能使用。', sGen:'同工專用：更換授權碼', sGenPh:'輸入新的授權碼', sGenBtn:'產生雜湊值', sGenOut:'新雜湊值：', sGenNote:'把這組雜湊值交給 App 維護同工，替換 index.html 裡的 K321_GATE.hash。換了之後，所有手機都要重新輸入新的授權碼。' },
+    'zh-Hans': { title:'国度321空中团契', sub:'请输入授权码开通 App', label:'授权码', ph:'请输入授权码', btn:'开通', empty:'请先输入授权码', bad:'授权码不正确，请再确认一次', bad3:'授权码还是不正确。请向邀请你的同工确认。', good:'开通成功，感谢主！', help:'还没有授权码？<br>请向邀请你的同工、小家长或空中团契服侍团队索取。', verse:'「看哪，弟兄和睦同居是何等地善，何等地美！」', ref:'诗篇 133:1',
+      sTitle:'授权码', sOk:'✓ 这部手机已开通', sRe:'重新输入授权码', sConfirm:'确定要让这部手机回到未开通状态吗？之后要再输入授权码才能使用。', sGen:'同工专用：更换授权码', sGenPh:'输入新的授权码', sGenBtn:'产生哈希值', sGenOut:'新哈希值：', sGenNote:'把这组哈希值交给 App 维护同工，替换 index.html 里的 K321_GATE.hash。换了之后，所有手机都要重新输入新的授权码。' },
+    'en': { title:'Kingdom 321 Online Fellowship', sub:'Enter your access code to activate the app', label:'Access code', ph:'Enter access code', btn:'Activate', empty:'Please enter the access code', bad:'That code isn’t right — please check and try again', bad3:'Still not right. Please check with the co-worker who invited you.', good:'Activated — thank God!', help:'Don’t have a code yet?<br>Ask the co-worker or small-group leader who invited you, or the fellowship’s serving team.', verse:'“See how good and how pleasant it is for brothers to live together in unity!”', ref:'Psalm 133:1',
+      sTitle:'Access code', sOk:'✓ Activated on this phone', sRe:'Enter the code again', sConfirm:'Return this phone to the not-activated state? The access code will be needed again.', sGen:'For co-workers: change the access code', sGenPh:'New access code', sGenBtn:'Make hash', sGenOut:'New hash: ', sGenNote:'Give this hash to the app maintainer to replace K321_GATE.hash in index.html. After the change, every phone must enter the new code.' }
+  };
+  function lang(){ var l = lsGet('k321_lang'); return TX[l] ? l : 'zh-Hant'; }
+  function tx(){ return TX[lang()]; }
+  G.tx = tx;
+  var root = document.documentElement, langChanged = false, fails = 0;
+
+  function render(){
+    var t = tx(), L = lang(), el = document.getElementById('k321gate');
+    if (!el) return;
+    el.innerHTML =
+      '<div class="g-lang">' +
+        '<button type="button" data-gl="zh-Hant" class="' + (L === 'zh-Hant' ? 'on' : '') + '">繁</button>' +
+        '<button type="button" data-gl="zh-Hans" class="' + (L === 'zh-Hans' ? 'on' : '') + '">简</button>' +
+        '<button type="button" data-gl="en" class="' + (L === 'en' ? 'on' : '') + '">EN</button></div>' +
+      '<img class="g-icon" src="icon-192.png?v=3" alt="">' +
+      '<h1>' + t.title + '</h1><div class="g-sub">' + t.sub + '</div>' +
+      '<form class="g-card" id="k321form" autocomplete="off">' +
+        '<label for="k321code">' + t.label + '</label>' +
+        '<input id="k321code" type="text" inputmode="numeric" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" maxlength="16" placeholder="' + t.ph + '">' +
+        '<button class="g-btn" type="submit">' + t.btn + '</button>' +
+        '<div class="g-msg" id="k321msg"></div>' +
+        '<div class="g-help">' + t.help + '</div></form>' +
+      '<div class="g-verse">' + t.verse + '<b>' + t.ref + '</b></div>';
+    var bs = el.querySelectorAll('[data-gl]');
+    for (var i = 0; i < bs.length; i++) bs[i].onclick = function(){ var v = this.getAttribute('data-gl'); if (v !== lang()) { lsSet('k321_lang', v); langChanged = true; render(); } };
+    document.getElementById('k321form').onsubmit = submit;
+  }
+  function submit(e){
+    if (e && e.preventDefault) e.preventDefault();
+    var t = tx(), inp = document.getElementById('k321code'), msg = document.getElementById('k321msg'), card = document.getElementById('k321form');
+    var code = norm(inp.value);
+    msg.className = 'g-msg';
+    if (!code) { msg.innerHTML = t.empty; inp.focus(); return false; }
+    if (fnv(code) !== G.hash) {
+      fails++; msg.innerHTML = fails >= 3 ? t.bad3 : t.bad;
+      card.className = 'g-card'; void card.offsetWidth; card.className = 'g-card shake';
+      inp.select(); return false;
+    }
+    if (!lsSet(G.key, G.hash)) sessionOk = true;
+    msg.className = 'g-msg ok'; msg.innerHTML = t.good;
+    if (inp.blur) inp.blur();
+    setTimeout(function(){
+      if (langChanged) { location.reload(); return; }
+      var el = document.getElementById('k321gate'); if (el && el.parentNode) el.parentNode.removeChild(el);
+      root.className = root.className.replace(/\s*k321-locked/g, '');
+      try { window.scrollTo(0, 0); window.dispatchEvent(new Event('resize')); } catch(x) {}
+    }, 700);
+    return false;
+  }
+  G.lock = function(){ lsDel(G.key); sessionOk = false; location.reload(); };
+
+  if (!G.ok()) {
+    root.className += ' k321-locked';
+    var el = document.createElement('div'); el.id = 'k321gate'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+    document.body.insertBefore(el, document.body.firstChild);
+    render();
+  }
+
+  /* 設定頁：授權碼狀態、重新輸入、同工產生器 */
+  function setBlock(){
+    var panel = document.querySelector('#setSheet .panel'); if (!panel) return;
+    var box = document.getElementById('k321auth');
+    if (!box) {
+      box = document.createElement('div'); box.id = 'k321auth';
+      var foot = document.getElementById('setFooter'), hr = foot && foot.previousElementSibling;
+      panel.insertBefore(box, (hr && hr.tagName === 'HR') ? hr : foot);
+    }
+    var t = tx();
+    box.innerHTML =
+      '<div class="fsrow ka-row"><div>' + t.sTitle + '</div><span class="ka-ok">' + t.sOk + '</span></div>' +
+      '<div style="margin-top:10px"><button type="button" id="k321relock">' + t.sRe + '</button></div>' +
+      '<details><summary>' + t.sGen + '</summary><div class="ka-gen"><input id="k321new" type="text" autocomplete="off" placeholder="' + t.sGenPh + '"><button type="button" id="k321mk">' + t.sGenBtn + '</button></div>' +
+      '<div class="ka-out" id="k321out"></div><p class="note" style="margin-top:6px">' + t.sGenNote + '</p></details>';
+    document.getElementById('k321relock').onclick = function(){ if (window.confirm(tx().sConfirm)) G.lock(); };
+    document.getElementById('k321mk').onclick = function(){ var c = norm(document.getElementById('k321new').value); document.getElementById('k321out').innerHTML = c ? (tx().sGenOut + '<b>' + fnv(c) + '</b>（' + c + '）') : ''; };
+  }
+  function hook(){
+    setBlock();
+    var sb = document.getElementById('setBtn'); if (sb) sb.addEventListener('click', function(){ setTimeout(setBlock, 0); });
+    var lo = document.getElementById('langOpts'); if (lo) lo.addEventListener('click', function(){ setTimeout(setBlock, 60); });
+  }
+  if (document.readyState !== 'loading') hook(); else document.addEventListener('DOMContentLoaded', hook);
+})();
+</script>
+
 <div id="app">
   <header class="appbar">
     <button class="iconbtn" id="backBtn" aria-label="返回" style="display:none">
@@ -21433,7 +21575,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610150800';
+var APPVER = '4.0.202610151623';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
