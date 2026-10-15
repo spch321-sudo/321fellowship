@@ -1173,6 +1173,34 @@ input,textarea,select{min-width:0;max-width:100%;}
 #nadmModal h3{margin:0 0 12px}#nadmModal .fld{display:block;margin-bottom:10px}#nadmModal .fld span{display:block;font-weight:700;margin-bottom:4px}
 #nadmModal input[type=text],#nadmModal input[type=url],#nadmModal input[type=date],#nadmModal input[type=password],#nadmModal select,#nadmModal textarea{width:100%;box-sizing:border-box;font-size:16px;padding:10px;border:1.5px solid #C9D3E6;border-radius:10px;background:#fff;color:#1D2433}
 #nadmModal .nm-btns{display:flex;gap:10px;margin-top:14px}#nadmModal .nm-btns .btn{flex:1}
+
+.newshero{position:relative;margin:4px 0 18px;padding:18px 18px 8px;border-radius:22px;
+  background:linear-gradient(160deg,#FFFBF0 0%,#FBF0D4 55%,#F3DFA9 100%);
+  border:1px solid rgba(184,134,11,.35);box-shadow:0 10px 26px rgba(150,110,20,.16),inset 0 1px 0 rgba(255,255,255,.8);color:#2A2210;overflow:hidden}
+.newshero:before{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.7),rgba(255,255,255,0) 70%);pointer-events:none}
+.nh-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.nh-badge{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,#D9B25C,#9A7426);color:#fff;box-shadow:0 2px 6px rgba(154,116,38,.4)}
+.nh-badge svg{width:16px;height:16px}
+.nh-h{font-weight:800;letter-spacing:.32em;color:#8A6416;font-size:calc(14px * var(--fs))}
+.newshero .nh-count{margin-left:auto;background:#12233F!important;color:#F2D68E!important;min-width:24px;height:24px;padding:0 7px;border-radius:12px;background:#12233F;color:#F2D68E;
+  font-size:calc(12px * var(--fs));font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.nh-item{position:relative;padding:14px 0 14px;border-top:1px dashed rgba(154,116,38,.35)}
+.nh-item.first{border-top:none;padding-top:6px}
+.nh-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.nh-kind{font-size:calc(12px * var(--fs));font-weight:800;padding:3px 10px;border-radius:999px;background:#12233F;color:#F2D68E;letter-spacing:.08em}
+.nh-kind.k-meet{background:#1E5BB8;color:#fff}.nh-kind.k-event{background:#B5502A;color:#fff}.nh-kind.k-pray{background:#3F7A4A;color:#fff}
+.nh-date{font-size:calc(13px * var(--fs));color:#8A6416;font-weight:700}
+.nh-pin{font-size:calc(13px * var(--fs))}
+.nh-title{margin:2px 0 6px;font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-weight:900;color:#12233F;
+  font-size:calc(21px * var(--fs));line-height:1.35;letter-spacing:.02em}
+.nh-item:not(.first) .nh-title{font-size:calc(18px * var(--fs))}
+.nh-body{margin:0;white-space:pre-line;color:#3A3220;font-size:calc(16px * var(--fs));line-height:1.75}
+.nh-link{display:inline-flex;align-items:center;gap:4px;margin-top:10px;padding:8px 16px;border-radius:999px;
+  background:#12233F;color:#F2D68E!important;font-weight:800;text-decoration:none;font-size:calc(14px * var(--fs))}
+.newshero .nadmbar{margin:6px 0 4px}.newshero .nadmbar .note{color:#8A6416}
+.newshero .nadmrow .btn{background:rgba(255,255,255,.7)}
 </style>
 </head>
 <body>
@@ -17294,6 +17322,7 @@ function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
 
 /* ---- 圖示 ---- */
 var IC = {
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
   home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
   book:'<path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M18 3v18"/>',
   seed:'<path d="M12 22c5-2 8-6 8-12 0 0-6 1-8 5-2-4-8-5-8-5 0 6 3 10 8 12z"/>',
@@ -19008,16 +19037,29 @@ var PAGES = {
       q("give",esc(f9("奉獻","Give")),"meet",null)+
       q("heart",esc(f9("新朋友","New Friend")),"newfriend",null)+'</div>';
 
-    var NL = newsList();
-    var news = newsTop() + (NL.length ?
-      NL.map(function(a){
-        var en = curLang()==="en";
+    var NL = newsList(), news = "";
+    if (NL.length || nAdm()) {
+      var en = curLang()==="en";
+      var KL = { news:f9("公告","Notice"), meet:f9("聚會","Meeting"), event:f9("活動","Event"), pray:f9("代禱","Prayer") };
+      var md = function(dt){ var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(dt||""); return m ? (en ? (+m[2])+"/"+(+m[3]) : (+m[2])+"月"+(+m[3])+"日") : (dt||""); };
+      var items = NL.map(function(a, ix){
         var ti = (en && a.title_en) ? a.title_en : a.title, bo = (en && a.body_en) ? a.body_en : a.body;
-        return '<div class="card newscard">'+(a.date?'<div class="newsdate">'+esc(a.date)+'</div>':'')+
-          '<h3>'+esc(ti||"")+'</h3>'+(bo?'<p style="white-space:pre-line">'+esc(bo)+'</p>':'')+
-          (a.link?'<a class="newslink" href="'+esc(safeUrl(a.link))+'" target="_blank" rel="noopener">'+esc((en&&a.link_text_en)?a.link_text_en:(a.link_text||f9("查看詳情 ›","Details ›")))+'</a>':'')+newsCardTail(a)+'</div>';
-      }).join("")
-      : slot(esc(f9("目前沒有新消息。","No news right now."))+'<br>'+esc(f9("營會、專題、代禱事項將顯示在這裡。","Camps, special topics and prayer requests will appear here."))));
+        return '<article class="nh-item'+(ix===0?' first':'')+'">'+
+          '<div class="nh-meta">'+(a.top?'<span class="nh-pin">\ud83d\udccc</span>':'')+
+            '<span class="nh-kind k-'+esc(a.kind||"news")+'">'+esc(KL[a.kind]||KL.news)+'</span>'+
+            (a.date?'<span class="nh-date">'+esc(md(a.date))+'</span>':'')+'</div>'+
+          (ti?'<h3 class="nh-title">'+esc(ti)+'</h3>':'')+
+          (bo?'<p class="nh-body">'+esc(bo)+'</p>':'')+
+          (a.link?'<a class="nh-link" href="'+esc(safeUrl(a.link))+'" target="_blank" rel="noopener">'+esc((en&&a.link_text_en)?a.link_text_en:(a.link_text||f9("查看詳情","Details")))+' \u203a</a>':'')+
+          newsCardTail(a)+'</article>';
+      }).join("");
+      news = '<section class="newshero">'+
+        '<div class="nh-head"><span class="nh-badge">'+icon("bell",16)+'</span>'+
+          '<span class="nh-h">'+esc(f9("最 新 消 息","LATEST NEWS"))+'</span>'+
+          (NL.length>1?'<span class="nh-count">'+NL.length+'</span>':'')+'</div>'+
+        newsTop() + items +
+      '</section>';
+    }
 
     var vc=(window.APP_CONFIG&&window.APP_CONFIG.verseChannelUrl)||"";
     var remind = vc ?
@@ -19039,7 +19081,7 @@ var PAGES = {
         (nurl?'<span class="chev">'+icon("chev",20)+'</span>':'')+
       '</'+(nurl?'a':'div')+'>';
     }
-    return verse + nrow + remind +
+    return news + verse + nrow + remind +
       sect("識",f9("認識我們","About Us"))+
       '<div class="card" style="padding:6px">'+
         rowlink("home",f9("認識我們","About Us"),
@@ -19048,8 +19090,7 @@ var PAGES = {
       sect("路",f9("成長之路","The Road of Growth"))+
       '<div class="card" style="padding:8px 8px 4px">'+stations+'</div>'+
       '<p class="note center">'+esc(f9("由內而外五重的改變 · 一步一步走上這條路","The five-fold change from the inside out \u00b7 one step at a time"))+'</p>'+
-      sect("捷",f9("快速前往","Quick Links"))+ quick +
-      sect("訊",f9("最新消息","Latest News"))+ news;
+      sect("捷",f9("快速前往","Quick Links"))+ quick;
   },
 
   /* 觀念層：只放「我們相信什麼、怎麼落實」。
@@ -21787,7 +21828,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610152222';
+var APPVER = '4.0.202610152328';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -23624,6 +23665,6 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202610152222";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202610152328";</script>
 </body>
 </html>
