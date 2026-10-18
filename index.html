@@ -19027,12 +19027,12 @@ var APP_VIEW=null, APP_VIEW_FROM="resources";
 function openApp(i){
   var list=(D.ecosystem||[]);
   if(!list[i]) return;
-  APP_VIEW=i;
+  APP_VIEW=i; try{ sessionStorage.setItem('k321_appview', String(i)); }catch(e){}
   APP_VIEW_FROM = (CUR_ROUTE && CUR_ROUTE!=="appview") ? CUR_ROUTE : "resources";
   try{ k3track("app_open"); }catch(e){}
   go("appview");
 }
-function closeApp(){ APP_VIEW=null; go(APP_VIEW_FROM||"resources"); }
+function closeApp(){ APP_VIEW=null; try{ sessionStorage.removeItem('k321_appview'); }catch(e){} go(APP_VIEW_FROM||"resources"); }
 
 var PAGES = {
 
@@ -19788,6 +19788,8 @@ function renderTabs(active){
 var TAB_ROUTES={home:1,resources:1,apps:1,meet:1,newfriend:1,more:1};
 function go(route){ if(location.hash!=="#/"+route) location.hash="#/"+route; else render(route); }
 function currentRoute(){ var h=location.hash.replace(/^#\//,"");
+  /* 內嵌 App 開著時頁面重新載入（自動更新等）：把剛才開的那個 App 接回來，留在原 App，不要跳回團契首頁 */
+  if(h==="appview" && APP_VIEW===null){ try{ var q=sessionStorage.getItem("k321_appview"); if(q!==null && q!=="" && !isNaN(+q)) APP_VIEW=+q; }catch(e){} }
   /* 重新載入後 APP_VIEW 已遺失（自動更新、開通授權碼後）：不要停在空白的內嵌檢視，回首頁 */
   if(h==="appview" && (APP_VIEW===null || !((D&&D.ecosystem)||[])[APP_VIEW])){ try{ history.replaceState(null,"",location.pathname+location.search+"#/home"); }catch(e){} return "home"; }
   return PAGES[h]?h:"home"; }
@@ -21904,7 +21906,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610160533';
+var APPVER = '4.0.202610182045';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -23416,7 +23418,7 @@ function BUSY_OTHER() {
   return !!(rec || aic.busy || (PL && !PL.done) || rwShowing || document.getElementById('hsheet') || typing ||
     (document.getElementById('studioOv') && document.getElementById('studioOv').className.indexOf('open') >= 0));
 }
-function updBusy() { return !!(BUSY || spk.on || sayKey || BUSY_OTHER()); }
+function updBusy() { return !!(BUSY || spk.on || sayKey || BUSY_OTHER() || CUR_ROUTE === 'appview'); }
 
 /* ---------- 字級四段、主題四種 ---------- */
 var FS_LEVELS = ['1', '1.2', '1.45', '1.7'];
