@@ -19066,7 +19066,7 @@ var PAGES = {
            朗讀（雲端真人語音）需要 autoplay，缺了它 iOS 會退回裝置內建聲音。 */
         '<iframe id="appFrame" src="'+esc(url)+'" title="'+esc(a.name)+'" '+
           'allow="autoplay *; clipboard-read *; clipboard-write *; encrypted-media *; '+
-          'fullscreen *; microphone *; speaker-selection *; screen-wake-lock *" '+
+          'fullscreen *; camera *; microphone *; speaker-selection *; screen-wake-lock *; display-capture *" '+
           'allowfullscreen '+
           'referrerpolicy="strict-origin-when-cross-origin"></iframe>'+
       '</div>'+
@@ -21906,7 +21906,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610182045';
+var APPVER = '4.0.202610182100';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
