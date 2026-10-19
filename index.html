@@ -1201,6 +1201,16 @@ input,textarea,select{min-width:0;max-width:100%;}
   background:#12233F;color:#F2D68E!important;font-weight:800;text-decoration:none;font-size:calc(14px * var(--fs))}
 .newshero .nadmbar{margin:6px 0 4px}.newshero .nadmbar .note{color:#8A6416}
 .newshero .nadmrow .btn{background:rgba(255,255,255,.7)}
+.homemeet{margin:0 0 18px}
+.homemeet .hm-card{background:#fff;border:1px solid rgba(201,160,74,.28);border-radius:20px;padding:12px;margin-bottom:14px;box-shadow:0 4px 14px rgba(18,35,63,.07)}
+.homemeet .hm-btn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;border-radius:14px;background:#1D3A86;color:#fff!important;
+  font-weight:800;font-size:calc(18px * var(--fs));letter-spacing:1px;text-decoration:none;cursor:pointer;box-shadow:0 4px 12px rgba(29,58,134,.28)}
+.homemeet .hm-btn:active{transform:translateY(1px)}
+.homemeet .hm-btn svg{flex:none}
+.homemeet .nextmtg{margin-bottom:0}
+.homemeet .nextmtg h4{color:#fff!important}
+.homemeet .nextmtg .btn{display:block;text-align:center;font-size:calc(18px * var(--fs));font-weight:800;min-height:54px;line-height:54px;padding:0 14px;border-radius:14px;color:#fff!important;text-decoration:none}
+html[data-theme="dark"] .homemeet .hm-card{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
 </style>
 </head>
 <body>
@@ -18972,6 +18982,13 @@ window.aicSpeakToggle=function(text,id){
 
 /* 聚會時間表：一律顯示「你的時間」，並附上基準時區的原始時刻 */
 function meetLink(mt,fallback){ return (mt && mt.link) ? mt.link : (fallback||""); }
+/* 首頁：最新消息下方的「聚會時間與奉獻支持」＋「下一堂／一鍵加入聚會」（同《321互動聖經》） */
+function homeMeet(zurl){
+  return '<div class="homemeet">'+
+    '<div class="hm-card"><a class="hm-btn" data-route="meet">'+icon("zoom",20)+'<span>'+esc(f9("聚會時間與奉獻支持","Meetings & Giving"))+'</span></a></div>'+
+    renderNextCard(zurl)+
+  '</div>';
+}
 function renderNextCard(zurl){
   if(!TZ_OK) return "";
   var o=nextMeeting();
@@ -19155,7 +19172,7 @@ var PAGES = {
         (nurl?'<span class="chev">'+icon("chev",20)+'</span>':'')+
       '</'+(nurl?'a':'div')+'>';
     }
-    return news + verse + nrow + remind +
+    return news + homeMeet(zoomUrl) + verse + remind +
       sect("識",f9("認識我們","About Us"))+
       '<div class="card" style="padding:6px">'+
         rowlink("home",f9("認識我們","About Us"),
@@ -21906,7 +21923,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610182100';
+var APPVER = '4.0.202610200030';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -23743,6 +23760,6 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202610160533";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202610200030";</script>
 </body>
 </html>
