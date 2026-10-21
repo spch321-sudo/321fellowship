@@ -326,6 +326,20 @@ body.embedmode #view{ padding:0 !important; margin:0 !important; }
 .remindcard .rt{flex:1;}
 .remindcard .rt b{display:block;color:var(--head);font-size:calc(16px * var(--fs));}
 .remindcard .rt span{color:var(--muted);font-size:calc(13px * var(--fs));}
+.cohort7{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:0 0 16px;}
+.cohort7 .c7-head{font-weight:800;font-size:1.02em;color:var(--navy,#1B2A4A);margin-bottom:4px;}
+.cohort7 .c7-sub{font-size:.88em;color:var(--muted,#6b6b6b);line-height:1.6;margin-bottom:8px;}
+.cohort7 .c7-pill{display:inline-block;background:#F3EAD3;color:#8a6d1f;border-radius:999px;padding:3px 11px;font-size:.8em;font-weight:700;}
+.cohort7 .c7-now{font-weight:800;font-size:1.05em;margin:8px 0;line-height:1.5;}
+.cohort7 .c7-go{width:100%;border:none;border-radius:11px;background:var(--navy,#1B2A4A);color:#fff;font-size:1em;font-weight:700;padding:11px;cursor:pointer;}
+.cohort7 .c7-go.done{background:#EDE7DA;color:var(--navy,#1B2A4A);}
+.cohort7 .c7-week{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.cohort7 .c7-wk{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:.9em;cursor:pointer;}
+.cohort7 .c7-wk.now{border-color:var(--navy,#1B2A4A);background:#F6F1E6;}
+.cohort7 .c7-wk .d{white-space:nowrap;color:var(--muted,#6b6b6b);font-size:.88em;min-width:78px;}
+.cohort7 .c7-wk .t{flex:1;}
+.cohort7 .c7-wk .c{font-weight:800;color:var(--navy,#1B2A4A);}
+.cohort7 .c7-next{font-size:.85em;color:var(--muted,#6b6b6b);margin-top:6px;}
 .rescard{position:relative;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:14px 14px;margin-bottom:12px;}
 .rescard b{display:block;color:var(--head);font-size:calc(17px * var(--fs));font-family:var(--font-display);line-height:1.4;padding-right:70px;}
 .rescard .resmeta{color:var(--muted);font-size:calc(13px * var(--fs));margin-top:3px;}
@@ -18291,6 +18305,60 @@ function resMatch(r){
   if(hay.toLowerCase().indexOf(q.toLowerCase())>-1) return true;
   return hanNormalize(hay).indexOf(hanNormalize(q))>-1;
 }
+/* ── 晨讀進度：國度321空中團契第七期，2026-10-19（週一）開始，每週一、三、五各一課（台北時間），
+      共 173 堂（第三課、第六課的上、下各算一堂）；與「晨讀321」「落實321」同一套進度 ── */
+var COHORT7={start:Date.UTC(2026,9,19)/86400000,days:[1,3,5],
+  parts:{3:[["建立屬神體系","Establish God’s System"],["耶穌是我的榜樣","Jesus Is My Role Model"]],
+         6:[["讓耶穌作王","Let Jesus Be King"],["讓耶穌得著一切的榮耀","Let Jesus Receive All the Glory"]]}};
+function chTpeDay(){ return Math.floor((new Date().getTime()+8*3600000)/86400000); }
+function chDow7(d){ return (d+4)%7; }
+function chIsClass7(d){ return COHORT7.days.indexOf(chDow7(d))>=0; }
+function chSession7(d){ var n=0; for(var x=COHORT7.start;x<=d;x++){ if(chIsClass7(x)) n++; } return n; }
+function chDayOf7(k){ var n=0; for(var x=COHORT7.start;x<COHORT7.start+2000;x++){ if(chIsClass7(x)){ n++; if(n===k) return x; } } return COHORT7.start; }
+function chSessions7(){
+  var out=[];
+  for(var n=1;n<=171;n++){
+    var p=COHORT7.parts[n];
+    if(p){ out.push({n:n,part:1,zh:p[0][0],en:p[0][1]}); out.push({n:n,part:2,zh:p[1][0],en:p[1][1]}); }
+    else { var r=resById("L"+(n<10?"00":(n<100?"0":""))+n); var zt=r?String(r.title||"").replace(/^第\s*\d+\s*課[\s\u3000]*/,""):""; out.push({n:n,part:0,zh:zt,en:lessonTitleOf(n,zt)}); }
+  }
+  return out;
+}
+function chLabel7(x){
+  if(curLang()==="en") return "Lesson "+x.n+(x.part?" (Part "+x.part+")":"");
+  return f9("第"+x.n+"課"+(x.part?(x.part===1?"上":"下"):""),"");
+}
+function chTitle7(x){ return curLang()==="en" ? (x.en||x.zh) : f9(x.zh,x.zh); }
+function chDate7(d){
+  var t=new Date(d*86400000), w=chDow7(d);
+  if(curLang()==="en") return ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][w]+" "+(t.getUTCMonth()+1)+"/"+t.getUTCDate();
+  return (t.getUTCMonth()+1)+"/"+t.getUTCDate()+f9("（週"+"日一二三四五六".charAt(w)+"）","");
+}
+function cohortCardHTML(){
+  var ss=chSessions7(), total=ss.length, today=chTpeDay(), k=chSession7(today);
+  var h='<div class="cohort7"><div class="c7-head">👥 '+esc(f9("晨讀進度","Morning Devotion pace"))+'</div>'+
+    '<div class="c7-sub">'+esc(f9("照著國度321空中團契第七期的進度：10月19日開始，每週一、三、五各學一課。","Following Kingdom 321 Online Fellowship’s 7th cohort: from 19 October, one lesson every Monday, Wednesday and Friday."))+'</div>';
+  if(k===0){
+    h+='<span class="c7-pill">'+esc(f9("第七期","Cohort 7"))+' · '+esc(chDate7(COHORT7.start))+esc(f9(" 開始"," start"))+'</span>';
+  } else if(k>total){
+    h+='<span class="c7-pill">'+esc(f9("第七期已全部學完 🎉","Cohort 7 has finished all lessons 🎉"))+'</span>';
+  } else {
+    var x=ss[k-1], cls=chIsClass7(today), done=isRead(x.n);
+    h+='<span class="c7-pill">'+esc(f9("第七期","Cohort 7"))+' · '+esc(f9("第 "+k+" 堂","Session "+k))+' / '+total+'</span>'+
+      '<div class="c7-now">'+esc(cls?f9("今天：","Today: "):f9("最近一堂：","Latest session: "))+esc(chLabel7(x))+' · '+esc(chTitle7(x))+(done?' ✓':'')+'</div>'+
+      '<button class="c7-go'+(done?' done':'')+'" data-lesson="'+x.n+'">'+esc(done?f9("再讀一次","Read it again"):f9("開始這一課","Start this lesson"))+'</button><div class="c7-week">';
+    var mon=today-((chDow7(today)+6)%7);
+    for(var i=0;i<COHORT7.days.length;i++){
+      var d=mon+(COHORT7.days[i]-1); if(d<COHORT7.start) continue;
+      var kk=chSession7(d); if(kk<1||kk>total) continue;
+      var y=ss[kk-1];
+      h+='<div class="c7-wk'+(d===today?' now':'')+'" data-lesson="'+y.n+'"><span class="d">'+esc(chDate7(d))+'</span><span class="t">'+esc(chLabel7(y))+' · '+esc(chTitle7(y))+'</span><span class="c">'+(isRead(y.n)?'✓':'')+'</span></div>';
+    }
+    h+='</div>';
+    if(!cls&&k<total) h+='<div class="c7-next">'+esc(f9("下一堂：","Next session: "))+esc(chDate7(chDayOf7(k+1)))+'</div>';
+  }
+  return h+'</div>';
+}
 /* 單一資源卡（171 課或真實資源）的 HTML */
 function resCardHTML(r){
   var fmts=fmtButtons(r.formats);
@@ -19523,6 +19591,7 @@ var PAGES = {
     }
 
     return pageHead(f9("材料總庫","LIBRARY"),f9("資源中心","Resources"),f9("一篇信息，一張卡：讀 · 看 · 下載","One message, one card \u2014 read, watch, download"))+
+      ((filtering||RES_UNIT)?'':cohortCardHTML()) +
       search + chips + body +
       sect("影",f9("專題影音","Video Topics"))+ renderTopics()+
       sect("包",f9("為繁殖者預備","Prepared for Multipliers"))+ renderPacks()+
@@ -21923,7 +21992,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610200030';
+var APPVER = '4.0.202610212100';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -23760,6 +23829,6 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202610200030";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202610212100";</script>
 </body>
 </html>
