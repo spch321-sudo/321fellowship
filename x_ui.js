@@ -160,14 +160,14 @@ document.addEventListener('click', function (e) {
     case 'hldel2': if (confirm(T('delHl'))) { hlDelete(+n.getAttribute('data-no'), n.getAttribute('data-k')); render('marks'); } break;
     case 'bmdel': delete S.bm[n.getAttribute('data-k')]; save(); render('marks'); break;
     case 'favtts': var fv = aicFavs()[i]; if (fv) { if (sayKey === 'f' + i) stopAll(); else speakText(mdSpeak(fv.a), 'f' + i, T('fFav')); } break;
-    case 'favcard': var fc = aicFavs()[i]; if (fc) openStudio({ t: cardText(fc.a), ref: '', plain: true }); break;
+    case 'favcard': var fc = aicFavs()[i]; if (fc) (window.VPICK321 ? VPICK321.card(fc.a, openStudio, { t: cardText(fc.a), ref: '', plain: true }) : openStudio({ t: cardText(fc.a), ref: '', plain: true })); break;
     case 'favshare': var fs2 = aicFavs()[i]; if (fs2) shareText((fs2.q ? fs2.q + '\n\n' : '') + mdStrip(fs2.a) + '\n\n—— ' + T('fellowshipName') + '\n' + appShareUrl()); break;
     case 'favdel': if (confirm(t('aiFavRemoveConfirm'))) { var F = aicFavs(); F.splice(i, 1); aicSaveFavs(F); if (currentRoute() === 'marks') render('marks'); if (aic.open) renderAIC(); } break;
     case 'msgfold': msgFold(i); break;
     case 'chatfoldall': foldAll(); break;
     case 'msgfav': aicFav(i); break;
     case 'msgshare': msgShare(i); break;
-    case 'msgcard': var mm = aic.msgs[i]; if (mm) openStudio(mm.src ? { t: mm.src.t, ref: mm.src.ref, n: cardText(mm.text) } : { t: cardText(mm.text), ref: '', plain: true }); break;
+    case 'msgcard': var mm = aic.msgs[i]; if (mm) (mm.src ? openStudio({ t: mm.src.t, ref: mm.src.ref, n: cardText(mm.text) }) : (window.VPICK321 ? VPICK321.card(mm.text, openStudio, { t: cardText(mm.text), ref: '', plain: true }) : openStudio({ t: cardText(mm.text), ref: '', plain: true }))); break;
     case 'msgcopy': var mc = aic.msgs[i]; if (mc) { copyText(mdStrip(mc.text)); toast(T('copied')); } break;
     case 'msgtts': var mt = aic.msgs[i]; if (mt) { if (sayKey === 'm' + i) stopAll(); else speakText(mdSpeak(mt.text), 'm' + i, T('xz')); } break;
     case 'msgdel': msgDelete(i); break;
