@@ -7,7 +7,45 @@ function chipRow(act, list, cur) {
   eachA(list, function (x) { b += '<button class="xchip' + (String(cur) === String(x[0]) ? ' on' : '') + '" data-xact="' + act + '" data-v="' + esc(x[0]) + '">' + esc(x[1]) + '</button>'; });
   return b + '</div>';
 }
+/* 完整版美圖工作室：直接開「321互動聖經」的經文美圖工作室（嵌入模式 ?embed=studio）
+   四分頁、內建圖庫、整張原圖、我的相片庫、AI 生圖、字體與顏色、小智寫祝福、配樂、AI 配樂、錄影、我的作品——都和互動聖經一致，
+   互動聖經更新，這裡也跟著更新。沒有網路時才用下面的簡易版。 */
+var BIBLE_STUDIO_URL = window.K321_BIBLE_STUDIO || 'https://spch321-sudo.github.io/bible/';
+function studioLang() { var l = curLang(); return l === 'en' ? 'en' : (l === 'zh-Hans' ? 'zs' : 'zh'); }
+function studioItemOf(o) { return { t: o.t || '', ref: o.ref || '', n: o.n || '' }; }
+function studioPost(o) { try { localStorage.setItem('ib_card_in', JSON.stringify({ ts: now(), item: studioItemOf(o), lang: studioLang() })); } catch (e) { } }
 function openStudio(c) {
+  if (navigator.onLine === false) return openStudioLite(c);
+  stopAll(); closeHSheet(); try { mkCloseSheet(); } catch (e) { }
+  if (aic.open) { aic.open = false; renderAIC(); }
+  studio = { t: c.t || '', ref: c.ref || '', n: c.n || '', n0: c.n || '', plain: !!c.plain, opts: c.opts || null, opt: 0, emb: 1 };
+  studioPost(studio);
+  var ov = document.getElementById('studioOv');
+  if (!ov) { ov = document.createElement('div'); ov.id = 'studioOv'; document.body.appendChild(ov); }
+  ov.className = 'studio-ov open emb';
+  var b = '<div class="studio-top"><button class="xib" data-xact="stclose" aria-label="close">✕</button><b>' + esc(T('studioT')) + '</b><span></span></div>';
+  if (studio.opts && studio.opts.length > 1) { var o = []; eachA(studio.opts, function (x, i) { o.push([i, x.label]); }); b += '<div class="emb-opts">' + chipRow('copt', o, 0) + '</div>'; }
+  b += '<div class="emb-wrap"><div class="emb-load">' + esc(T('loadingMedia')) + '</div>' +
+    '<iframe id="studioFr" name="k321studio" title="studio" src="' + esc(BIBLE_STUDIO_URL + '?embed=studio#/studio') + '" allow="camera *; microphone *; autoplay *; clipboard-read *; clipboard-write *; display-capture *; fullscreen *"></iframe></div>';
+  ov.innerHTML = b; simpifyEl(ov.querySelector('.studio-top'));
+  try { document.documentElement.style.overflow = 'hidden'; } catch (e) { }
+  try { history.pushState({ studio: 1 }, '', location.href); STUDIO_PUSHED = true; } catch (e) { STUDIO_PUSHED = false; }
+  BUSY = true;
+}
+/* 換文字來源（經文／亮光／宣告／畫線／默想）：不重新載入，直接通知工作室 */
+function studioEmbSwitch(i) {
+  var o = studio && studio.opts && studio.opts[i]; if (!o) return;
+  studio.opt = i; studio.t = o.t; studio.ref = o.ref; studio.n = o.n;
+  studioPost(studio);
+  eachA(qa('#studioOv [data-xact="copt"]'), function (e) { e.className = 'xchip' + (+e.getAttribute('data-v') === i ? ' on' : ''); });
+  var fr = document.getElementById('studioFr');
+  try { fr.contentWindow.postMessage({ k321: 'studioItem', item: studioItemOf(studio) }, location.origin); } catch (e) { }
+}
+window.addEventListener('message', function (e) {
+  if (e.origin !== location.origin || !e.data || e.data.k321 !== 'studioClose') return;
+  closeStudio(false);
+}, false);
+function openStudioLite(c) {
   stopAll(); closeHSheet(); try { mkCloseSheet(); } catch (e) { }
   if (aic.open) { aic.open = false; renderAIC(); }
   studio = { t: c.t || '', ref: c.ref || '', n: c.n || '', n0: c.n || '', plain: !!c.plain, opts: c.opts || null, opt: 0 };

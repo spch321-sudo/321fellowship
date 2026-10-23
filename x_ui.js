@@ -176,7 +176,7 @@ document.addEventListener('click', function (e) {
     case 'qstog': var qp = document.getElementById('qsPanel'); if (qp) qp.style.display = qp.style.display === 'none' ? '' : 'none'; break;
     case 'studio': makeVerseImage(); break;
     case 'stclose': closeStudio(false); break;
-    case 'copt': var o = studio && studio.opts && studio.opts[+v]; if (o) { studio.opt = +v; studio.t = o.t; studio.ref = o.ref; studio.n = o.n; studio.n0 = o.n; studio.plain = !!o.plain; studioRender(); } break;
+    case 'copt': if (studio && studio.emb) { studioEmbSwitch(+v); break; } var o = studio && studio.opts && studio.opts[+v]; if (o) { studio.opt = +v; studio.t = o.t; studio.ref = o.ref; studio.n = o.n; studio.n0 = o.n; studio.plain = !!o.plain; studioRender(); } break;
     case 'ctpl': S.card.tpl = v; save(); studioRender(); break;
     case 'csize': S.card.size = v; save(); studioRender(); break;
     case 'cborder': S.card.border = v; save(); studioRender(); break;

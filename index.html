@@ -1111,6 +1111,13 @@ input,textarea,select{min-width:0;max-width:100%;}
 /* 美圖工作室 */
 .studio-ov{position:fixed;inset:0;z-index:2200;background:var(--paper);overflow-y:auto;display:none;-webkit-overflow-scrolling:touch;}
 .studio-ov.open{display:block;}
+.studio-ov.emb.open{display:flex;flex-direction:column;overflow:hidden;}
+.studio-ov.emb .studio-top{margin:0;position:relative;flex:none;}
+.studio-ov.emb .emb-opts{flex:none;padding:8px 12px 0;background:var(--paper);}
+.studio-ov.emb .emb-opts .xchips{margin:0 0 6px;}
+.emb-wrap{position:relative;flex:1;min-height:0;}
+.emb-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;}
+.emb-load{position:absolute;top:38%;left:0;right:0;text-align:center;color:var(--muted);font-size:calc(15px * var(--fs));}
 .studio-in{max-width:var(--maxw);margin:0 auto;padding:0 16px calc(40px + env(safe-area-inset-bottom));}
 .studio-top{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:10px;background:var(--navy);color:#fff;margin:0 -16px 14px;
   padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));font-family:var(--font-display);font-size:calc(18px * var(--fs));}
@@ -21998,7 +22005,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610212110';
+var APPVER = '4.0.202610230830';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -23184,7 +23191,45 @@ function chipRow(act, list, cur) {
   eachA(list, function (x) { b += '<button class="xchip' + (String(cur) === String(x[0]) ? ' on' : '') + '" data-xact="' + act + '" data-v="' + esc(x[0]) + '">' + esc(x[1]) + '</button>'; });
   return b + '</div>';
 }
+/* 完整版美圖工作室：直接開「321互動聖經」的經文美圖工作室（嵌入模式 ?embed=studio）
+   四分頁、內建圖庫、整張原圖、我的相片庫、AI 生圖、字體與顏色、小智寫祝福、配樂、AI 配樂、錄影、我的作品——都和互動聖經一致，
+   互動聖經更新，這裡也跟著更新。沒有網路時才用下面的簡易版。 */
+var BIBLE_STUDIO_URL = window.K321_BIBLE_STUDIO || 'https://spch321-sudo.github.io/bible/';
+function studioLang() { var l = curLang(); return l === 'en' ? 'en' : (l === 'zh-Hans' ? 'zs' : 'zh'); }
+function studioItemOf(o) { return { t: o.t || '', ref: o.ref || '', n: o.n || '' }; }
+function studioPost(o) { try { localStorage.setItem('ib_card_in', JSON.stringify({ ts: now(), item: studioItemOf(o), lang: studioLang() })); } catch (e) { } }
 function openStudio(c) {
+  if (navigator.onLine === false) return openStudioLite(c);
+  stopAll(); closeHSheet(); try { mkCloseSheet(); } catch (e) { }
+  if (aic.open) { aic.open = false; renderAIC(); }
+  studio = { t: c.t || '', ref: c.ref || '', n: c.n || '', n0: c.n || '', plain: !!c.plain, opts: c.opts || null, opt: 0, emb: 1 };
+  studioPost(studio);
+  var ov = document.getElementById('studioOv');
+  if (!ov) { ov = document.createElement('div'); ov.id = 'studioOv'; document.body.appendChild(ov); }
+  ov.className = 'studio-ov open emb';
+  var b = '<div class="studio-top"><button class="xib" data-xact="stclose" aria-label="close">✕</button><b>' + esc(T('studioT')) + '</b><span></span></div>';
+  if (studio.opts && studio.opts.length > 1) { var o = []; eachA(studio.opts, function (x, i) { o.push([i, x.label]); }); b += '<div class="emb-opts">' + chipRow('copt', o, 0) + '</div>'; }
+  b += '<div class="emb-wrap"><div class="emb-load">' + esc(T('loadingMedia')) + '</div>' +
+    '<iframe id="studioFr" name="k321studio" title="studio" src="' + esc(BIBLE_STUDIO_URL + '?embed=studio#/studio') + '" allow="camera *; microphone *; autoplay *; clipboard-read *; clipboard-write *; display-capture *; fullscreen *"></iframe></div>';
+  ov.innerHTML = b; simpifyEl(ov.querySelector('.studio-top'));
+  try { document.documentElement.style.overflow = 'hidden'; } catch (e) { }
+  try { history.pushState({ studio: 1 }, '', location.href); STUDIO_PUSHED = true; } catch (e) { STUDIO_PUSHED = false; }
+  BUSY = true;
+}
+/* 換文字來源（經文／亮光／宣告／畫線／默想）：不重新載入，直接通知工作室 */
+function studioEmbSwitch(i) {
+  var o = studio && studio.opts && studio.opts[i]; if (!o) return;
+  studio.opt = i; studio.t = o.t; studio.ref = o.ref; studio.n = o.n;
+  studioPost(studio);
+  eachA(qa('#studioOv [data-xact="copt"]'), function (e) { e.className = 'xchip' + (+e.getAttribute('data-v') === i ? ' on' : ''); });
+  var fr = document.getElementById('studioFr');
+  try { fr.contentWindow.postMessage({ k321: 'studioItem', item: studioItemOf(studio) }, location.origin); } catch (e) { }
+}
+window.addEventListener('message', function (e) {
+  if (e.origin !== location.origin || !e.data || e.data.k321 !== 'studioClose') return;
+  closeStudio(false);
+}, false);
+function openStudioLite(c) {
   stopAll(); closeHSheet(); try { mkCloseSheet(); } catch (e) { }
   if (aic.open) { aic.open = false; renderAIC(); }
   studio = { t: c.t || '', ref: c.ref || '', n: c.n || '', n0: c.n || '', plain: !!c.plain, opts: c.opts || null, opt: 0 };
@@ -23678,7 +23723,7 @@ document.addEventListener('click', function (e) {
     case 'qstog': var qp = document.getElementById('qsPanel'); if (qp) qp.style.display = qp.style.display === 'none' ? '' : 'none'; break;
     case 'studio': makeVerseImage(); break;
     case 'stclose': closeStudio(false); break;
-    case 'copt': var o = studio && studio.opts && studio.opts[+v]; if (o) { studio.opt = +v; studio.t = o.t; studio.ref = o.ref; studio.n = o.n; studio.n0 = o.n; studio.plain = !!o.plain; studioRender(); } break;
+    case 'copt': if (studio && studio.emb) { studioEmbSwitch(+v); break; } var o = studio && studio.opts && studio.opts[+v]; if (o) { studio.opt = +v; studio.t = o.t; studio.ref = o.ref; studio.n = o.n; studio.n0 = o.n; studio.plain = !!o.plain; studioRender(); } break;
     case 'ctpl': S.card.tpl = v; save(); studioRender(); break;
     case 'csize': S.card.size = v; save(); studioRender(); break;
     case 'cborder': S.card.border = v; save(); studioRender(); break;
@@ -23835,6 +23880,6 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202610212110";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202610230830";</script>
 </body>
 </html>
