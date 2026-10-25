@@ -84,7 +84,7 @@ body.poster .posteronly{display:block}
   <div class="lang" role="group" aria-label="Language">
     <button data-l="tc" class="on">繁</button><button data-l="sc">简</button><button data-l="en">EN</button>
   </div>
-  <img class="kv" src="join-main.jpg" alt="國度321空中團契・活出基督・成為得勝者" width="1080" height="1080">
+  <img class="kv" id="kv" src="join-main.jpg" alt="國度321空中團契・活出基督・成為得勝者" width="1080" height="1080">
   <p class="eyebrow" data-t="eyebrow"></p>
   <h1 data-t="title"></h1>
   <p class="intro" data-t="intro"></p>
@@ -206,6 +206,7 @@ function render(){
   var els=document.querySelectorAll('[data-t]');for(var i=0;i<els.length;i++)els[i].innerHTML=tx(els[i].getAttribute('data-t'));
   var bs=document.querySelectorAll('.lang button');for(var j=0;j<bs.length;j++)bs[j].className=bs[j].getAttribute('data-l')===L?'on':'';
   document.getElementById('joinBtn').href=MEET_URL;
+  var kv=document.getElementById('kv');kv.src=['join-main.jpg','join-main-sc.jpg','join-main-en.jpg'][I[L]];kv.alt=['國度321空中團契・活出基督・成為得勝者','国度321空中团契・活出基督・成为得胜者','Kingdom 321 Online Fellowship · Live Out Christ · Become Overcomers'][I[L]];
   var now=Date.now(),best=null,rows='';
   MEETINGS.forEach(function(m){
     var o=occur(m,now);if(o&&(!best||o.live&&!best.live||!best.live&&o.start<best.start))best=o;
