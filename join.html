@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>邀請你參加國度321空中團契</title>
+<meta name="description" content="每天線上聚會：晨讀、午修靈糧、晚禱。同一個 Zoom，點一下就能加入，一同學習聖經真理，活出基督的生命。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="邀請你參加國度321空中團契">
+<meta property="og:description" content="每天線上聚會：晨讀 06:00、午修靈糧 12:10、晚禱 21:00（台北時間）。同一個 Zoom，點一下就能加入。">
+<meta property="og:image" content="https://spch321-sudo.github.io/321fellowship/join.png">
+<meta property="og:url" content="https://spch321-sudo.github.io/321fellowship/join.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#1F4D3D">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{
+  --green:#1F4D3D; --green-d:#0E2A20; --gold:#E8C66A; --gold-d:#9C6B18;
+  --paper:#F3F1EC; --card:#FFFFFF; --ink:#1D2421; --dusk:#5F6B65; --line:#E2DED4;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Noto Sans CJK TC","Microsoft JhengHei",sans-serif;font-size:18px;line-height:1.7;-webkit-text-size-adjust:100%}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 40px}
+.hero{background:linear-gradient(165deg,#2A6450 0%,var(--green) 45%,var(--green-d) 100%);color:#fff;padding:calc(28px + env(safe-area-inset-top)) 22px 30px;border-radius:0 0 28px 28px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(232,198,106,.28),rgba(232,198,106,0) 70%)}
+.hero .inner{max-width:516px;margin:0 auto;position:relative;z-index:1}
+.lang{position:absolute;right:0;top:0;display:inline-flex;border:1px solid rgba(255,255,255,.45);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:transparent;color:#fff;font:700 14px/30px inherit;padding:0 11px;cursor:pointer;font-family:inherit}
+.lang button.on{background:rgba(255,255,255,.92);color:var(--green)}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;padding-right:128px;min-height:44px}
+.brand img{width:44px;height:44px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.brand span{font-size:15px;letter-spacing:.14em;font-weight:700;color:var(--gold);line-height:1.35}
+body.poster .brand{padding-right:0}
+.eyebrow{font-size:15px;letter-spacing:.2em;color:rgba(255,255,255,.75);margin:0 0 6px}
+h1{font-size:34px;line-height:1.3;margin:0 0 14px;font-weight:800}
+.intro{margin:0;font-size:17px;color:rgba(255,255,255,.92)}
+.verse{margin:20px 0 0;padding:14px 16px;border-left:3px solid var(--gold);background:rgba(255,255,255,.08);border-radius:0 12px 12px 0;font-size:17px}
+.verse small{display:block;color:var(--gold);margin-top:4px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px 18px;margin:16px 0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.eb{margin:0 0 10px;font-size:14px;font-weight:700;letter-spacing:.16em;color:var(--dusk)}
+.next{background:linear-gradient(160deg,var(--green),var(--green-d));color:#fff;border-radius:20px;padding:20px;margin:-22px 0 16px;position:relative;z-index:2;box-shadow:0 10px 28px rgba(14,42,32,.28)}
+.tag{display:inline-block;background:rgba(255,255,255,.16);color:var(--gold);border-radius:99px;padding:2px 14px;font-size:15px;font-weight:700}
+.next h2{margin:10px 0 2px;font-size:28px}
+.next .t{font-size:17px;opacity:.95}
+.next .sub{font-size:15px;opacity:.75}
+.next .cd{color:var(--gold);font-weight:700;margin:6px 0 14px;font-size:18px}
+.btn{display:block;width:100%;text-align:center;text-decoration:none;border-radius:14px;padding:14px;font-size:19px;font-weight:700;border:0;cursor:pointer;font-family:inherit}
+.btn.gold{background:var(--gold-d);color:#fff}
+.btn.green{background:var(--green);color:#fff}
+.btn.line{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:600;font-size:17px;margin-top:10px}
+.zoom{display:flex;gap:10px;margin-top:12px}
+.zoom div{flex:1;background:var(--paper);border-radius:12px;padding:8px 12px}
+.zoom small{display:block;color:var(--dusk);font-size:13px}
+.zoom b{font-size:20px;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.row{display:flex;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0;padding-bottom:4px}
+.row .time{flex:0 0 134px;white-space:nowrap;background:var(--paper);border-radius:14px;padding:8px 6px;text-align:center;line-height:1.35}
+.row .time b{display:block;font-size:18px;font-variant-numeric:tabular-nums}
+.row .time small{color:var(--dusk);font-size:13px}
+.row .mid{flex:1;min-width:0}
+.row .name{font-size:21px;font-weight:800}
+.row .days{font-size:15px;color:var(--dusk)}
+.row .mine{font-size:15px;color:var(--green);font-weight:700}
+.pillars{display:grid;grid-template-columns:1fr;gap:10px}
+.pillar{border-radius:14px;background:var(--paper);padding:12px 14px}
+.pillar b{color:var(--green);font-size:17px}
+.pillar p{margin:2px 0 0;font-size:16px}
+.foot{text-align:center;color:var(--dusk);font-size:14px;margin-top:22px}
+.foot b{color:var(--green)}
+#toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:rgba(20,28,24,.92);color:#fff;padding:9px 18px;border-radius:99px;font-size:15px;display:none;z-index:9}
+/* 海報模式（做成圖片傳到群組用）：不顯示倒數與個人時間，只寫台北時間 */
+body.poster .lang,body.poster .live,body.poster .mine,body.poster .btn.line,body.poster .copy{display:none!important}
+body.poster .wrap{padding-bottom:28px}
+.posteronly{display:none}
+body.poster .posteronly{display:block}
+.link{font-size:17px;font-weight:700;color:var(--green);word-break:break-all}
+</style>
+</head>
+<body>
+<div class="hero"><div class="inner">
+  <div class="lang" role="group" aria-label="Language">
+    <button data-l="tc" class="on">繁</button><button data-l="sc">简</button><button data-l="en">EN</button>
+  </div>
+  <div class="brand"><img src="icon-192.png" alt=""><span data-t="brand"></span></div>
+  <p class="eyebrow" data-t="eyebrow"></p>
+  <h1 data-t="title"></h1>
+  <p class="intro" data-t="intro"></p>
+  <p class="verse"><span data-t="verse"></span><small data-t="verseRef"></small></p>
+</div></div>
+
+<div class="wrap">
+  <div class="next live" id="next"></div>
+
+  <div class="card">
+    <p class="eb">🎥 <span data-t="zoomEb"></span></p>
+    <a class="btn green" id="joinBtn" target="_blank" rel="noopener" data-t="join"></a>
+    <div class="zoom">
+      <div><small data-t="mid"></small><b>819 397 2372</b></div>
+      <div style="flex:0 0 34%"><small data-t="pwd"></small><b>321</b></div>
+    </div>
+    <button class="btn line copy" id="copyBtn" data-t="copy"></button>
+  </div>
+
+  <div class="card">
+    <p class="eb" data-t="schedEb"></p>
+    <div id="rows"></div>
+    <p class="posteronly" style="margin:10px 0 0;font-size:15px;color:var(--dusk)" data-t="tzNote"></p>
+  </div>
+
+  <div class="card">
+    <p class="eb" data-t="whatEb"></p>
+    <div class="pillars">
+      <div class="pillar"><b data-t="p1h"></b><p data-t="p1"></p></div>
+      <div class="pillar"><b data-t="p2h"></b><p data-t="p2"></p></div>
+      <div class="pillar"><b data-t="p3h"></b><p data-t="p3"></p></div>
+    </div>
+  </div>
+
+  <div class="card posteronly" style="text-align:center">
+    <p class="eb" data-t="openEb"></p>
+    <p class="link">spch321-sudo.github.io/321fellowship/join.html</p>
+  </div>
+
+  <div class="card live">
+    <a class="btn line" style="margin-top:0" href="https://www.youtube.com/@kingdom321air" target="_blank" rel="noopener" data-t="yt"></a>
+    <a class="btn line" href="https://spch321-sudo.github.io/321fellowship/" target="_blank" rel="noopener" data-t="app"></a>
+  </div>
+
+  <p class="foot" data-t="foot"></p>
+</div>
+<div id="toast"></div>
+
+<script>
+(function(){
+var MEET_URL='https://zoom.us/j/8193972372?pwd=o3tuX9k87Lyhb3UEV7hgRtSUYVyI1Q.1', TZ=8;
+var MEETINGS=[
+  {t:['晨讀','晨读','Morning Reading'],d:['週一至週六','周一至周六','Mon – Sat'],days:[1,2,3,4,5,6],s:'06:00',e:'07:00'},
+  {t:['午修靈糧','午修灵粮','Midday Manna'],d:['週一至週五','周一至周五','Mon – Fri'],days:[1,2,3,4,5],s:'12:10',e:'13:00'},
+  {t:['晚禱','晚祷','Evening Prayer'],d:['週一至週五','周一至周五','Mon – Fri'],days:[1,2,3,4,5],s:'21:00',e:'22:00'}
+];
+var T={
+ brand:['國度321空中團契','国度321空中团契','KINGDOM 321 ONLINE FELLOWSHIP'],
+ eyebrow:['誠 摯 邀 請 你','诚 挚 邀 请 你','YOU ARE INVITED'],
+ title:['每天一起<br>在線上親近神','每天一起<br>在线上亲近神','Draw near to God<br>together, every day'],
+ intro:['以「321理念」為核心的線上團契，連結台灣、馬來西亞、中國、印尼、新加坡、紐西蘭、澳洲、韓國、日本等多個國家敬虔愛神的人，每天透過線上聚會一同學習聖經真理，操練活出基督的生命。',
+        '以“321理念”为核心的线上团契，连结台湾、马来西亚、中国、印尼、新加坡、纽西兰、澳洲、韩国、日本等多个国家敬虔爱神的人，每天透过线上聚会一同学习圣经真理，操练活出基督的生命。',
+        'An online fellowship built on the 3-2-1 ideology, connecting godly believers in Taiwan, Malaysia, China, Indonesia, Singapore, New Zealand, Australia, Korea, Japan and many other countries. Every day we meet online to learn the truth of Scripture and practise living out the life of Christ.'],
+ verse:['「你們不可停止聚會，好像那些停止慣了的人，倒要彼此勸勉；既知道那日子臨近，就更當如此。」',
+        '“你们不可停止聚会，好像那些停止惯了的人，倒要彼此劝勉；既知道那日子临近，就更当如此。”',
+        '“Not forsaking our own assembling together, as the custom of some is, but exhorting one another, and so much the more as you see the Day approaching.”'],
+ verseRef:['希伯來書 10:25','希伯来书 10:25','Hebrews 10:25 (WEB)'],
+ zoomEb:['線上聚會 Zoom','线上聚会 Zoom','ONLINE · ZOOM'],
+ join:['一鍵加入聚會','一键加入聚会','Join the meeting'],
+ mid:['會議號','会议号','Meeting ID'], pwd:['密碼','密码','Passcode'],
+ copy:['📋 複製會議號與密碼','📋 复制会议号与密码','📋 Copy meeting ID & passcode'],
+ copied:['已複製，可以貼給朋友','已复制，可以贴给朋友','Copied — paste it to a friend'],
+ schedEb:['每天的聚會時間','每天的聚会时间','DAILY MEETINGS'],
+ taipei:['台北時間','台北时间','Taipei time'],
+ yours:['你的時間','你的时间','Your time'],
+ tzNote:['以上是台北時間（GMT+8），馬來西亞、新加坡、中國同一時間；其他地區打開連結會自動換成你的時間。',
+         '以上是台北时间（GMT+8），马来西亚、新加坡、中国同一时间；其他地区打开链接会自动换成你的时间。',
+         'Times are Taipei time (GMT+8). Open the link and they convert to your local time automatically.'],
+ whatEb:['我們在做什麼','我们在做什么','WHAT WE DO'],
+ p1h:['三個基礎','三个基础','Three foundations'],
+ p1:['耶穌是我的榜樣，聖經是我的準則，聖靈是我的引導。','耶稣是我的榜样，圣经是我的准则，圣灵是我的引导。','Jesus is my example, the Bible is my standard, the Holy Spirit is my guide.'],
+ p2h:['二個核心','二个核心','Two cores'],
+ p2:['讓耶穌作王，讓耶穌得到一切的榮耀。','让耶稣作王，让耶稣得到一切的荣耀。','Let Jesus reign; let Jesus receive all the glory.'],
+ p3h:['一個目的','一个目的','One purpose'],
+ p3:['建立屬神的體系——從改變觀念開始，改變生命、改變生活。','建立属神的体系——从改变观念开始，改变生命、改变生活。','Build God’s system — a changed mindset changes the life, and a changed life changes how we live.'],
+ openEb:['點這個連結，一鍵加入','点这个链接，一键加入','OPEN THIS LINK TO JOIN'],
+ yt:['▶️ YouTube 頻道（聚會重播）','▶️ YouTube 频道（聚会重播）','▶️ YouTube channel (replays)'],
+ app:['📱 國度321空中團契 App','📱 国度321空中团契 App','📱 Kingdom 321 Fellowship app'],
+ foot:['歡迎你，也歡迎帶家人朋友一起來。<br><b>同一個 Zoom，天天都在。</b>','欢迎你，也欢迎带家人朋友一起来。<br><b>同一个 Zoom，天天都在。</b>','You are welcome — bring your family and friends too.<br><b>One Zoom, every day.</b>'],
+ live:['正在聚會','正在聚会','Live now'], next:['下一堂聚會','下一堂聚会','Next meeting'],
+ inprog:['進行中，現在就能加入','进行中，现在就能加入','In progress — join now'],
+ joinNow:['立即加入','立即加入','Join now']
+};
+var I={tc:0,sc:1,en:2}, L='tc';
+try{var q=new URLSearchParams(location.search);var ql=q.get('lang');if(I[ql]!=null)L=ql;else{var sv=localStorage.getItem('k321join_lang');if(I[sv]!=null)L=sv;else{var n=(navigator.language||'').toLowerCase();if(/^zh/.test(n))L=/hans|cn|sg|my/.test(n)?'sc':'tc';else if(n)L='en';}}
+  if(q.has('poster'))document.body.classList.add('poster');}catch(e){}
+function tx(k){return T[k][I[L]];}
+function pad(n){return(n<10?'0':'')+n;}
+function hm(ts){var d=new Date(ts);return pad(d.getHours())+':'+pad(d.getMinutes());}
+function wd(d){return [['週日','週一','週二','週三','週四','週五','週六'],['周日','周一','周二','周三','周四','周五','周六'],['Sun','Mon','Tue','Wed','Thu','Fri','Sat']][I[L]][d];}
+function occur(m,now){
+  var sp=m.s.split(':'),ep=m.e.split(':'),sh=new Date(now+TZ*3600000),base=Date.UTC(sh.getUTCFullYear(),sh.getUTCMonth(),sh.getUTCDate());
+  for(var k=0;k<9;k++){var day=new Date(base+k*86400000);if(m.days.indexOf(day.getUTCDay())<0)continue;
+    var st=day.getTime()+(+sp[0]-TZ)*3600000+(+sp[1])*60000,en=day.getTime()+(+ep[0]-TZ)*3600000+(+ep[1])*60000;
+    if(now<en)return{start:st,end:en,live:now>=st,m:m};}
+  return null;
+}
+function until(ms){
+  var mins=Math.round(ms/60000),h=Math.floor(mins/60),m=mins%60,d=Math.floor(h/24),hh=h%24;
+  if(mins<1)return[ '就要開始了','就要开始了','Starting now'][I[L]];
+  if(mins<60)return['還有 '+mins+' 分鐘','还有 '+mins+' 分钟','in '+mins+' min'][I[L]];
+  if(h<24)return['還有 '+h+' 小時'+(m?' '+m+' 分':''),'还有 '+h+' 小时'+(m?' '+m+' 分':''),'in '+h+' hr'+(m?' '+m+' min':'')][I[L]];
+  return['還有 '+d+' 天'+(hh?' '+hh+' 小時':''),'还有 '+d+' 天'+(hh?' '+hh+' 小时':''),'in '+d+' day'+(d>1?'s':'')+(hh?' '+hh+' hr':'')][I[L]];
+}
+var same=(-new Date().getTimezoneOffset()/60)===TZ;
+function render(){
+  document.documentElement.lang=L==='en'?'en':(L==='sc'?'zh-Hans':'zh-Hant');
+  document.title=['邀請你參加國度321空中團契','邀请你参加国度321空中团契','Join the Kingdom 321 Online Fellowship'][I[L]];
+  var els=document.querySelectorAll('[data-t]');for(var i=0;i<els.length;i++)els[i].innerHTML=tx(els[i].getAttribute('data-t'));
+  var bs=document.querySelectorAll('.lang button');for(var j=0;j<bs.length;j++)bs[j].className=bs[j].getAttribute('data-l')===L?'on':'';
+  document.getElementById('joinBtn').href=MEET_URL;
+  var now=Date.now(),best=null,rows='';
+  MEETINGS.forEach(function(m){
+    var o=occur(m,now);if(o&&(!best||o.live&&!best.live||!best.live&&o.start<best.start))best=o;
+    var mine=o&&!same?'<div class="mine">'+tx('yours')+'　'+wd(new Date(o.start).getDay())+' '+hm(o.start)+'–'+hm(o.end)+'</div>':'';
+    rows+='<div class="row"><div class="time"><b>'+m.s+'–'+m.e+'</b><small>'+tx('taipei')+'</small></div><div class="mid"><div class="name">'+m.t[I[L]]+'</div><div class="days">'+m.d[I[L]]+'</div>'+mine+'</div></div>';
+  });
+  document.getElementById('rows').innerHTML=rows;
+  var nx=document.getElementById('next');
+  if(best){
+    nx.innerHTML='<span class="tag">'+(best.live?tx('live'):tx('next'))+'</span><h2>'+best.m.t[I[L]]+'</h2>'+
+      '<div class="t">'+(same?tx('taipei'):tx('yours'))+'　'+wd(new Date(best.start).getDay())+' '+hm(best.start)+'–'+hm(best.end)+'</div>'+
+      (same?'':'<div class="sub">'+tx('taipei')+'　'+best.m.s+'–'+best.m.e+'</div>')+
+      '<div class="cd">'+(best.live?tx('inprog'):until(best.start-now))+'</div>'+
+      '<a class="btn gold" href="'+MEET_URL+'" target="_blank" rel="noopener">'+(best.live?tx('joinNow'):tx('join'))+'</a>';
+  }
+}
+function toast(t){var el=document.getElementById('toast');el.textContent=t;el.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(function(){el.style.display='none';},1800);}
+document.querySelector('.lang').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;L=b.getAttribute('data-l');try{localStorage.setItem('k321join_lang',L);}catch(x){}render();});
+document.getElementById('copyBtn').addEventListener('click',function(){
+  var s=[ '國度321空中團契 Zoom\n會議號：819 397 2372\n密碼：321\n','国度321空中团契 Zoom\n会议号：819 397 2372\n密码：321\n','Kingdom 321 Online Fellowship · Zoom\nMeeting ID: 819 397 2372\nPasscode: 321\n'][I[L]]+MEET_URL;
+  function fb(){var ta=document.createElement('textarea');ta.value=s;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast(tx('copied'));}catch(e){}document.body.removeChild(ta);}
+  try{navigator.clipboard.writeText(s).then(function(){toast(tx('copied'));},fb);}catch(e){fb();}
+});
+render(); setInterval(render,30000);
+})();
+</script>
+</body>
+</html>
