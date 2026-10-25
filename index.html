@@ -19215,7 +19215,8 @@ var PAGES = {
       var KL = { news:f9("公告","Notice"), meet:f9("聚會","Meeting"), event:f9("活動","Event"), pray:f9("代禱","Prayer") };
       var md = function(dt){ var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(dt||""); return m ? (en ? (+m[2])+"/"+(+m[3]) : (+m[2])+"月"+(+m[3])+"日") : (dt||""); };
       var items = NL.map(function(a, ix){
-        var ti = (en && a.title_en) ? a.title_en : a.title, bo = (en && a.body_en) ? a.body_en : a.body;
+        var tr = (en && !a.title_en && !a.body_en) ? nTrGet(a) : null;
+        var ti = (en && a.title_en) ? a.title_en : (tr ? tr.title : a.title), bo = (en && a.body_en) ? a.body_en : (tr ? tr.body : a.body);
         return '<article class="nh-item'+(ix===0?' first':'')+'">'+
           '<div class="nh-meta">'+(a.top?'<span class="nh-pin">\ud83d\udccc</span>':'')+
             '<span class="nh-kind k-'+esc(a.kind||"news")+'">'+esc(KL[a.kind]||KL.news)+'</span>'+
@@ -21755,7 +21756,8 @@ function nEdit(id){
     '<label class="fld"><span>'+esc(f9("顯示到哪一天（過了自動收起，可不填）","Show until (optional)"))+'</span><input id="nUntil" type="date" value="'+esc(a.until||"")+'"></label>'+
     '<label class="fld"><span>'+esc(f9("連結（可不填）","Link (optional)"))+'</span><input id="nLink" type="url" placeholder="https://" value="'+esc(a.link||"")+'"></label>'+
     '<label class="chk"><input type="checkbox" id="nTop"'+(a.top?" checked":"")+'><span>'+esc(f9("置頂","Pin to top"))+'</span></label>'+
-    '<details'+((a.title_en||a.body_en)?" open":"")+'><summary class="note">'+esc(f9("英文版（可不填，不填就顯示中文；簡體會自動轉換）","English version (optional)"))+'</summary>'+
+    '<details id="nEnBox"'+((a.title_en||a.body_en)?" open":"")+'><summary class="note">'+esc(f9("英文版（不填會在發佈時自動翻譯；簡體會自動轉換）","English version (left blank, it is translated automatically when you publish)"))+'</summary>'+
+    '<button type="button" class="btn ghost" id="nTrBtn" style="margin:6px 0 4px">✨ '+esc(f9((a.title_en||a.body_en)?"中文改過了？重新翻譯成英文":"先翻譯成英文看看","Translate to English now"))+'</button>'+
     '<label class="fld"><span>Title (English)</span><input id="nTitleEn" type="text" maxlength="160" value="'+esc(a.title_en||"")+'"></label>'+
     '<label class="fld"><span>Message (English)</span><textarea id="nBodyEn" rows="4" maxlength="4000">'+esc(a.body_en||"")+'</textarea></label></details>'+
     '<div class="nm-btns"><button class="btn ghost" id="nCancel">'+esc(f9("取消","Cancel"))+'</button><button class="btn" id="nSave">'+esc(id?f9("儲存","Save"):f9("發佈","Publish"))+'</button></div>');
@@ -21765,12 +21767,36 @@ function nEdit(id){
     var it={ id:id||"", kind:g("nKind"), title:g("nTitle"), body:g("nBody"), date:g("nDate"), until:g("nUntil"), link:g("nLink"),
       top:!!(document.getElementById("nTop")||{}).checked, title_en:g("nTitleEn"), body_en:g("nBodyEn") };
     var btn=this; btn.disabled=true;
+    if(!trimS(it.title_en) && !trimS(it.body_en) && (trimS(it.title) || trimS(it.body))){
+      var lbl=btn.textContent; btn.textContent=f9("正在翻譯成英文…","Translating…");
+      nTr(it.title, it.body, function(r){
+        btn.textContent=lbl;
+        if(r){ it.title_en=r.title; it.body_en=r.body; }
+        else note(f9("英文翻譯沒有成功，先以中文發佈；之後負責人打開 App 會自動補上英文","Translation failed — posted in Chinese; English will be added automatically later"));
+        nSaveGo(it, id, btn);
+      });
+      return;
+    }
+    nSaveGo(it, id, btn);
+  };
+  var trb=m.querySelector("#nTrBtn");
+  if(trb) trb.onclick=function(){
+    var g=function(x){ var el=document.getElementById(x); return el?el.value:""; };
+    if(!trimS(g("nTitle")) && !trimS(g("nBody"))){ note(f9("請先寫好中文標題或內容","Write the Chinese title or message first")); return; }
+    var b=this, lbl=b.textContent; b.disabled=true; b.textContent=f9("正在翻譯…","Translating…");
+    nTr(g("nTitle"), g("nBody"), function(r){
+      b.disabled=false; b.textContent=lbl;
+      if(!r){ note(f9("翻譯沒有成功，請稍後再試","Translation failed — please try again")); return; }
+      document.getElementById("nTitleEn").value=r.title; document.getElementById("nBodyEn").value=r.body;
+    });
+  };
+}
+function nSaveGo(it, id, btn){
     nPost("/news", { pin:nPin(), item:it }, function(j,e){
       btn.disabled=false;
       if(!j){ note(nErr(e)); if(e==="badpin"){ nSetPin(""); nClose(); render(); } return; }
       nClose(); note(id?f9("已儲存","Saved"):f9("已發佈，大家打開 App 就會看到","Published — everyone will see it when they open the app")); loadNews();
     });
-  };
 }
 function nDel(id, btn){
   if(btn.getAttribute("data-arm")!=="1"){ btn.setAttribute("data-arm","1"); btn.textContent=f9("再按一次刪除","Tap again to delete"); return; }
@@ -21818,6 +21844,62 @@ function newsList(){
   out.sort(function(x,y){ var px=x.pin?1:0, py=y.pin?1:0; if(px!==py) return py-px; return String(y.date||"")<String(x.date||"")?-1:(String(y.date||"")>String(x.date||"")?1:0); });
   return out.slice(0, 8);
 }
+/* 消息自動翻譯成英文（小智 AI）：發佈時自動填英文；英文版畫面遇到還沒翻的舊消息就先翻來看；負責人打開 App 時把缺英文的消息補上 */
+function trimS(x){ return String(x==null?"":x).replace(/^\s+|\s+$/g,""); }
+var NTR_SYS = "You translate announcements of 國度321空中團契 (Kingdom 321 Online Fellowship), a Chinese Christian online fellowship, from Chinese into natural, warm, clear English for its English-speaking members. Keep dates, times, numbers, names, URLs, line breaks and list numbering. Use these fixed terms: 國度321空中團契 = Kingdom 321 Online Fellowship; 空中團契 = the Online Fellowship; 晨讀 = Morning Devotion; 午修靈糧 = Midday Manna; 晚禱 = Evening Prayer; 夫妻成長營 = Couples Growth Camp; 321互動聖經 = 321 Interactive Bible; 小智 = Sage; 321理念 = the 3-2-1 ideology; 無己 = selflessness; 有己 = self-centredness; 得勝者 = overcomer; 小家 = small group; 小家長 = small-group leader; 同工 = co-worker; 弟兄姊妹 = brothers and sisters; 家人 = family members; 見證 = testimony; 代禱 = prayer request. Quote Scripture from the World English Bible. Reply with JSON only: {\"title\":\"...\",\"body\":\"...\"} (empty string when the source part is empty). No commentary.";
+function nTr(title, body, cb){
+  var ep=(window.APP_CONFIG&&window.APP_CONFIG.aiEndpoint)||"https://xiaozhi-proxy.spch321.workers.dev";
+  var model=(window.APP_CONFIG&&window.APP_CONFIG.aiModel)||"claude-sonnet-4-6";
+  var done=false, fin=function(r){ if(done) return; done=true; cb(r); };
+  try{
+    var x=new XMLHttpRequest(); x.open("POST", ep, true); x.timeout=60000;
+    x.setRequestHeader("Content-Type","application/json");
+    x.onload=function(){
+      if(x.status!==200){ fin(null); return; }
+      try{
+        var d=JSON.parse(x.responseText), t="";
+        if(d && d.content && d.content.length){ for(var i=0;i<d.content.length;i++) t+=d.content[i].text||""; }
+        if(!t) t=(d&&(d.reply||d.text||d.message))||"";
+        var m=/\{[\s\S]*\}/.exec(t); var o=m?JSON.parse(m[0]):null;
+        if(o && (trimS(o.title)||trimS(o.body))){ fin({ title:trimS(o.title||""), body:trimS(o.body||"") }); return; }
+      }catch(e){}
+      fin(null);
+    };
+    x.onerror=function(){ fin(null); }; x.ontimeout=function(){ fin(null); };
+    x.send(JSON.stringify({ model:model, max_tokens:2000, system:NTR_SYS,
+      messages:[{ role:"user", content:"TITLE:\n"+(title||"")+"\n\nBODY:\n"+(body||"") }] }));
+  }catch(e){ fin(null); }
+}
+function nTrKey(a){ var s=(a.title||"")+"\u0001"+(a.body||""), h=0; for(var i=0;i<s.length;i++){ h=((h<<5)-h+s.charCodeAt(i))|0; } return (a.id||"")+":"+h; }
+var NTR_BUSY={};
+function nTrGet(a){
+  var k=nTrKey(a), c=null;
+  try{ c=JSON.parse(window.localStorage.getItem("k321_news_tr")||"{}"); }catch(e){ c={}; }
+  if(c && c[k]) return c[k];
+  if(!NTR_BUSY[k] && navigator.onLine!==false){
+    NTR_BUSY[k]=1;
+    nTr(a.title, a.body, function(r){
+      if(!r) return;
+      try{ var c2=JSON.parse(window.localStorage.getItem("k321_news_tr")||"{}"); c2[k]=r; var ks=Object.keys(c2); if(ks.length>40) delete c2[ks[0]]; window.localStorage.setItem("k321_news_tr", JSON.stringify(c2)); }catch(e){}
+      if(currentRoute()==="home" && curLang()==="en"){ try{ render("home"); }catch(e){} }
+    });
+  }
+  return null;
+}
+var NTR_FILLED={};
+function nBackfill(){
+  if(!nAdm() || NEWS_SRC!=="worker" || !NEWS || !NEWS.length) return;
+  var todo=null;
+  for(var i=0;i<NEWS.length;i++){ var a=NEWS[i]; if(a && a.id && !NTR_FILLED[a.id] && !trimS(a.title_en) && !trimS(a.body_en) && (trimS(a.title)||trimS(a.body))){ todo=a; break; } }
+  if(!todo) return;
+  NTR_FILLED[todo.id]=1;
+  nTr(todo.title, todo.body, function(r){
+    if(!r) return;
+    var it={}; for(var k in todo) if(Object.prototype.hasOwnProperty.call(todo,k)) it[k]=todo[k];
+    it.title_en=r.title; it.body_en=r.body;
+    nPost("/news", { pin:nPin(), item:it }, function(j){ if(j){ todo.title_en=r.title; todo.body_en=r.body; setTimeout(nBackfill, 300); } });
+  });
+}
 function loadNews(){
   try{
     if(!window.fetch) return;
@@ -21833,7 +21915,7 @@ function loadNews(){
     };
     /* 先問 Cloudflare Worker；連不上（或還沒設好）就退回 news.json */
     fetch(NEWS_URL + "/news", { cache:"no-store" }).then(function(r){ return r.ok ? r.json() : null; }).then(function(j){
-      if(j && j.ok && isArr(j.news)){ NEWS = j.news; NEWS_SRC = "worker"; try{ window.localStorage.setItem("k321_news_cache", JSON.stringify(j.news)); }catch(e){} paint(); } else fromFile();
+      if(j && j.ok && isArr(j.news)){ NEWS = j.news; NEWS_SRC = "worker"; try{ window.localStorage.setItem("k321_news_cache", JSON.stringify(j.news)); }catch(e){} paint(); try{ setTimeout(nBackfill, 1500); }catch(e){} } else fromFile();
     })["catch"](fromFile);
   }catch(e){}
 }
@@ -22005,7 +22087,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610230830-vp1023';
+var APPVER = '4.0.202610252057-newsen';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -23880,7 +23962,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202610230830-vp1023";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202610252057-newsen";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
