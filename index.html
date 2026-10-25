@@ -1821,7 +1821,7 @@ function hanNormalize(str){ return toSimp(String(str||"")).toLowerCase(); }
    這一步讓 171 課課文即時以簡體呈現，成本近乎零。 */
 /* 簡體版的用詞對照：有些專有名詞不是「逐字轉換」能處理的，
    例如台灣說「紐西蘭」、大陸說「新西蘭」。要再加詞就補在這裡。 */
-var SIMP_WORDS = { "紐西蘭":"新西蘭" };
+var SIMP_WORDS = { "紐西蘭":"新西蘭", "摯":"挚", "薦":"荐" };
 function simpWords(t){
   for(var w in SIMP_WORDS){
     if(!Object.prototype.hasOwnProperty.call(SIMP_WORDS,w)) continue;
@@ -18944,21 +18944,33 @@ function appShareUrl(){
   if(u) return u;
   try{ return location.origin+location.pathname; }catch(e){ return ""; }
 }
+function inviteUrl(){
+  var l=curLang(), b="https://spch321-sudo.github.io/321fellowship/";
+  return b+(l==="en"?"join-en.html":(l==="zh-Hans"?"join-sc.html":"join.html"));
+}
+function invSC(t){ try{ return curLang()==="zh-Hans" ? simpWords(toSimp(t)) : t; }catch(e){ return t; } }
+/* 邀請新朋友的正式邀請文（連到「空中團契連結」，聚會時間會自動換成對方當地時間） */
+function inviteMsg(){
+  var u=inviteUrl();
+  if(curLang()==="en") return "🌿 You’re warmly invited to the Kingdom 321 Online Fellowship!\nWe meet online every day to learn the truth of Scripture and live out the life of Christ:\n☀️ Morning Reading · Mon–Sat 06:00–07:00\n🍞 Midday Manna · Mon–Fri 12:10–13:00\n🌙 Evening Prayer · Mon–Fri 21:00–22:00\n(Taipei time, GMT+8 — the link shows your local time automatically)\n👉 Join with one tap: "+u;
+  return invSC("🌿 誠摯邀請你參加「國度321空中團契」！\n每天線上聚會，一同學習聖經真理，活出基督的生命：\n☀️ 晨讀　週一至六 06:00–07:00\n🍞 午修靈糧　週一至五 12:10–13:00\n🌙 晚禱　週一至五 21:00–22:00\n（台北時間，打開連結會自動換成你的時間）\n👉 一鍵加入：")+u;
+}
 function inviteTemplates(){
-  if(D.invite && D.invite.templates && D.invite.templates.length) return D.invite.templates;
-  var url=appShareUrl();
+  var url=inviteUrl();
   if(curLang()==="en") return [
+    { label:"Meeting invitation (recommended)", text:inviteMsg() },
     { label:"For a friend who does not yet believe",
-      text:"Hi, how have you been? I\u2019d love to share something that has really helped me \u2014 a warm online fellowship with a word for each day and people who walk with you. No pressure at all; have a look when you have a moment: " + url },
+      text:"Hi, how have you been? I’d love to share something that has really helped me — a warm online fellowship with a word for each day and people who walk with you. No pressure at all; have a look when you have a moment: " + url },
     { label:"For a Christian friend",
-      text:"Let me share a wonderful online fellowship with you: Kingdom 321 Online Fellowship. The 3-2-1 ideology helps us move from being saved to being victorious, from self to selflessness, with daily Scripture reading and gatherings. Let\u2019s grow together: " + url },
+      text:"Let me share a wonderful online fellowship with you: Kingdom 321 Online Fellowship. The 3-2-1 ideology helps us move from being saved to being victorious, from self to selflessness, with daily Scripture reading and gatherings. Let’s grow together: " + url },
     { label:"The shortest one",
-      text:"I\u2019d like to invite you to Kingdom 321 Online Fellowship \u2014 an online home for drawing near to God every day: " + url }
+      text:"I’d like to invite you to Kingdom 321 Online Fellowship — an online home for drawing near to God every day: " + url }
   ];
   return [
-    { label:"給還沒信主的朋友", text:"嗨，最近好嗎？想跟你分享一個對我很有幫助的地方——一個溫暖的線上團契，每天有一句話、也有人陪伴。不用有壓力，有空點進來看看就好：" + url },
-    { label:"給基督徒朋友", text:"分享給你一個很棒的線上團契「國度321空中團契」，用321理念幫助我們從得救走向得勝、從有己走向無己，每天還有讀經和聚會。一起成長：" + url },
-    { label:"最簡短", text:"邀請你加入國度321空中團契，一個每天親近神的線上家：" + url }
+    { label:invSC("聚會邀請（推薦）"), text:inviteMsg() },
+    { label:invSC("給還沒信主的朋友"), text:invSC("嗨，最近好嗎？想跟你分享一個對我很有幫助的地方——一個溫暖的線上團契，每天有一句話、也有人陪伴。不用有壓力，有空點進來看看就好：") + url },
+    { label:invSC("給基督徒朋友"), text:invSC("分享給你一個很棒的線上團契「國度321空中團契」，用321理念幫助我們從得救走向得勝、從有己走向無己，每天還有讀經和聚會。一起成長：") + url },
+    { label:invSC("最簡短"), text:invSC("邀請你加入國度321空中團契，一個每天親近神的線上家：") + url }
   ];
 }
 function copyText(text, hintId, okMsg, badMsg){
@@ -18975,17 +18987,15 @@ function copyText(text, hintId, okMsg, badMsg){
   }catch(e){ done(false); }
 }
 function shareApp(){
-  var url=appShareUrl();
-  var msg="邀請你加入國度321空中團契，一個每天親近神的線上家 🕊️";
+  var msg=inviteMsg();
   try{
     if(navigator.share){
-      navigator.share({ title:"國度321空中團契", text:msg, url:url })
-        .then(function(){}, function(){});
+      navigator.share({ text:msg }).then(function(){}, function(){});
       return;
     }
   }catch(e){}
-  // 不支援分享 → 退回複製連結
-  copyText(msg+" "+url, "shareHint");
+  // 不支援分享 → 退回複製邀請文
+  copyText(msg, "shareHint");
 }
 function resMatch(r){
   if(RES_STAGE && RES_STAGE!=="全部" && (r.stage||"")!==RES_STAGE) return false;
@@ -20517,7 +20527,7 @@ var PAGES = {
       '<div class="card"><h3>'+esc(f9("邀請一位朋友回家","Invite a Friend Home"))+'</h3>'+
       '<p>'+esc(f9("你身邊有沒有一個人，正需要神的愛？也許，你就是神要用來把他帶回家的那雙手。不必說服，只要邀請——把這個家，分享給他。","Is there someone near you who needs the love of God? Perhaps you are the very hands God wants to use to bring them home. You do not have to persuade \u2014 only invite. Share this family with them."))+'</p>'+
       '<button class="btn gold" data-share="1" style="margin-top:12px">'+icon("give",20)+' '+esc(f9("一鍵分享給朋友","Share with a friend"))+'</button>'+
-      '<button class="btn ghost" data-copylink="1" style="margin-top:10px">'+esc(f9("複製 App 連結","Copy the app link"))+'</button>'+
+      '<button class="btn ghost" data-copylink="1" style="margin-top:10px">'+esc(f9("複製邀請文與連結","Copy the invitation and link"))+'</button>'+
       '<p class="note" id="shareHint" style="margin-top:10px">'+esc(f9("點「一鍵分享」會叫出手機的分享選單（LINE、WhatsApp、訊息…）。","Tapping Share opens your phone\u2019s share sheet (LINE, WhatsApp, Messages\u2026)."))+'</p></div>'+
       sect("語",f9("現成的邀請語","Ready-Made Invitations"))+
       '<p class="note" style="margin:-4px 2px 12px">'+esc(f9("不知道怎麼開口？挑一段，複製後貼給朋友：","Not sure how to start? Pick one, copy it, and send it to your friend:"))+'</p>'+ tHtml +
@@ -22086,7 +22096,7 @@ document.addEventListener("click",function(e){
     if(el.getAttribute && el.getAttribute("data-verseimg")){ makeVerseImage(); return; }
     if(el.getAttribute && el.getAttribute("data-record")){ openRec(); return; }
     if(el.getAttribute && el.getAttribute("data-share")){ shareApp(); return; }
-    if(el.getAttribute && el.getAttribute("data-copylink")){ copyText(appShareUrl(), "shareHint"); return; }
+    if(el.getAttribute && el.getAttribute("data-copylink")){ copyText(inviteMsg(), "shareHint"); return; }
     if(el.getAttribute && el.getAttribute("data-copyacct")){
       var ai=parseInt(el.getAttribute("data-copyacct"),10);
       var accs=((langData().links||{}).offering)||[];
@@ -22766,7 +22776,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610252230-l172';
+var APPVER = '4.0.202610252325-invite';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -24641,7 +24651,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202610252230-l172";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202610252325-invite";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
