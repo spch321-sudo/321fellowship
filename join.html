@@ -179,7 +179,7 @@ var T={
  joinNow:['立即加入','立即加入','Join now']
 };
 var I={tc:0,sc:1,en:2}, L='tc';
-try{var q=new URLSearchParams(location.search);var ql=q.get('lang');if(I[ql]!=null)L=ql;else{var sv=localStorage.getItem('k321join_lang');if(I[sv]!=null)L=sv;else{var n=(navigator.language||'').toLowerCase();if(/^zh/.test(n))L=/hans|cn|sg|my/.test(n)?'sc':'tc';else if(n)L='en';}}
+try{var q=new URLSearchParams(location.search);var ql=q.get('lang');if(I[ql]!=null)L=ql;else if(window.JOIN_LANG&&I[window.JOIN_LANG]!=null)L=window.JOIN_LANG;else{var sv=localStorage.getItem('k321join_lang');if(I[sv]!=null)L=sv;else{var n=(navigator.language||'').toLowerCase();if(/^zh/.test(n))L=/hans|cn|sg|my/.test(n)?'sc':'tc';else if(n)L='en';}}
   if(q.has('poster'))document.body.classList.add('poster');}catch(e){}
 function tx(k){return T[k][I[L]];}
 function pad(n){return(n<10?'0':'')+n;}
