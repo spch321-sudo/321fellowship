@@ -22796,7 +22796,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610291647-apps';
+var APPVER = '4.0.202610291721-upd';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -24588,11 +24588,28 @@ function applyUpdate(hard) {
 function onNewVersion(v) {
   if (!v || v === APPVER) return;
   UPD.target = v;
+  /* 正在 App 內嵌檢視（屬靈父母、慕道生活…）裡：不蓋住對方畫面，按「返回」後再自動更新 */
+  if (CUR_ROUTE === 'appview') { UPD.pending = true; updBar(false); return; }
   if (updBusy()) { UPD.pending = true; updBar(true); return; }
-  if (ssGet('updHard') === v) { updBar(true); return; }
+  /* 已經強制重新載入過，拿到的頁面還是舊版：GitHub Pages 還在發佈（約 1～10 分鐘）。
+     不再顯示點了沒用的更新條，改成每分鐘悄悄重試一次，最多 8 次 */
+  if (ssGet('updHard') === v) {
+    updBar(false);
+    var n = +ssGet('updWait') || 0;
+    if (n < 8 && !UPD.wt) UPD.wt = setTimeout(function () {
+      UPD.wt = 0; ssSet('updWait', String(n + 1));
+      if (updBusy()) { UPD.pending = true; return; }
+      ssSet('updTry', ''); ssSet('updHard', ''); reloadFresh();
+    }, 60000);
+    return;
+  }
   applyUpdate(ssGet('updTry') === v);
 }
-function updIdle() { if (UPD.pending && !updBusy()) { UPD.pending = false; onNewVersion(UPD.target); } }
+function updIdle() {
+  if (CUR_ROUTE === 'appview') { updBar(false); return; }
+  if (UPD.pending && !updBusy()) { UPD.pending = false; onNewVersion(UPD.target); }
+}
+window.addEventListener('hashchange', function () { setTimeout(updIdle, 600); });
 function checkUpdate(manual) {
   if (navigator.onLine === false) { if (manual) toast(T('netErr')); return; }
   try { if (UPD.reg) UPD.reg.update(); } catch (e) { }
@@ -24671,7 +24688,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202610291647-apps";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202610291721-upd";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
