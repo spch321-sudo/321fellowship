@@ -20685,7 +20685,15 @@ function bindDynamic(){
   var rs=$("resSearch");
   if(rs){
     var wasFiltering = !!(RES_Q && RES_Q.replace(/^\s+|\s+$/g,""));
-    rs.oninput=function(){
+    /* 注音／拼音輸入法組字中（例如打 eng 還沒選字）不要搜尋、更不能整頁重繪：
+       重繪會把輸入框換掉，組字被打斷，拼音字母就直接留在框裡（eng→engs）。
+       等選完字（compositionend）再搜尋一次。 */
+    var resComposing=false;
+    rs.addEventListener("compositionstart",function(){ resComposing=true; });
+    rs.addEventListener("compositionend",function(){ resComposing=false; rs.oninput(); });
+    rs.oninput=function(e){
+      if(resComposing || (e && e.isComposing)) return;
+      if((rs.value||"")===RES_Q && e) return;
       RES_Q=rs.value||"";
       var nowFiltering = !!(RES_Q.replace(/^\s+|\s+$/g,""));
       /* 進入或離開「搜尋模式」時要整頁重繪（切換單元總覽↔平鋪結果）；
@@ -22786,7 +22794,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610261029-homeinv';
+var APPVER = '4.0.202610291300-imefix';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -24661,7 +24669,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202610261029-homeinv";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202610291300-imefix";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
