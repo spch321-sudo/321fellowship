@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#12233F">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob: https://images.pexels.com https://i.ytimg.com https://*.ytimg.com; media-src 'self' blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://youtube.com; base-uri 'self'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob: https://images.pexels.com https://i.ytimg.com https://*.ytimg.com; media-src 'self' blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https: wss:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://youtube.com; base-uri 'self'; form-action 'none'; object-src 'none'">
 <title>321空中團契</title>
 <meta name="description" content="國度321空中團契：每天一句今日金句、172課晨讀課文、線上聚會與屬靈同行。落實321——耶穌是我的榜樣、聖經是我的準則、聖靈是我的引導。">
 <!-- 分享預覽（貼到 LINE、FB、群組時的樣子） -->
@@ -1232,6 +1232,32 @@ input,textarea,select{min-width:0;max-width:100%;}
 .homemeet .nextmtg h4{color:#fff!important}
 .homemeet .nextmtg .btn{display:block;text-align:center;font-size:calc(18px * var(--fs));font-weight:800;min-height:54px;line-height:54px;padding:0 14px;border-radius:14px;color:#fff!important;text-decoration:none}
 html[data-theme="dark"] .homemeet .hm-card{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+</style>
+<style id="crcss">
+/* 一起共讀 */
+.crbar{position:fixed;left:0;right:0;top:0;z-index:2400;display:flex;align-items:center;gap:6px;padding:calc(6px + env(safe-area-inset-top)) 10px 6px;background:linear-gradient(90deg,#14336F,#6C4BA3);color:#fff;font-size:14px;line-height:1.4;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.crbar .crt{flex:1 1 0;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700;cursor:pointer}
+.crbar button{flex:0 0 auto;border:0;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;padding:5px 10px;font:inherit;font-weight:600;cursor:pointer}
+body.crOn{padding-top:calc(40px + env(safe-area-inset-top))}
+body.crOn .appbar{top:calc(40px + env(safe-area-inset-top));padding-top:14px}
+.iconbtn.crlive{background:#6C4BA3;color:#fff}
+.iconbtn.crb{font-size:calc(19px * var(--fs));line-height:1;padding:8px 6px}
+.cr-pt{box-shadow:inset 0 0 0 999px rgba(108,75,163,.18);outline:2px solid rgba(108,75,163,.55);border-radius:4px;animation:crp 1.6s ease-out 1}
+@keyframes crp{0%{outline-color:rgba(108,75,163,1);outline-width:5px}100%{outline-color:rgba(108,75,163,.55);outline-width:2px}}
+.crqr{display:flex;justify-content:center}
+.crqr svg{width:200px;height:200px;background:#fff;border-radius:12px}
+.crcode{font-size:2em;font-weight:800;letter-spacing:.25em;color:var(--head);font-family:ui-monospace,Menlo,monospace}
+.crsheet .opt{display:flex;flex-direction:column;gap:4px;width:100%;text-align:left;border:1px solid var(--line);background:var(--white);border-radius:14px;padding:14px;margin-bottom:10px;color:var(--ink);font:inherit}
+.crsheet.c{text-align:center}
+.crsheet .h2{font-size:1.15em;font-weight:800;color:var(--head);margin:0 0 4px}
+.crsheet .sm{font-size:.88em}.crsheet .xs{font-size:.8em}.crsheet .muted{color:var(--muted)}
+.crsheet .full{width:100%}
+.crsheet .pill{display:inline-block;background:var(--sky);border-radius:999px;padding:3px 10px;margin:2px;font-size:.85em}
+.crsheet input[type=text]{border:1px solid var(--line);background:var(--white);border-radius:12px;padding:11px 12px;font:inherit;color:var(--ink);width:100%}
+.crsheet .row{display:flex;align-items:center}
+.crsheet .row .btn{width:auto;flex:1 1 0;min-width:0;padding:12px 8px}
+.crsheet .eyebrow{font-size:.8em;color:var(--muted)}
+@media(max-width:360px){.crbar{gap:4px;padding-left:6px;padding-right:6px;font-size:13px}.crbar button{padding:5px 7px}}
 </style>
 </head>
 <body>
@@ -21186,7 +21212,7 @@ document.addEventListener("click", function(e){
   while(el && el!==document){
     if(el.getAttribute){
       var v;
-      v=el.getAttribute("data-mk");        if(v){ mkTap(v,el); return; }
+      v=el.getAttribute("data-mk");        if(v){ try{ crPoint(el); }catch(x){} mkTap(v,el); return; }
       v=el.getAttribute("data-mkflag");    if(v){
         var n=document.getElementById("mkn-"+v);
         if(n){ var on=n.className.indexOf("open")>=0; n.className="mk-note"+(on?"":" open"); el.innerHTML=on?"\u25b6":"\u25bc"; }
@@ -22796,7 +22822,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610291721-upd';
+var APPVER = '4.0.202610311000-cr';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -22836,6 +22862,8 @@ function shareText(t) {
 
 /* ---------- 介面字串（繁／英；简體由繁體自動轉） ---------- */
 var XI = {"zh": {"hlTitle": "這一句", "hlColor": "顏色", "hlSpan": "範圍", "spanUnit": "{0} 句", "spanP": "整段", "hlNotePH": "寫下默想……", "save": "儲存", "makeCard": "做成美圖", "readThis": "朗讀", "copy": "複製", "share": "分享", "hlDel": "刪除畫線", "spanIsP": "這一段已經整段畫起來了", "spanDoneP": "已畫整段，共 {0} 句", "hlAdded": "已畫線，再點一下可換色、寫默想、做美圖", "noHl": "還沒有畫線。讀課文時點一下任何一句就能畫線。", "noFav": "還沒有收藏。小智的回答按 ★ 就能收藏。", "ttsErr": "這台裝置不支援朗讀", "ttsFallback": "改用裝置內建語音", "xzFormat": " 回答格式：需要並列或對照時可以用 markdown 表格；用簡短的小標題（####）與條列分段；請把最重要的一句用「> 」標成引言，那一句會被做成美圖。不要用程式碼區塊或念不出來的裝飾符號。若寫到禱告，結尾一律用「奉主耶穌的名禱告，阿們」。", "thinking": "小智思考中……", "favB": "收藏", "chatErr": "小智暫時連不上，請稍後再試", "xzReplied": "小智回覆了", "xzExamples": "不知道問甚麼？看看範例", "studioT": "經文美圖工作室", "saveImg": "存到相簿", "cTpl": "版型", "cSize": "尺寸", "sz916": "直式 9:16", "sz45": "直式 4:5", "szSq": "方形", "szWide": "橫式", "cBorder": "邊框", "bd_classic": "古典雙框", "bd_corner": "雅緻角飾", "bd_inline": "內斂細線", "bd_dots": "珠鏈點框", "bd_ornate": "華麗花角", "bd_none": "無邊框", "cFs": "字級", "cfs0": "小一點", "cfs1": "標準", "cfs2": "大", "cfs3": "特大", "cfs4": "超大", "cPhoto": "背景相片", "pickPhoto": "從相簿選", "pexels": "免費圖庫", "noPhoto": "移除相片", "cText": "經文／金句", "cRef": "出處", "cNote": "領受（可留空）", "cNotePH": "寫下你的領受……", "cTo": "送給（可留空）", "cToPH": "例如：親愛的媽媽", "cTop": "團體名稱", "cSignL": "落款", "photoBad": "這張相片讀不進來，換一張試試", "holdT": "長按圖片存到相簿", "holdS": "長按下面的圖片，選「加入照片」就會存進相簿。", "close": "關閉", "saveIOS": "在分享面板選「儲存影像」就會存進相簿", "savedFile": "已下載圖片", "pexelsT": "Pexels 免費圖庫", "pxPH": "想找甚麼樣的畫面……", "search": "搜尋", "more": "再多一些", "pxHint": "照片來自 Pexels，免費可商用。挑一張當背景，字會自動壓上一層遮罩。", "pxNone": "找不到相符的照片，換個字試試", "pxErr": "連不上圖庫", "pxLoading": "下載照片中……", "pxPicked": "已選好這張照片", "tplNavy": "深藍聖夜", "tplPaper": "素樸信箋", "tplDawn": "晨曦盼望", "tplGrace": "青草安歇", "tplRose": "溫柔玫瑰", "tplSky": "平安晴空", "tplLinen": "素雅棉麻", "tplNight": "深夜星光", "tplPlain": "純白簡潔", "hlTip": "點一下任何一句就能畫線；再點一次可換顏色、寫默想、問小智、朗讀或做成美圖。", "fHl": "畫線", "fFav": "收藏", "favSaved": "已收藏", "delHl": "刪除這條畫線？", "cardBless": "願神賜福你！", "fellowshipName": "國度321空中團契", "lessonRef": "{0}〈{1}〉", "makeCardV": "經文美圖", "readPage": "從這裡朗讀", "xzCtxChip": "正在上：{0}", "xzAboutHl": "我畫了這一句：\n{0}\n——{1}\n{2}請幫我更明白，並告訴我怎樣在生活中活出來。", "foldMore": "展開全文 ▾", "foldLess": "收合 ▴", "foldAll": "把所有長回答收合起來", "foldAllB": "收合", "foldedAll": "已收合所有長回答", "foldNone": "目前沒有需要收合的回答", "updating": "更新到最新版本中…", "hardUpd": "強制更新", "say_1": "先來讀經文。", "say_2": "接下來聽一段短講。", "say_3": "接下來想一想。", "say_4": "接下來開口說，一起禱告。", "say_5": "最後，付諸行動。", "xzGoOn": "（剛才的回答因字數上限中斷了。請從中斷的地方直接接著寫完，不要重複前面的內容，也不要加開場白或說明。）", "xzCont": "小智還在接著寫…", "appName": "國度321空中團契", "xz": "小智", "askXz": "問小智", "audFor": "寫給：{0}（到小智頁或設定可以更改）", "audSet": "回答對象：{0}", "audT": "回答對象", "bmAdded": "已加上書籤 🔖", "bmRemoved": "已移除書籤", "bmMode": "書籤模式", "bmOn": "書籤模式（開）", "bmOnT": "書籤模式：點一句就加上／移除書籤", "bmOffT": "已回到畫線模式", "cFrom": "做成美圖的內容", "cancel": "取消", "checkUpd": "檢查更新", "copied": "已複製", "fBm": "書籤", "favOn": "已收藏", "favRemoved": "已取消收藏", "fontB": "字級", "fontNow": "字級：{0}", "fuT": "追問：", "loading": "載入中…", "loadingMedia": "正在載入配樂與錄製工具…", "mediaFail": "配樂與錄製工具載入失敗（請確認 media.js 已上傳）。美圖仍可照常儲存與分享。", "myMarks": "我的畫線・收藏・書籤", "netErr": "連不上網路，稍後再試", "newVer": "已有新版本，點這裡立即更新", "upToDate": "已是最新版本", "noBm": "還沒有書籤。在課文頁打開「書籤模式」，點一句就能加書籤。", "noCardSrc": "這一課沒有可以做成美圖的內容", "nothingToRead": "這一頁沒有可以朗讀的文字", "optVerse": "主題經文", "optLight": "321 亮光", "optDec": "信心宣告", "optMark": "我的畫線", "optNote": "我的默想", "plTitle": "讀經樂", "plSub": "小智依課文現場出題，每次都不一樣；答錯的題目會收進錯題本，離線也能複習。", "plSrcT": "出題範圍", "plSrcCur": "正在讀的這一課", "plSrcRand": "讀過的課隨機一課", "plQuiz": "測驗", "plQuizD": "5 題單選，看你抓到重點沒有", "plRiddle": "猜謎", "plRiddleD": "4 題，三個提示，越早猜中分數越高", "plWrong": "錯題本", "plWrongD": "再做一次答錯的題，答對就畢業", "plBest": "最佳成績：測驗 {0}%・猜謎 {1}%", "plMaking": "小智正在照{0}出題…", "plFail": "出題失敗，請再試一次", "plOffline": "現在離線，可以先做「錯題本」", "plNoLesson": "找不到這一課的內容", "plNoWrong": "錯題本是空的，太棒了！", "plQof": "第 {0} 題／共 {1} 題", "plScore": "得分 {0}", "plRight": "答對了！", "plWrongA": "答錯了，正確答案已標出來", "plNext": "下一題", "plHintN": "提示 {0}：", "plGuess": "猜", "plGuessPH": "寫下你的答案", "plHintBtn": "再給一個提示", "plGive": "看答案", "plMoreHint": "還不是喔，多給你一個提示", "plWas": "答案是", "plNewBest": "新紀錄！", "plAgain": "再玩一次", "plHome": "回讀經樂", "plRes0": "沒關係，再讀一次這一課，下次一定更好。", "plRes1": "不錯！你已經抓到這一課的重點了。", "plRes2": "太好了！你對這一課非常清楚，願你活出來。", "plRes0t": "差一點點！再刷一次，下次直接上分。", "plRes1t": "可以喔！重點都抓到了，再衝一下就滿分。", "plRes2t": "神操作！這一課你完全通關了。", "plRes0k": "沒關係～我們再讀一次，你一定可以的！", "plRes1k": "好棒喔！你記得好多！", "plRes2k": "哇！你全部都會耶！耶穌也為你高興！", "quizMe": "考考我", "rateT": "語速", "rateSlow": "慢", "rateStd": "標準", "rateFast": "快", "rateFaster": "更快", "readBody": "朗讀課文", "reading": "朗讀中", "stop": "停止", "recBusyClose": "錄製中，請先按「停止並完成」", "rwGoal": "達　標", "rwOk": "收下獎章", "rwAgain": "再看一次獎勵動畫", "rwCount": "課程獎章 {0}／{1}", "rwNth": "第 {0} 枚獎章　共 {1} 課", "rwA1": "你讀完整個單元了：{0}", "rwA2": "一課一課走到這裡，真理已經在你裡面扎根。", "rwT1": "單元通關！{0}", "rwT2": "整個單元讀完不是人人做得到，這枚獎章你拿得實至名歸。", "rwK1": "哇！你讀完一整個單元了！🎉", "rwK2": "你好棒！耶穌一定很高興，一起收下這枚金牌！🏅", "rwS1": "恭喜你！這個單元讀完了：{0}", "rwS2": "願意一課一課讀下去真不簡單，希望這些話對你有幫助。", "saved": "已儲存", "verT": "版本", "voiceT": "朗讀聲音", "voiceTest": "試聽", "voiceNote": "真人語音連不上時，會自動改用手機內建的聲音，朗讀不會中斷。", "voiceSample": "我們一起朗讀神的話：與主同行，讓耶穌作王。", "fontB2": ""}, "en": {"hlTitle": "This passage", "hlColor": "Colour", "hlSpan": "Range", "spanUnit": "{0} sent.", "spanP": "Whole paragraph", "hlNotePH": "Write a reflection…", "save": "Save", "makeCard": "Make a picture", "readThis": "Listen", "copy": "Copy", "share": "Share", "hlDel": "Remove", "spanIsP": "The whole paragraph is already highlighted", "spanDoneP": "Whole paragraph highlighted ({0} sentences)", "hlAdded": "Highlighted — tap again to change colour, add a note or make a picture", "noHl": "No highlights yet. Tap any sentence in a lesson to highlight it.", "noFav": "Nothing saved yet. Tap ★ on any Sage AI answer to save it.", "ttsErr": "Read-aloud is not supported on this device", "ttsFallback": "Using this device's built-in voice", "xzFormat": " Format: you may use a markdown table for side-by-side comparisons; use short headings (####) and bullet lists; mark the single most important sentence as a \"> \" blockquote — that line becomes a shareable picture. No code blocks or decorative symbols that cannot be read aloud. If you write a prayer, close with \"In the name of the Lord Jesus we pray. Amen.\"", "thinking": "Sage AI is thinking…", "favB": "Save", "chatErr": "Sage AI is unreachable right now. Please try again shortly.", "xzReplied": "Sage AI has replied", "xzExamples": "Not sure what to ask? See examples", "studioT": "Verse Picture Studio", "saveImg": "Save image", "cTpl": "Style", "cSize": "Size", "sz916": "Story 9:16", "sz45": "Portrait 4:5", "szSq": "Square", "szWide": "Landscape", "cBorder": "Border", "bd_classic": "Classic", "bd_corner": "Corners", "bd_inline": "Fine line", "bd_dots": "Dots", "bd_ornate": "Ornate", "bd_none": "None", "cFs": "Text size", "cfs0": "Smaller", "cfs1": "Normal", "cfs2": "Large", "cfs3": "Larger", "cfs4": "Largest", "cPhoto": "Background photo", "pickPhoto": "From my photos", "pexels": "Free photos", "noPhoto": "Remove photo", "cText": "Verse / key line", "cRef": "Reference", "cNote": "Reflection (optional)", "cNotePH": "Write what you received…", "cTo": "To (optional)", "cToPH": "e.g. Dear Mum", "cTop": "Group name", "cSignL": "Signature", "photoBad": "That photo could not be loaded — try another", "holdT": "Press and hold to save", "holdS": "Press and hold the picture below and choose \"Add to Photos\".", "close": "Close", "saveIOS": "Choose \"Save Image\" in the share sheet to save it to Photos", "savedFile": "Image downloaded", "pexelsT": "Pexels free photos", "pxPH": "What kind of scene…", "search": "Search", "more": "Load more", "pxHint": "Photos from Pexels, free to use. Pick one as the background; the text gets a soft overlay automatically.", "pxNone": "Nothing found — try another word", "pxErr": "Cannot reach the photo library", "pxLoading": "Downloading the photo…", "pxPicked": "Photo chosen", "tplNavy": "Holy night", "tplPaper": "Letter paper", "tplDawn": "Dawn hope", "tplGrace": "Green pastures", "tplRose": "Gentle rose", "tplSky": "Peaceful sky", "tplLinen": "Linen", "tplNight": "Starlight", "tplPlain": "Pure white", "hlTip": "Tap any sentence to highlight it; tap again to change colour, add a note, ask Sage AI, listen or make a picture.", "fHl": "Highlights", "fFav": "Saved", "favSaved": "Saved", "delHl": "Remove this highlight?", "cardBless": "God bless you!", "fellowshipName": "Kingdom 321 Online Fellowship", "lessonRef": "{0} “{1}”", "makeCardV": "Verse picture", "readPage": "Read from here", "xzCtxChip": "Current lesson: {0}", "xzAboutHl": "I highlighted this:\n{0}\n— {1}\n{2}Please help me understand it and show me how to live it out.", "foldMore": "Show all ▾", "foldLess": "Collapse ▴", "foldAll": "Collapse all long answers", "foldAllB": "Collapse", "foldedAll": "All long answers collapsed", "foldNone": "Nothing to collapse", "updating": "Updating to the latest version…", "hardUpd": "Force update", "say_1": "First, the Scripture.", "say_2": "Next, a short message.", "say_3": "Now take a moment to think.", "say_4": "Next, speak it out and pray.", "say_5": "Finally, put it into practice.", "xzGoOn": "(Your previous answer was cut off by the length limit. Continue exactly where it stopped; do not repeat earlier text or add any preamble.)", "xzCont": "Sage AI is still writing…", "appName": "Kingdom 321 Online Fellowship", "xz": "Sage AI", "askXz": "Ask Sage AI", "audFor": "Written for: {0} (change it on the Sage AI page or in Settings)", "audSet": "Answering for: {0}", "audT": "Answer style for", "bmAdded": "Bookmarked 🔖", "bmRemoved": "Bookmark removed", "bmMode": "Bookmark mode", "bmOn": "Bookmark mode (on)", "bmOnT": "Bookmark mode: tap a sentence to add or remove a bookmark", "bmOffT": "Back to highlighting", "cFrom": "What to put on the picture", "cancel": "Cancel", "checkUpd": "Check for updates", "copied": "Copied", "fBm": "Bookmarks", "favOn": "Saved", "favRemoved": "Removed from saved", "fontB": "Text size", "fontNow": "Text size: {0}", "fuT": "Ask more: ", "loading": "Loading…", "loadingMedia": "Loading music and recording tools…", "mediaFail": "Music and recording tools could not load (please make sure media.js is uploaded). You can still save and share the picture.", "myMarks": "My highlights · saved · bookmarks", "netErr": "No connection — please try again later", "newVer": "A new version is ready — tap to update", "upToDate": "You have the latest version", "noBm": "No bookmarks yet. Turn on Bookmark mode in a lesson and tap a sentence.", "noCardSrc": "This lesson has nothing to put on a picture yet", "nothingToRead": "There is nothing to read aloud on this page", "optVerse": "Key verse", "optLight": "321 Insight", "optDec": "Declaration", "optMark": "My highlight", "optNote": "My note", "plTitle": "Play & Learn", "plSub": "Sage AI writes fresh questions from the lesson every time. Missed questions go into your review book, which works offline.", "plSrcT": "Questions from", "plSrcCur": "The lesson I am reading", "plSrcRand": "A random lesson I have read", "plQuiz": "Quiz", "plQuizD": "5 multiple-choice questions on the main points", "plRiddle": "Riddles", "plRiddleD": "4 riddles with three hints — guess early to score more", "plWrong": "Review book", "plWrongD": "Retry the ones you missed until you get them right", "plBest": "Best scores: quiz {0}% · riddles {1}%", "plMaking": "Sage AI is writing questions from {0}…", "plFail": "Could not make the questions — please try again", "plOffline": "You are offline — try the review book", "plNoLesson": "Could not find this lesson", "plNoWrong": "Your review book is empty — well done!", "plQof": "Question {0} of {1}", "plScore": "Score {0}", "plRight": "Correct!", "plWrongA": "Not quite — the right answer is marked", "plNext": "Next", "plHintN": "Hint {0}: ", "plGuess": "Guess", "plGuessPH": "Type your answer", "plHintBtn": "Another hint", "plGive": "Show answer", "plMoreHint": "Not yet — here is another hint", "plWas": "The answer was", "plNewBest": "New best!", "plAgain": "Play again", "plHome": "Back to Play & Learn", "plRes0": "That is okay — read the lesson once more and you will do better.", "plRes1": "Good! You have caught the main points of this lesson.", "plRes2": "Excellent! You know this lesson well — now live it out.", "plRes0t": "So close! One more run and you will level up.", "plRes1t": "Nice! You got the main points — one more push for full marks.", "plRes2t": "Legendary! You cleared this lesson completely.", "plRes0k": "That is okay — let us read it again. You can do it!", "plRes1k": "Great job! You remembered so much!", "plRes2k": "Wow, you knew them all! Jesus is happy with you!", "quizMe": "Quiz me", "rateT": "Speed", "rateSlow": "Slow", "rateStd": "Normal", "rateFast": "Fast", "rateFaster": "Faster", "readBody": "Read the lesson", "reading": "Reading aloud", "stop": "Stop", "recBusyClose": "Recording — tap “Stop and finish” first", "rwGoal": "GOAL REACHED", "rwOk": "Collect", "rwAgain": "Watch the medal again", "rwCount": "Course medals {0}/{1}", "rwNth": "Medal {0} · {1} lessons", "rwA1": "You finished a whole unit: {0}", "rwA2": "Lesson by lesson you came this far — the truth is taking root in you.", "rwT1": "Unit cleared! {0}", "rwT2": "Not everyone finishes a whole unit — you earned this one.", "rwK1": "Wow! You finished a whole unit! 🎉", "rwK2": "You did it! Jesus is so happy. Here is your gold medal! 🏅", "rwS1": "Congratulations — you finished this unit: {0}", "rwS2": "Reading lesson by lesson is not easy. I hope these words help you.", "saved": "Saved", "verT": "Version", "voiceT": "Reading voice", "voiceTest": "Try it", "voiceNote": "If the human-like voice cannot connect, the phone’s own voice takes over so reading never stops.", "voiceSample": "Let us read God’s word together: walk with the Lord and let Jesus be King.", "fontB2": ""}};
+/* 一起共讀字串（简體由繁體自動轉） */
+(function () { var Z = {"crTitle": "一起共讀", "crHostB": "我來帶領共讀", "crHostD": "大家的手機會跟著我翻頁、滑動、看我點的那一句、聽我朗讀到哪裡", "crJoinB": "加入共讀", "crJoinD": "輸入帶領者給你的6碼代碼（或直接點他傳來的連結、掃 QR）", "crCodePh": "6碼代碼", "crJoinGo": "加入", "crNamePh": "你的稱呼（讓帶領者知道你來了）", "crBadCode": "請輸入6碼共讀代碼", "crStarting": "正在建立共讀…", "crJoining": "正在加入共讀…", "crCode": "共讀代碼", "crScan": "請家人用手機相機掃描 QR，或在 App 點右上角 📡 輸入代碼", "crShareLink": "分享邀請", "crInviteMsg": "邀請你和我一起用《國度321空中團契》App 共讀，點下面的連結就能加入（共讀代碼 {0}）：", "crMembers": "已加入 {0} 人", "crNone": "還沒有人加入，把邀請或 QR 給大家吧", "crEnd": "結束共讀", "crLeaveB": "離開", "crInv": "邀請", "crHostBar": "帶領共讀 {0}", "crGuestBar": "跟著 {0} 共讀", "crWait": "正在連接共讀…", "crOff": "此頁不同步", "crFollow": "跟著帶領者走", "crFree": "自己瀏覽一下", "crFollowB": "跟隨中", "crFreeB": "回到帶領者", "crJoined": "{0} 加入了共讀", "crLeft": "{0} 離開了共讀", "crEnded": "帶領者已結束共讀，願主祝福你！", "crNoRoom": "找不到這個共讀，請確認代碼，或請帶領者重新開始", "crLostT": "共讀連接中斷了，可以重新加入", "crLibErr": "共讀功能載入失敗，請檢查網絡後再試", "crSent": "已送給帶領者", "crAway": "帶領者在其他頁面", "crGuest": "朋友", "crLeader": "帶領者", "crGuestTip": "你可以隨時「自己瀏覽一下」，再按「回到帶領者」就會跳回帶領者所在的地方。你的畫線與默想只存在自己的手機。", "crTip": "大家進入共讀後，帶領者翻到哪一頁（今日金句、課文、觀念、認識我們）、看到哪一段、點哪一句、朗讀到哪裡，所有人的手機都會一起跟著走；每個人看到的是自己設定的語言與字級。想用電視一起看，可用手機的 AirPlay／Chromecast 投放畫面。"}, E = {"crTitle": "Read Together", "crHostB": "I’ll lead", "crHostD": "Everyone’s phone follows my page, scrolling, the sentence I tap and where read-aloud is", "crJoinB": "Join", "crJoinD": "Enter the leader’s 6-character code (or tap their link / scan the QR)", "crCodePh": "6-character code", "crJoinGo": "Join", "crNamePh": "Your name (so the leader knows you’re here)", "crBadCode": "Please enter the 6-character code", "crStarting": "Starting Read Together…", "crJoining": "Joining…", "crCode": "Code", "crScan": "Ask your family to scan the QR with their phone camera, or tap 📡 at the top of the app and enter the code", "crShareLink": "Send invite link", "crInviteMsg": "I invite you to read together with me in the 321 Air Fellowship app. Tap the link below to join (code {0}):", "crMembers": "{0} joined", "crNone": "No one yet—share the link or QR", "crEnd": "End", "crLeaveB": "Leave", "crInv": "Invite", "crHostBar": "Leading {0}", "crGuestBar": "Following {0}", "crWait": "Connecting…", "crOff": "not synced here", "crFollow": "Follow the leader", "crFree": "Browse on my own", "crFollowB": "Following", "crFreeB": "Back to leader", "crJoined": "{0} joined", "crLeft": "{0} left", "crEnded": "The leader ended Read Together. God bless you!", "crNoRoom": "Couldn’t find this session. Check the code, or ask the leader to start again", "crLostT": "Connection lost—you can join again", "crLibErr": "Couldn’t load the Read Together component—check your connection", "crSent": "Sent to the leader", "crAway": "leader is on another page", "crGuest": "Friend", "crLeader": "Leader", "crGuestTip": "You can “Browse on my own” anytime, then tap “Back to leader” to jump to where the leader is. Your notes and highlights stay on your own phone.", "crTip": "Once everyone joins, wherever the leader goes—which page (daily verse, lesson, concept, about us), scroll position, tapped sentence, read-aloud—every phone follows, in each person’s own language and text size. To show it on a TV, use your phone’s screen mirroring (AirPlay / Chromecast)."}; for (var k in Z) XI.zh[k] = Z[k]; for (var k2 in E) XI.en[k2] = E[k2]; })();
 function T(k) {
   var d = isEN() ? XI.en : XI.zh, s = d[k];
   if (s == null) s = XI.zh[k];
@@ -23126,7 +23154,7 @@ function raSeg(item, k) {
   if (!item || !item.segs.length) return; k = Math.max(0, Math.min(k, item.segs.length - 1));
   if (item.at === k && document.querySelector('.tts-reading')) return; item.at = k; raClear();
   var e = item.segs[k]; if (!e || !e.parentNode) return;
-  e.className += ' tts-reading';
+  e.className += ' tts-reading'; crTts(e);
   if (now() - raManualAt > RA_COOL) { try { e.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (x) { } }
 }
 function raProgress(item, ratio) {
@@ -24343,7 +24371,7 @@ renderUnitLessons = function (course) {
 function BUSY_OTHER() {
   var rec = false; try { rec = !!(window.MX && MX.busy && MX.busy()); } catch (e) { }
   var typing = false; try { var ae = document.activeElement; typing = !!(ae && /^(TEXTAREA|INPUT)$/.test(ae.tagName) && trim(ae.value)); } catch (e) { }
-  return !!(rec || aic.busy || (PL && !PL.done) || rwShowing || document.getElementById('hsheet') || typing ||
+  return !!(rec || aic.busy || (PL && !PL.done) || rwShowing || document.getElementById('hsheet') || typing || (CR && CR.role) ||
     (document.getElementById('studioOv') && document.getElementById('studioOv').className.indexOf('open') >= 0));
 }
 function updBusy() { return !!(BUSY || spk.on || sayKey || BUSY_OTHER() || CUR_ROUTE === 'appview'); }
@@ -24383,6 +24411,7 @@ renderTabs = function (active) {
     b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
     var sb = document.getElementById('setBtn'); top.insertBefore(b, sb);
   }
+  crTopBtn();
 };
 
 /* ---------- 設定頁：回答對象、朗讀聲音、版本與更新 ---------- */
@@ -24429,6 +24458,7 @@ render = function (route) {
   try { _render0(route); } finally { window.__keepSpeak = false; }
   LANG_SEEN = curLang(); LAST_LNO = LESSON_NO;
   afterRender(r, same);
+  try { if (CR && CR.role) crAfter(); } catch (e) { }
 };
 function afterRender(r, same) {
   var view = document.getElementById('view'); if (!view) return;
@@ -24460,6 +24490,216 @@ function afterRender(r, same) {
   if (same) ttsRebind();
   updIdle();
 }
+
+/* =====================================================================
+   一起共讀：帶領者的頁面（今日金句、課文、觀念、認識我們）同步到大家的手機（PeerJS／WebRTC，點對點、不經伺服器）
+   ES5。傳輸協定沿用 321 共讀：hi／st／pos／mk／re／end。
+   ===================================================================== */
+var CR = { role: '', code: '', peer: null, conns: [], conn: null, host: '', n: 0, follow: true, last: {}, tries: 0, scrollT: 0, stT: 0, away: false, hostPage: null };
+var CR_CH = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+var CR_PFX = 'fl321-';
+var CR_PAGES = { home: 1, lesson: 1, concept: 1, about: 1 };   /* 同步的頁面：其他頁（設定、App、聚會…）不同步 */
+var CR_BLK = '#view > *,.page-title,.section-label,.card,.lverse,h3.lh,.lp,.llight,.prayerbox,.step1,details';
+var CR_JOIN = (location.search.match(/[?&]join=([A-Za-z0-9]{6})/) || [])[1] || '';
+if (CR_JOIN) {
+  try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { }
+  window.addEventListener('load', function () { setTimeout(function () { crJoin(CR_JOIN); }, 900); });
+}
+function crLoad(src, test, cb) { if (test()) return cb(); var s = document.createElement('script'); s.src = src + '?v=' + APPVER; s.onload = function () { if (test()) cb(); else toast(T('crLibErr')); }; s.onerror = function () { toast(T('crLibErr')); }; document.body.appendChild(s); }
+function crOpt() { return window.CR_PEER_OPT || { debug: 0, config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }, { urls: 'stun:stun.cloudflare.com:3478' }] } }; }
+function crGen() { var c = ''; for (var i = 0; i < 6; i++) c += CR_CH.charAt(Math.floor(Math.random() * CR_CH.length)); return c; }
+function crUrl() { return location.origin + location.pathname + '?join=' + CR.code; }
+function crName() { return trim(lsGet('k321_crname') || ''); }
+function crMe() { return crName() || T(CR.role === 'host' ? 'crLeader' : 'crGuest'); }
+function crTopBtn() {
+  var top = document.querySelector('.appbar'); if (!top) return;
+  var b = document.getElementById('crBtn');
+  if (!b) { b = document.createElement('button'); b.id = 'crBtn'; b.setAttribute('aria-label', 'co-read'); b.onclick = function () { crMenu(); }; b.textContent = '📡'; var sb = document.getElementById('setBtn'); top.insertBefore(b, sb); }
+  b.className = 'iconbtn crb' + (CR.role ? ' crlive' : '');
+}
+function crMenu() {
+  if (CR.role) return crPanel();
+  openHSheet('<div class="crsheet"><p class="h2">📡 ' + esc(T('crTitle')) + '</p><p class="sm muted" style="margin:0 0 12px">' + esc(T('crTip')) + '</p>' +
+    '<button class="opt" onclick="crDo(\'host\')"><b>' + esc(T('crHostB')) + '</b><span class="sm muted">' + esc(T('crHostD')) + '</span></button>' +
+    '<div class="opt" style="cursor:default"><b>' + esc(T('crJoinB')) + '</b><span class="sm muted">' + esc(T('crJoinD')) + '</span><div class="row" style="gap:8px;margin-top:8px"><input type="text" id="crc" maxlength="6" autocomplete="off" placeholder="' + esc(T('crCodePh')) + '" style="flex:1 1 0;width:0;min-width:0;text-transform:uppercase;letter-spacing:.2em"><button class="btn pri" style="flex:0 0 auto" onclick="crDo(\'joinui\')">' + esc(T('crJoinGo')) + '</button></div><input type="text" id="crn" maxlength="20" placeholder="' + esc(T('crNamePh')) + '" value="' + esc(crName()) + '" style="margin-top:8px"></div>' +
+    '<button class="btn ghost" onclick="crDo(\'close\')">' + esc(T('close')) + '</button></div>');
+}
+function crJoinUi() { var n = trim((document.getElementById('crn') || {}).value || ''); if (n) lsSet('k321_crname', n.slice(0, 20)); var c = (document.getElementById('crc') || {}).value || ''; closeHSheet(); crJoin(c); }
+function crHost(code) {
+  crLoad('peerjs.min.js', function () { return !!window.Peer; }, function () {
+    crKill(); CR.role = 'host'; CR.code = code || crGen(); CR.conns = []; toast(T('crStarting')); crTopBtn();
+    var p = new Peer(CR_PFX + CR.code, crOpt()); CR.peer = p;
+    p.on('open', function () { CR.tries = 0; crBar(); crPanel(); });
+    p.on('connection', function (c) {
+      c.on('open', function () { CR.conns.push(c); crBar(); });
+      c.on('data', function (d) { crHostData(c, d); });
+      c.on('close', function () { crDrop(c); }); c.on('error', function () { crDrop(c); });
+    });
+    p.on('disconnected', function () { if (CR.role === 'host' && CR.peer === p) { try { p.reconnect(); } catch (e) { } } });
+    p.on('error', function (e) {
+      if (e && e.type === 'unavailable-id' && !code) { crHost(); return; }
+      if (e && e.type === 'unavailable-id') { if (CR.tries++ < 5) setTimeout(function () { if (CR.role === 'host') crHost(CR.code); }, 3000); return; }
+      crErr(e);
+    });
+  });
+}
+function crHostData(c, d) {
+  if (!d || !d.t) return;
+  if (d.t === 'hi') { c._nm = String(d.name || T('crGuest')).slice(0, 20); toast(T('crJoined', c._nm)); crSend(c, crState()); crBar(); if (document.getElementById('hsheet') && document.querySelector('.crsheet.c')) crPanel(); }
+  else if (d.t === 're') toast((c._nm || '') + ' ' + String(d.e || '').slice(0, 4));
+}
+function crDrop(c) { var a = []; for (var i = 0; i < CR.conns.length; i++) if (CR.conns[i] !== c) a.push(CR.conns[i]); if (a.length !== CR.conns.length && c._nm) toast(T('crLeft', c._nm)); CR.conns = a; crBar(); }
+function crSend(c, m) { try { if (c && c.open) c.send(m); } catch (e) { } }
+function crCast(m) { if (CR.role !== 'host') return; for (var i = 0; i < CR.conns.length; i++) crSend(CR.conns[i], m); }
+function crCur() { return { t: CUR_ROUTE, n: CUR_ROUTE === 'lesson' ? LESSON_NO : 0 }; }
+function crPage() { var r = CUR_ROUTE; if (!r || !CR_PAGES[r]) return null; if (r === 'lesson') return LESSON_NO ? { t: 'lesson', n: LESSON_NO } : null; return { t: r, n: 0 }; }
+function crKey(p) { return p ? (p.t || '') + '|' + (+p.n || 0) : ''; }
+function crState() { return { t: 'st', page: crPage(), name: crMe(), n: CR.conns.length + 1, pos: CR.last.pos || null, mk: CR.last.mk || null }; }
+function crJoin(code) {
+  code = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+  if (code.length < 6) return toast(T('crBadCode'));
+  crLoad('peerjs.min.js', function () { return !!window.Peer; }, function () { crKill(); CR.role = 'guest'; CR.code = code; CR.follow = true; CR.tries = 0; toast(T('crJoining')); crConnect(); crBar(); });
+}
+function crConnect() {
+  if (CR.peer) { try { CR.peer.destroy(); } catch (e) { } }
+  var p = new Peer(crOpt()); CR.peer = p; CR.host = '';
+  p.on('open', function () {
+    var c = p.connect(CR_PFX + CR.code, { reliable: true }); CR.conn = c;
+    var to = setTimeout(function () { if (CR.role === 'guest' && !CR.host) crLost(); }, 15000);
+    c.on('open', function () { crSend(c, { t: 'hi', name: crMe() }); });
+    c.on('data', function (d) { clearTimeout(to); CR.tries = 0; crGuestData(d); });
+    c.on('close', function () { if (CR.role === 'guest' && CR.peer === p) crLost(); });
+    c.on('error', function () { if (CR.role === 'guest' && CR.peer === p) crLost(); });
+  });
+  p.on('error', function (e) {
+    if (CR.peer !== p) return;
+    if (e && e.type === 'peer-unavailable') { if (CR.tries === 0 && !CR.host) { toast(T('crNoRoom')); crLeave(); } else crLost(); return; }
+    crLost();
+  });
+}
+function crErr(e) { toast(T('crLostT')); crLeave(); }
+function crLost() { CR.host = ''; crBar(); if (CR.role !== 'guest') return; if (CR.tries++ < 6) setTimeout(function () { if (CR.role === 'guest') crConnect(); }, 1500 * CR.tries); else { toast(T('crLostT')); crLeave(); } }
+function crGuestData(d) {
+  if (!d || !d.t) return;
+  if (d.t === 'end') { toast(T('crEnded')); crLeave(); return; }
+  if (d.t === 'st') {
+    CR.host = String(d.name || T('crLeader')).slice(0, 20); CR.n = d.n || 0; CR.away = !d.page; if (d.page) CR.hostPage = d.page;
+    if (d.pos) CR.last.pos = d.pos; if (d.mk) CR.last.mk = d.mk; crBar();
+    if (CR.follow && d.page) crGo(d.page); else crApply(); return;
+  }
+  if (d.t === 'pos') { CR.last.pos = d; if (CR.follow) crScroll(d); return; }
+  if (d.t === 'mk') { CR.last.mk = d; if (CR.follow) crMark(d, 1); return; }
+}
+function crGo(pg) {
+  var n = +pg.n || 0;
+  if (!CR_PAGES[pg.t] || (pg.t === 'lesson' && !(n > 0 && n < 1000))) return;
+  if (crKey(pg) === crKey(crCur())) { crApply(); return; }
+  CR.last.pos = null; CR.last.mk = null; stopAll(); closeSheets();
+  if (pg.t === 'lesson') LESSON_NO = n;
+  go(pg.t);
+}
+/* 區塊：捲動用「最內層」區塊的序號；點選／朗讀用「句子所在區塊」序號＋該區塊內第幾句 */
+function crLeaves() { var v = document.getElementById('view'), a = v ? qa(CR_BLK, v) : [], o = []; for (var i = 0; i < a.length; i++) if (!a[i].querySelector(CR_BLK)) o.push(a[i]); return o; }
+function crAllBlk() { var v = document.getElementById('view'); return v ? qa(CR_BLK, v) : []; }
+function crShown(e) { return !!(e && e.getClientRects && e.getClientRects().length); }
+function crScroll(d) {
+  if (now() - raManualAt < 5000) return;
+  if (d.top0) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  var ls = crLeaves(), el = (ls.length === d.nb) ? ls[d.b] : null;
+  if (!crShown(el)) {
+    if (d.f >= 0) { var mx = Math.max(0, document.documentElement.scrollHeight - window.innerHeight); window.scrollTo({ top: Math.round(mx * d.f), behavior: 'smooth' }); }
+    return;
+  }
+  var dy = el.getBoundingClientRect().top - (d.y || 100); if (Math.abs(dy) > 4) window.scrollBy({ top: dy, behavior: 'smooth' });
+}
+function crFindSent(d) {
+  var v = document.getElementById('view'); if (!v) return null;
+  var el = null, i;
+  if (d.mk) {
+    el = v.querySelector('[data-mk="' + String(d.mk).replace(/"/g, '') + '"]');
+    if (!el) { var p = String(d.mk).replace(/#\d+$/, ''), ss = v.querySelectorAll('[data-mk^="' + p.replace(/"/g, '') + '#"]'); if (ss.length) el = ss[Math.min(+d.s || 0, ss.length - 1)]; }
+    if (el) return el;
+  }
+  var bs = crAllBlk(), blk = bs[d.bi]; if (!crShown(blk)) return null;
+  var sn = qa('.mk-s,.rd-s', blk); return sn.length ? sn[Math.min(+d.s || 0, sn.length - 1)] : blk;
+}
+function crClearPt() { eachA(qa('.cr-pt'), function (e) { e.className = e.className.replace(/\s*cr-pt/g, ''); }); }
+function crMark(d, move) {
+  crClearPt(); var el = crFindSent(d); if (!el) return; el.className += ' cr-pt';
+  if (move && now() - raManualAt > 5000) { try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { } }
+}
+function crApply() {
+  if (CR.role !== 'guest' || !CR.follow) return;
+  setTimeout(function () {
+    if (crKey(CR.hostPage) !== crKey(crCur())) return;
+    if (CR.last.mk) crMark(CR.last.mk, 0); if (CR.last.pos) crScroll(CR.last.pos);
+  }, 150);
+}
+function crAfter() {
+  if (CR.role === 'host') { clearTimeout(CR.stT); CR.stT = setTimeout(function () { CR.last.pos = null; CR.last.mk = null; crCast(crState()); }, 150); }
+  else if (CR.role === 'guest') crApply();
+  crBar();
+}
+function crSendPos() {
+  if (CR.role !== 'host' || !CR.conns.length || !crPage()) return;
+  if (window.scrollY < 12) { CR.last.pos = { t: 'pos', top0: 1 }; crCast(CR.last.pos); return; }
+  var ls = crLeaves(), mx = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  for (var i = 0; i < ls.length; i++) {
+    var r = ls[i].getBoundingClientRect();
+    if (r.bottom > 110 && crShown(ls[i])) { CR.last.pos = { t: 'pos', b: i, nb: ls.length, y: Math.round(r.top), f: Math.min(1, window.scrollY / mx) }; crCast(CR.last.pos); return; }
+  }
+}
+window.addEventListener('scroll', function () { if (CR.role !== 'host' || !CR.conns.length) return; clearTimeout(CR.scrollT); CR.scrollT = setTimeout(crSendPos, 220); }, { passive: true });
+function crSentMsg(el, k) {
+  if (!el || !crPage()) return null;
+  var bs = crAllBlk(), p = el.parentNode, bi = -1, i;
+  while (p && p.id !== 'view') { i = bs.indexOf(p); if (i >= 0) { bi = i; break; } p = p.parentNode; }
+  if (bi < 0) return null;
+  var sn = qa('.mk-s,.rd-s', bs[bi]), s = sn.indexOf(el);
+  return { t: 'mk', k: k, bi: bi, s: s < 0 ? 0 : s, mk: el.getAttribute('data-mk') || '' };
+}
+function crPoint(el) { if (CR.role !== 'host' || !CR.conns.length) return; var m = crSentMsg(el, 'pt'); if (m) { CR.last.mk = m; crCast(m); } }
+function crTts(el) { if (CR.role !== 'host' || !CR.conns.length) return; var m = crSentMsg(el, 'tts'); if (m) { CR.last.mk = m; crCast(m); } }
+function crReact(e) { if (CR.conn) crSend(CR.conn, { t: 're', e: e }); toast(T('crSent')); }
+function crToggle() { CR.follow = !CR.follow; toast(T(CR.follow ? 'crFollow' : 'crFree')); crBar(); if (CR.follow && CR.hostPage) crGo(CR.hostPage); else crApply(); }
+function crKill() { if (CR.peer) { try { CR.peer.destroy(); } catch (e) { } } CR.peer = null; CR.conn = null; CR.conns = []; CR.host = ''; CR.last = {}; CR.hostPage = null; }
+function crLeave() { if (CR.role === 'host') crCast({ t: 'end' }); var r = CR.role; setTimeout(crKill, r === 'host' ? 300 : 0); CR.role = ''; CR.code = ''; crClearPt(); crBar(); crTopBtn(); closeHSheet(); }
+function crBar() {
+  var el = document.getElementById('crbar'); document.body.className = document.body.className.replace(/\s*crOn/g, '') + (CR.role ? ' crOn' : '');
+  if (!CR.role) { if (el) el.parentNode.removeChild(el); return; }
+  if (!el) { el = document.createElement('div'); el.id = 'crbar'; el.className = 'crbar'; document.body.appendChild(el); }
+  if (CR.role === 'host') el.innerHTML = '<span class="crt" onclick="crDo(\'panel\')">📡 ' + esc(T('crHostBar', CR.code)) + ' · 👥' + (CR.conns.length + 1) + (crPage() ? '' : ' · ' + esc(T('crOff'))) + '</span><button onclick="crDo(\'panel\')">' + esc(T('crInv')) + '</button><button onclick="crDo(\'endask\')">' + esc(T('crEnd')) + '</button>';
+  else el.innerHTML = '<span class="crt" onclick="crDo(\'panel\')">📡 ' + esc(CR.host ? T('crGuestBar', CR.host) + ' · 👥' + CR.n + (CR.away ? ' · ' + T('crAway') : '') : T('crWait')) + '</span><button onclick="crDo(\'toggle\')">' + esc(CR.follow ? T('crFollowB') : T('crFreeB')) + '</button><button onclick="crDo(\'re\',\'🙏\')">🙏</button><button onclick="crDo(\'re\',\'🙋\')">🙋</button><button onclick="crDo(\'leave\')">' + esc(T('crLeaveB')) + '</button>';
+  simpifyEl(el); crTopBtn();
+}
+function crPanel() {
+  if (!CR.role) return crMenu();
+  if (CR.role === 'guest') { openHSheet('<div class="crsheet c"><p class="h2">📡 ' + esc(T('crTitle')) + '</p><p>' + esc(CR.host ? T('crGuestBar', CR.host) : T('crWait')) + '</p><p class="sm muted">' + esc(T('crGuestTip')) + '</p><button class="btn pri block" onclick="crDo(\'close\');crDo(\'toggle\')">' + esc(CR.follow ? T('crFree') : T('crFollow')) + '</button><button class="btn ghost block" onclick="crDo(\'leave\')">' + esc(T('crLeaveB')) + '</button></div>'); return; }
+  crLoad('qrcode.js', function () { return !!window.qrcode; }, function () {
+    var q = qrcode(0, 'M'); q.addData(crUrl()); q.make();
+    var ms = ''; for (var i = 0; i < CR.conns.length; i++) ms += '<span class="pill">' + esc(CR.conns[i]._nm || T('crGuest')) + '</span> ';
+    openHSheet('<div class="crsheet c"><p class="h2">📡 ' + esc(T('crTitle')) + '</p><p class="xs muted" style="margin:2px 0 8px">' + esc(T('crScan')) + '</p><div class="crqr">' + q.createSvgTag(5, 8) + '</div><p class="eyebrow" style="margin:8px 0 0">' + esc(T('crCode')) + '</p><div class="crcode">' + esc(CR.code) + '</div>' +
+      '<div class="row" style="gap:8px;margin:10px 0"><button class="btn pri" onclick="crDo(\'share\')">' + esc(T('crShareLink')) + '</button><button class="btn ghost" onclick="crDo(\'copy\')">' + esc(T('copy')) + '</button></div>' +
+      '<p class="eyebrow" style="text-align:left">' + esc(T('crMembers', CR.conns.length)) + '</p><div style="text-align:left;min-height:24px">' + (ms || '<span class="xs muted">' + esc(T('crNone')) + '</span>') + '</div><p class="xs muted" style="text-align:left">' + esc(T('crTip')) + '</p>' +
+      '<div class="row" style="gap:8px"><button class="btn ghost" onclick="crDo(\'close\')">' + esc(T('close')) + '</button><button class="btn ghost" style="color:#C0392B;border-color:#C0392B" onclick="crDo(\'leave\')">' + esc(T('crEnd')) + '</button></div></div>');
+  });
+}
+/* 畫面上的 onclick 都走這一個入口（模組在閉包裡，內嵌 onclick 只認得 window 上的名字） */
+window.crDo = function (a, v) {
+  switch (a) {
+    case 'host': closeHSheet(); crHost(); break;
+    case 'joinui': crJoinUi(); break;
+    case 'close': closeHSheet(); break;
+    case 'panel': crPanel(); break;
+    case 'toggle': crToggle(); break;
+    case 're': crReact(v); break;
+    case 'leave': crLeave(); break;
+    case 'endask': if (confirm(T('crEnd') + (isEN() ? '?' : '？'))) crLeave(); break;
+    case 'share': shareText(T('crInviteMsg', CR.code) + '\n' + crUrl()); break;
+    case 'copy': copyText(crUrl()); toast(T('copied')); break;
+  }
+};
+document.addEventListener('visibilitychange', function () { if (document.visibilityState !== 'visible') return; if (CR.role === 'guest' && (!CR.conn || !CR.conn.open)) { CR.tries = 0; crConnect(); } if (CR.role === 'host' && CR.peer && CR.peer.disconnected) { try { CR.peer.reconnect(); } catch (e) { } } });
 
 /* ---------- 事件委派 ---------- */
 document.addEventListener('click', function (e) {
@@ -24688,7 +24928,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202610291721-upd";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202610311000-cr";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
