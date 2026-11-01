@@ -20687,7 +20687,11 @@ function bindDynamic(){
   })(cards[ci]); }
   /* 內嵌檢視器：返回鍵 + 載入偵測 */
   var abk=$("view").querySelector("[data-appback]");
-  if(abk) abk.onclick=function(){ closeApp(); };
+  if(abk) abk.onclick=function(){
+    /* 子 App（同源）若提供 k321Back，先在子 App 內退一頁；回傳 true 表示已處理，否則才關閉檢視器回到 321 App */
+    try{ var bf=$("appFrame"), bw=bf&&bf.contentWindow; if(bw && typeof bw.k321Back==="function" && bw.k321Back()===true) return; }catch(e){}
+    closeApp();
+  };
   var fr=$("appFrame"), msg=$("embedMsg");
   if(fr){
     var done=false;
@@ -22822,7 +22826,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202610311000-cr';
+var APPVER = '4.0.202611010920-cr';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -24928,7 +24932,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202610311000-cr";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202611010920-cr";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
