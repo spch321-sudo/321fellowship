@@ -87,7 +87,7 @@ function openHlSheet(no, key) {
   openHSheet('<div class="sheet-title">' + esc(T('hlTitle')) + '<span class="sheet-ref">' + esc(mkRefOf(no)) + '</span></div>' +
     '<div class="sheet-quote" id="hlQuote">' + esc(v.t) + '</div>' +
     '<div class="sheet-row"><span class="sheet-lab">' + esc(T('hlColor')) + '</span><div class="swatches">' + sw + '</div></div>' +
-    '<div class="sheet-row"><span class="sheet-lab">' + esc(T('hlSpan')) + '</span><div class="spanrow"><button class="spanbtn" data-xact="hlsp" data-d="-1">－</button><span class="spannum" id="hlNum">' + esc(T('spanUnit', v.sp)) + '</span><button class="spanbtn" data-xact="hlsp" data-d="1">＋</button><button class="spanbtn wide" data-xact="hlsp" data-d="p">' + esc(T('spanP')) + '</button></div></div>' +
+    '<div class="sheet-row"><span class="sheet-lab">' + esc(T('hlSpan')) + '</span><div class="spanrow"><button class="spanbtn" data-xact="hlsp" data-d="-1">－</button><span class="spannum" id="hlNum">' + esc(T('spanUnit', v.sp)) + '</span><button class="spanbtn" data-xact="hlsp" data-d="1">＋</button><button class="spanbtn wide" data-xact="hlsp" data-d="p">' + esc(T('spanP')) + '</button><button class="spanbtn wide" data-xact="hlsp" data-d="v">' + esc(T('spanV')) + '</button></div></div>' +
     '<textarea class="sheet-ta" id="hlNote" placeholder="' + esc(T('hlNotePH')) + '">' + esc(v.n || '') + '</textarea>' +
     '<div class="sheet-acts"><button class="btn gold" data-xact="hlsave">' + esc(T('save')) + '</button><button class="btn" data-xact="hlask">' + svgI('chat') + ' ' + esc(T('askXz')) + '</button></div>' +
     '<div class="sheet-acts2"><button class="xbtn gold" data-xact="hlcard">' + svgI('img') + ' ' + esc(T('makeCard')) + '</button><button class="xbtn" data-xact="hlread">' + svgI('sound') + ' ' + esc(T('readThis')) + '</button><button class="xbtn" data-xact="hlcopy">' + esc(T('copy')) + '</button><button class="xbtn" data-xact="hlshare">' + esc(T('share')) + '</button><button class="xbtn bad" data-xact="hldel">' + esc(T('hlDel')) + '</button><button class="xbtn" data-xact="hclose">' + esc(T('close')) + '</button></div>');
@@ -100,6 +100,9 @@ function hlSpan(d) {
   if (d === 'p') {
     var par = list[i].parentNode; n = 1; while (i + n < list.length && list[i + n].parentNode === par) n++;
     toast(n === v.sp ? T('spanIsP') : T('spanDoneP', n));
+  } else if (d === 'v') {
+    var bk0 = mkKeyOf(list[i]).key.split('#')[0]; n = 1; while (i + n < list.length && mkKeyOf(list[i + n]).key.split('#')[0] === bk0) n++;
+    toast(n === v.sp ? T('spanIsV') : T('spanDoneV', n));
   } else n = (v.sp || 1) + (+d);
   n = Math.max(1, Math.min(n, list.length - i)); v.sp = n; v.t = mkTextFromDom(list, i, n);
   mkSet(hlCur.no, hlCur.key, v); paintMarks();
