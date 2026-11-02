@@ -22832,7 +22832,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202611021754-cr-ws2';
+var APPVER = '4.0.202611021754-cr-ws3';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -24508,7 +24508,8 @@ function afterRender(r, same) {
 var CR = { role: '', code: '', peer: null, conns: [], conn: null, host: '', n: 0, follow: true, last: {}, tries: 0, scrollT: 0, stT: 0, away: false, hostPage: null };
 var CR_CH = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 var CR_PFX = 'fl321-';
-var CR_PAGES = { home: 1, lesson: 1, concept: 1, about: 1 };   /* 同步的頁面：其他頁（設定、App、聚會…）不同步 */
+var CR_SKIP = { set: 1, studio: 1, crpanel: 1 };   /* 個人性頁面不同步；其餘 PAGES 內所有頁面（App、聚會、資源…）都同步 */
+function crOk(t) { return !!(t && PAGES[t] && !CR_SKIP[t]); }
 var CR_BLK = '#view > *,.page-title,.section-label,.card,.lverse,h3.lh,.lp,.llight,.prayerbox,.step1,details';
 var CR_JOIN = (location.search.match(/[?&]join=([A-Za-z0-9]{6})/) || [])[1] || '';
 if (CR_JOIN) {
@@ -24561,8 +24562,8 @@ function crHostData(c, d) {
 function crDrop(c) { var a = []; for (var i = 0; i < CR.conns.length; i++) if (CR.conns[i] !== c) a.push(CR.conns[i]); if (a.length !== CR.conns.length && c._nm) toast(T('crLeft', c._nm)); CR.conns = a; crBar(); }
 function crSend(c, m) { try { if (c && c.open) c.send(m); } catch (e) { } }
 function crCast(m) { if (CR.role !== 'host') return; for (var i = 0; i < CR.conns.length; i++) crSend(CR.conns[i], m); }
-function crCur() { return { t: CUR_ROUTE, n: CUR_ROUTE === 'lesson' ? LESSON_NO : 0 }; }
-function crPage() { var r = CUR_ROUTE; if (!r || !CR_PAGES[r]) return null; if (r === 'lesson') return LESSON_NO ? { t: 'lesson', n: LESSON_NO } : null; return { t: r, n: 0 }; }
+function crCur() { return { t: CUR_ROUTE, n: CUR_ROUTE === 'lesson' ? LESSON_NO : (CUR_ROUTE === 'appview' && APP_VIEW !== null ? APP_VIEW : 0) }; }
+function crPage() { var r = CUR_ROUTE; if (!crOk(r)) return null; if (r === 'lesson') return LESSON_NO ? { t: 'lesson', n: LESSON_NO } : null; if (r === 'appview') return APP_VIEW !== null ? { t: 'appview', n: APP_VIEW } : null; return { t: r, n: 0 }; }
 function crKey(p) { return p ? (p.t || '') + '|' + (+p.n || 0) : ''; }
 function crState() { return { t: 'st', page: crPage(), name: crMe(), n: CR.conns.length + 1, pos: CR.last.pos || null, mk: CR.last.mk || null }; }
 function crJoin(code) {
@@ -24602,10 +24603,11 @@ function crGuestData(d) {
 }
 function crGo(pg) {
   var n = +pg.n || 0;
-  if (!CR_PAGES[pg.t] || (pg.t === 'lesson' && !(n > 0 && n < 1000))) return;
+  if (!crOk(pg.t) || (pg.t === 'lesson' && !(n > 0 && n < 1000)) || (pg.t === 'appview' && !((D && D.ecosystem) || [])[n])) return;
   if (crKey(pg) === crKey(crCur())) { crApply(); return; }
   CR.last.pos = null; CR.last.mk = null; stopAll(); closeSheets();
   if (pg.t === 'lesson') LESSON_NO = n;
+  if (pg.t === 'appview') { openApp(n); return; }
   go(pg.t);
 }
 /* 區塊：捲動用「最內層」區塊的序號；點選／朗讀用「句子所在區塊」序號＋該區塊內第幾句 */
@@ -24658,6 +24660,7 @@ function crSendPos() {
     var r = ls[i].getBoundingClientRect();
     if (r.bottom > 110 && crShown(ls[i])) { CR.last.pos = { t: 'pos', b: i, nb: ls.length, y: Math.round(r.top), f: Math.min(1, window.scrollY / mx) }; crCast(CR.last.pos); return; }
   }
+  CR.last.pos = { t: 'pos', f: Math.min(1, window.scrollY / mx) }; crCast(CR.last.pos);   /* 沒有區塊的頁面：傳捲動比例，加入者依自己頁面高度換算 */
 }
 window.addEventListener('scroll', function () { if (CR.role !== 'host' || !CR.conns.length) return; clearTimeout(CR.scrollT); CR.scrollT = setTimeout(crSendPos, 220); }, { passive: true });
 function crSentMsg(el, k) {
@@ -24941,7 +24944,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws2";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
