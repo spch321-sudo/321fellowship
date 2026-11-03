@@ -54,7 +54,7 @@ renderVoiceBlock = function () {
   eachA(vs, function (v, i) { vb += '<button data-xact="voice" data-i="' + i + '"' + (voiceIdx() === i ? ' class="on"' : '') + '>' + esc(isZS() ? toSimp(v[1]) : v[1]) + '</button>'; });
   eachA([T('rateSlow'), T('rateStd'), T('rateFast'), T('rateFaster')], function (x, i) { rb += '<button data-xact="rate" data-i="' + i + '"' + (S.rate === i ? ' class="on"' : '') + '>' + esc(x) + '</button>'; });
   host.innerHTML =
-    '<div class="fsrow" style="margin-top:16px"><div>' + esc(T('audT')) + '</div></div>' + audBar('set') +
+    '<div class="fsrow" style="margin-top:16px"><div>' + esc(isEN() ? 'Xiaozhi' : (isZS() ? '小智' : '小智')) + '</div></div>' + XZ2.settingsHtml() +
     '<div class="fsrow" style="margin-top:16px"><div>' + esc(T('voiceT')) + '</div><div class="opts">' + vb + '</div></div>' +
     '<div class="fsrow" style="margin-top:10px"><div>' + esc(T('rateT')) + '</div><div class="opts">' + rb + '</div></div>' +
     '<div class="xrow" style="margin-top:8px"><button class="xbtn" data-xact="voicetest">🔊 ' + esc(T('voiceTest')) + '</button><button class="xbtn" data-xact="ttsclear">' + esc(t('ttsClearCache')) + '</button></div>' +

@@ -2,6 +2,19 @@
    小智：markdown 美編、長回答收合、截斷自動接續、追問、回答對象、收藏／分享／美圖／朗讀／複製／刪除
    對話保留最近 60 則（只存在這台裝置）。
    ===================================================================== */
+/* XZ2 · 小智最新功能共用套件（-xz1103）：回答長度五段、讀者資料、慕道友信仰背景、設定頁區塊、滿版小智頁摘要列 */
+XZ2.init({
+  app: 'fellowship', pfx: 'k321-', ownAud: true,
+  lang: function () { try { return L(); } catch (e) { return 'zh'; } },
+  aud: { get: function () { try { return S.aud || 'adult'; } catch (e) { return 'adult'; } }, set: function (k) { try { S.aud = k; save(); } catch (e) {} } },
+  ctxWord: '課文脈絡', ctxWordZs: '课文脉络', ctxWordEn: 'the lesson context',
+  qsLabel: ['對象範例題', '对象范例题', 'Examples for me'],
+  reAnswer: function (m) { try { if (aic.busy || aic.msgs.length < 2) return false; var a = aic.msgs[aic.msgs.length - 1], u = aic.msgs[aic.msgs.length - 2]; if (a.role === 'user' || a.wait || u.role !== 'user') return false; aic.msgs.splice(aic.msgs.length - 2, 2); chatSave(); toast(m); sendChat(u.text, u.src); return true; } catch (e) { return false; } },
+  onAsk: function (q) { try { sendChat(q); } catch (e) {} },
+  toast: function (m) { try { toast(m); } catch (e) {} },
+  readCtx: function () { try { return (CUR_ROUTE === 'lesson' && LESSON_NO) ? [(isEN() ? 'Currently reading: Lesson ' : '目前讀到：第') + LESSON_NO + (isEN() ? '' : '課')] : []; } catch (e) { return []; } }
+});
+XZ2.watchScroll('#aic-msgs');
 var CHAT_KEY = 'k321_ai_chat', chatSrc = null;
 (function () { try { var a = JSON.parse(lsGet(CHAT_KEY) || '[]'); if (a && a.length) aic.msgs = a; } catch (e) { } })();
 function chatSave() {
@@ -16,6 +29,7 @@ aicSystem = function () {
   var s = _aicSystem0();
   s = s.replace(/不要使用 Markdown 語法[^\n]*/, isEN() ? SYS_FMT_EN : f9(SYS_FMT_ZH, ''));
   s += '\n\n' + (isEN() ? 'Audience:' : f9('【回答對象】', '')) + AUD_SYS();
+  s += '\n\n' + XZ2.sysTail();   /* 信仰背景＋讀者資料＋回答長度（五段）改由 XZ2 提供，只送一次 */
   if (isZS()) s += '\n请一律用简体中文回答。';
   return s;
 };
@@ -73,6 +87,7 @@ function extractReply(d) {
 }
 function sendChat(text, src) {
   text = trim(text); if (!text || aic.busy) return;
+  try { XZ2.collapse(); } catch (e) { }
   aic.favView = false;
   if (navigator.onLine === false) { aic.msgs.push({ role: 'user', text: text }); aic.msgs.push({ role: 'assistant', text: t('aiOffline') }); chatSave(); renderAIC(); aicScrollBottom(); return; }
   src = src || chatSrc; chatSrc = null;
@@ -94,7 +109,7 @@ function sendChat(text, src) {
   }
   (function round(k) {
     var ms = msgs.slice(); if (k) { ms.push({ role: 'assistant', content: acc }); ms.push({ role: 'user', content: T('xzGoOn') }); }
-    var payload = { model: SVC.model, max_tokens: 1600, system: sys, messages: ms };
+    var payload = { model: SVC.model, max_tokens: XZ2.maxTokens(), system: sys, messages: ms };
     (function attempt(n) {
       ajax('POST', SVC.xz, payload, null, function (st, txt) {
         var r = '', d = null;
@@ -169,7 +184,7 @@ renderAIC = function () {
       '<div class="aic-head"><div class="aic-head-l"><span class="aic-ava">✨</span><div><div class="aic-name">' + esc(t('aiName')) + '</div><div class="aic-role">' + esc(t('aiRole')) + '</div></div></div>' +
       '<div class="aic-head-r"><button class="aic-hbtn txt" data-xact="chatfoldall" title="' + esc(T('foldAll')) + '">' + esc(T('foldAllB')) + '</button>' +
       '<button class="aic-hbtn" onclick="aicToggleFavs()" aria-label="favorites">⭐</button><button class="aic-hbtn" onclick="aicClearAll()" aria-label="new">🏠</button><button class="aic-x" onclick="aicClose()">✕</button></div></div>' +
-      '<div class="aic-aud">' + audBar('chat') + '</div>' +
+      '<div class="aic-aud">' + XZ2.controlsHtml({ qs: true }) + '</div>' +
       '<div class="aic-msgs" id="aic-msgs">' + mh + '</div>' +
       '<div class="aic-foot"><textarea id="aic-input" class="aic-input" rows="1" placeholder="' + esc(t('aiPlaceholder')) + '"></textarea><button class="aic-send" onclick="aicSend()">' + esc(t('aiSend')) + '</button></div>' +
       '<div class="aic-note">' + esc(t('aiNote')) + '</div></div></div>';

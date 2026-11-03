@@ -120,5 +120,6 @@ function setAud(a) {
     var h = bar.nextSibling; if (h && h.className === 'audhint') h.textContent = isZS() ? toSimp(audL().hint[a]) : audL().hint[a];
   });
   toast(T('audSet', AUD.icon[a] + ' ' + audL().name[a]));
+  try { XZ2.refresh(); } catch (e) { }
   if (aic.open && !aic.busy) renderAIC();
 }
