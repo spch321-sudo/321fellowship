@@ -22845,7 +22845,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103';
+var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -25067,6 +25067,26 @@ window.X321 = { S: S, SVC: SVC, APPVER: APPVER, L: L, isEN: isEN, isZS: isZS, to
   fmtDate: fmtDate, cardSans: cardSans, T: T, updIdle: updIdle, save: save, AUD_WRITE: AUD_WRITE, ttsPrep: ttsPrep, mdSpeak: mdSpeak, buildQueue: buildQueue, checkUpdate: checkUpdate, PL: function () { return PL; } };
 Object.defineProperty(window.X321, 'studio', { get: function () { return studio; } });
 Object.defineProperty(window.X321, 'BUSY', { get: function () { return BUSY; }, set: function (v) { BUSY = !!v; if (!v) updIdle(); } });
+/* XZM 小智回答逐句跟讀／畫線掛鉤（-xzm1103）：只把閉包裡的函式與朗讀狀態交給 xzm.js 使用，不改任何既有行為 */
+window.X321.xz = {
+  aic: aic,
+  chatSave: function () { chatSave(); },
+  msgFold: function (i) { msgFold(i); },
+  ask: function (q, src) { openXz(q, src); },
+  studio: function (c) { openStudio(c); },
+  copy: function (t) { copyText(t); },
+  share: function (t) { shareText(t); },
+  url: function () { return appShareUrl(); },
+  svg: function (n) { return svgI(n); },
+  rerender: function () { if (currentRoute() === 'marks') render('marks'); },
+  v: function (k, val) {
+    if (k === 'spk') { if (val !== undefined) spk = val; return spk; }
+    if (k === 'sayKey') { if (val !== undefined) sayKey = val; return sayKey; }
+    if (k === 'raManualAt') { if (val !== undefined) raManualAt = val; return raManualAt; }
+    if (k === 'RA_COOL') { if (val !== undefined) RA_COOL = val; return RA_COOL; }
+  },
+  tts: { stop: function () { stopAll(); }, unlock: function () { ttsUnlock(); }, awake: function (on) { keepAwake(on); }, media: function (t) { mediaSession(t); }, paint: function () { paintSay(); }, play: function (i) { ttsPlayFrom(i); }, prep: function (t) { return ttsPrep(t); }, seg: function (it, k) { raSeg(it, k); } }
+};
 window.updIdle = updIdle; window.renderAIC = renderAIC; window.renderVoiceBlock = renderVoiceBlock;
 
 if(document.readyState!=="loading") init();
@@ -25075,7 +25095,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
@@ -25195,5 +25215,7 @@ else document.addEventListener("DOMContentLoaded",init);
   window.VPICK321 = { pick: pick, card: card, lang: lang, detect: detect, refs: function (t) { return toc().then(function () { return refs(t); }); } };
 })();
 </script>
+<script src="xzm.js?v=xzm1103"></script>
+<script>try{XZM.install(XZM.preset.fl());}catch(e){}</script>
 </body>
 </html>
