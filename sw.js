@@ -7,7 +7,7 @@
            音訊、影片與帶 Range 的請求一律不攔截（試聽、拖曳、錄影混音才不會壞）
    ‧ 同網域底下還有其他 321 App，本 SW 只管自己這個資料夾
    ===================================================================== */
-var VER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103';
+var VER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105';
 var V = 'k321-' + VER;
 var SHELL = ['./', './index.html', './manifest.json', './media.js', './xz2.js', './xzm.js', './peerjs.min.js', './qrcode.js', './data.json', './icon-192.png?v=3', './icon-512.png?v=3', './apple-touch-icon.png?v=3'];
 
@@ -35,6 +35,29 @@ self.addEventListener('message', function (e) { if (e.data === 'skip' || (e.data
 
 var OFFLINE = "<meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><div style=\"font-family:-apple-system,sans-serif;padding:40px;line-height:2;color:#16294A\"><h2>目前沒有網路</h2><p>連上網路後再打開就好。<br>神的話語不受網路限制——今天仍然可以禱告、可以親近祂。</p></div>";
 
+/* rf1105（互動聖經 v2.58.3）：網路優先，但慢網路（超過 SHELL_WAIT 毫秒沒回）先用完全相同的快取開；網路那份繼續下載並更新快取。
+   只有導覽請求才可以退回 index.html（程式檔退回 HTML 會造成 Unexpected token '<'）。 */
+var SHELL_WAIT = 1000;
+function shellFetch(e, req, key, url, nav) {
+  var net = fetch(url, { cache: 'no-cache', credentials: 'same-origin' }).then(function (resp) {
+    if (resp && resp.ok) { var cp = resp.clone(); caches.open(V).then(function (c) { c.put(key, cp); }); }
+    return resp;
+  });
+  e.waitUntil(net.then(function () { }, function () { }));
+  function fallback() {
+    return caches.match(key).then(function (h) { return h || caches.match(req, { ignoreSearch: true }); })
+      .then(function (h) { return h || (nav ? caches.match('./index.html') : undefined); });
+  }
+  return new Promise(function (resolve) {
+    var done = false;
+    var t = setTimeout(function () { fallback().then(function (h) { if (h && !done) { done = true; resolve(h); } }); }, SHELL_WAIT);
+    net.then(function (resp) { if (!done) { done = true; clearTimeout(t); resolve(resp); } }, function () {
+      clearTimeout(t);
+      if (done) return;
+      fallback().then(function (h) { if (!done) { done = true; resolve(h || Response.error()); } });
+    });
+  });
+}
 self.addEventListener('fetch', function (e) {
   var r = e.request; if (r.method !== 'GET') return;
   var u; try { u = new URL(r.url); } catch (x) { return; }
@@ -52,18 +75,7 @@ self.addEventListener('fetch', function (e) {
   if (nav && self.navigator && self.navigator.onLine !== false) return;
   var key = nav ? './index.html' : (/\.(json|js|css)$/.test(p) ? u.origin + p : r);
   if (nav || /\.(json|js|css)$/.test(p)) {
-    e.respondWith(fetch(nav ? u.origin + p + u.search : r.url, { cache: 'no-cache', credentials: 'same-origin' }).then(function (resp) {
-      if (resp && resp.ok) { var cp = resp.clone(); caches.open(V).then(function (c) { c.put(key, cp); }); }
-      return resp;
-    })['catch'](function () {
-      return caches.match(key).then(function (h) {
-        return h || caches.match(r, { ignoreSearch: true }).then(function (h2) {
-          if (h2) return h2;
-          if (nav) return caches.match('./index.html').then(function (h3) { return h3 || new Response(OFFLINE, { headers: { 'Content-Type': 'text/html; charset=utf-8' } }); });
-          return Response.error();
-        });
-      });
-    }));
+    e.respondWith(shellFetch(e, r, key, nav ? u.origin + p + u.search : r.url, nav));
     return;
   }
   e.respondWith(caches.match(r, { ignoreSearch: true }).then(function (h) {
