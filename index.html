@@ -208,6 +208,15 @@ body.embedmode #view{ padding:0 !important; margin:0 !important; }
 .apps{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .appcard{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:14px;
   display:block;color:var(--ink);}
+.appfold{margin-top:12px;}
+.appfold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:10px 14px;border:1px dashed var(--line);border-radius:14px;background:var(--white);color:var(--head);font-weight:700;font-size:calc(14px * var(--fs));}
+.appfold>summary::-webkit-details-marker{display:none;}
+.appfold>summary::after{content:"▾";font-size:calc(13px * var(--fs));}
+.appfold[open]>summary::after{content:"▴";}
+.appfold>summary .le{display:none;}
+.appfold[open]>summary .mo{display:none;}
+.appfold[open]>summary .le{display:inline;}
+.appfold[open]>summary{margin-bottom:12px;}
 .appcard .badge{width:44px;height:44px;border-radius:12px;background:linear-gradient(160deg,#2F5C93,#12233F);
   color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);
   font-weight:700;font-size:calc(16px * var(--fs));margin-bottom:10px;
@@ -18242,8 +18251,21 @@ function aiToolsBlock(){
     '<p class="note" style="margin-bottom:10px">'+esc(f9(
       "外部的 AI 助手，可以幫忙讀長文、整理資料、預備信息。點一下會用瀏覽器開啟：",
       "Outside AI assistants \u2014 helpful for reading long documents, sorting material and preparing messages. Tapping one opens it in your browser:"))+'</p>'+
-    appcards(list, true);
+    foldItems("ai", list, 0, function(items){ return appcards(items, true); });
 }
+/* v-fold：App 頁各區塊可收合展開。前 openN 個直接顯示，其餘收在「展開」裡；展開狀態記在本機，重畫頁面也不會收回去 */
+var APPFOLD=(function(){ try{ return JSON.parse(lsGet("k321_appfold")||"{}")||{}; }catch(e){ return {}; } })();
+function foldItems(id, items, openN, render){
+  var first=items.slice(0,openN), rest=items.slice(openN), out=first.length?render(first):"";
+  if(!rest.length) return out;
+  var more = first.length ? f9("展開其它 "+rest.length+" 個","Show "+rest.length+" more") : f9("展開全部 "+rest.length+" 個","Show all "+rest.length);
+  return out+'<details class="appfold" data-fold="'+id+'"'+(APPFOLD[id]?" open":"")+'><summary><span class="mo">'+esc(more)+'</span><span class="le">'+esc(f9("收合","Collapse"))+'</span></summary>'+render(rest)+'</details>';
+}
+document.addEventListener("toggle",function(e){
+  var d=e.target; if(!d||!d.getAttribute||!d.classList||!d.classList.contains("appfold")) return;
+  APPFOLD[d.getAttribute("data-fold")]=d.open?1:0;
+  try{ window.localStorage.setItem("k321_appfold",JSON.stringify(APPFOLD)); }catch(_){}
+},true);
 
 function appcards(list, ext){
   /* ext=true：外部網站（例如 Kimi）。這類站台多半禁止被內嵌，硬塞進 iframe 只會是一片空白，
@@ -22847,7 +22869,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105';
+var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -25138,16 +25160,19 @@ function ecoCards(idxs) {
 }
 PAGES.apps = function () {
   var life = ecoIdx('life'), devo = ecoIdx('devo'), main = ecoIdx('');
+  /* 生活操練：左邊家庭生活、右邊教會生活排最前面（預設展開），其餘收合 */
+  var _pri = { family:0, church:1 }, _L = D.ecosystem || [];
+  life = life.slice().sort(function (x, y) { var a = _pri[_L[x].id], b = _pri[_L[y].id]; a = a === undefined ? 9 : a; b = b === undefined ? 9 : b; return a - b || x - y; });
   return pageHead(f9('工具 · 每天用得上', 'TOOLS · FOR EVERY DAY'), f9('321 App', '321 Apps'), f9('點一下就打開，會自動用你現在的語言', 'Tap to open — in the language you are using')) +
     sect('生', f9('321 App 生態系', 'The 3-2-1 App Ecosystem')) +
     '<p class="note" style="margin-bottom:10px">' + esc(f9('每天晨讀、讀經，親近神。點一下就在這裡打開：', 'Morning devotion and Bible reading, to draw near to God every day. Tap one to open it right here:')) + '</p>' +
-    ecoCards(main) +
+    foldItems('eco', main, 2, ecoCards) +
     (devo.length ? sect('靈', f9('321 靈修生活', '321 Devotional Life')) +
       '<p class="note" style="margin-bottom:10px">' + esc(f9('每天一口屬靈的食物：心靈快餐、真理點心，隨時隨地飽足心靈。', 'A bite of spiritual food every day: Soul Meal and Truth Snack, to feed your heart anywhere, any time.')) + '</p>' +
       ecoCards(devo) : '') +
     (life.length ? sect('活', f9('321 生活操練', '321 Living It Out')) +
       '<p class="note" style="margin-bottom:10px">' + esc(f9('把 321 活在每一個生活領域：生命、健康、屬靈父母、慕道、屬靈、教會、婚姻、家庭、職場、社交。', 'Living out 3-2-1 in every part of life: inner life, health, spiritual parenting, seekers, spiritual life, church, marriage, family, work and friendships.')) + '</p>' +
-      ecoCards(life) : '') +
+      foldItems('life', life, 2, ecoCards) : '') +
     aiToolsBlock();
 };
 
@@ -25185,7 +25210,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
