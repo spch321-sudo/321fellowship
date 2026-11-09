@@ -22870,7 +22870,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109';
+var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -24166,7 +24166,9 @@ function chipRow(act, list, cur) {
 var BIBLE_STUDIO_URL = window.K321_BIBLE_STUDIO || 'https://spch321-sudo.github.io/bible/';
 function studioLang() { var l = curLang(); return l === 'en' ? 'en' : (l === 'zh-Hans' ? 'zs' : 'zh'); }
 function studioItemOf(o) { return { t: o.t || '', ref: o.ref || '', n: o.n || '' }; }
-function studioPost(o) { try { localStorage.setItem('ib_card_in', JSON.stringify({ ts: now(), item: studioItemOf(o), lang: studioLang() })); } catch (e) { } }
+function studioPost(o) { try { localStorage.setItem('ib_card_in', JSON.stringify({ ts: now(), item: studioItemOf(o), lang: studioLang(), chat: window.XJ321 ? 1 : 0 })); } catch (e) { } }
+/* 嵌入的互動聖經美圖工作室按「分享到聊天室」：把圖交給小家聊天室（sh1109） */
+window.addEventListener('message', function (e) { if (e.origin !== location.origin || !e.data || e.data.k321 !== 'studioChat' || !e.data.img) return; if (window.XJ321) XJ321.shareImg(e.data.img, { beforeGo: function () { closeStudio(false); }, delay: 400 }); }, false);
 function openStudio(c) {
   if (navigator.onLine === false) return openStudioLite(c);
   stopAll(); closeHSheet(); try { mkCloseSheet(); } catch (e) { }
@@ -24227,7 +24229,8 @@ function studioRender() {
   var b = '<div class="studio-in"><div class="studio-top"><button class="xib" data-xact="stclose" aria-label="close">✕</button><b>' + esc(T('studioT')) + '</b><span></span></div>';
   if (c.opts && c.opts.length > 1) { var o = []; eachA(c.opts, function (x, i) { o.push([i, x.label]); }); b += '<p class="eyebrow">' + esc(T('cFrom')) + '</p>' + chipRow('copt', o, c.opt); }
   b += '<div class="cardpv" id="cardPv"></div>' +
-    '<div class="xrow"><button class="btn gold" data-xact="csave">' + esc(T('saveImg')) + '</button><button class="btn ghost" data-xact="cshare">' + esc(T('share')) + '</button></div><div class="card">';
+    '<div class="xrow"><button class="btn gold" data-xact="csave">' + esc(T('saveImg')) + '</button><button class="btn ghost" data-xact="cshare">' + esc(T('share')) + '</button></div>' +
+    '<button class="btn ghost block" data-xact="cchat" style="margin-top:8px">💬 ' + esc(f9('分享到聊天室', 'Share to a chat')) + '</button><div class="card">';
   var tp = []; eachA(CARD_ORDER, function (k) { tp.push([k, T(CARD_TPL[k].n)]); });
   b += '<p class="eyebrow">' + esc(T('cTpl')) + '</p>' + chipRow('ctpl', tp, S.card.tpl);
   b += '<p class="eyebrow">' + esc(T('cSize')) + '</p>' + chipRow('csize', [['p', T('sz916')], ['t', T('sz45')], ['s', T('szSq')], ['w', T('szWide')]], S.card.size);
@@ -24926,6 +24929,7 @@ document.addEventListener('click', function (e) {
     case 'pxpick': pxPick(i); break;
     case 'csave': cardSave(); break;
     case 'cshare': cardShare(); break;
+    case 'cchat': if (cardImg && window.XJ321) XJ321.shareImg(cardImg, { beforeGo: function () { closeStudio(false); }, delay: 400 }); break;
     case 'plsrc': PL_SRC = v; render('play'); break;
     case 'plgo': plStart(n.getAttribute('data-m')); break;
     case 'plquit': PL = null; BUSY = BUSY_OTHER(); render('play'); updIdle(); break;
@@ -25228,7 +25232,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
@@ -25350,7 +25354,7 @@ else document.addEventListener("DOMContentLoaded",init);
 </script>
 <script src="xzm.js?v=xzm1103"></script>
 <script src="cpar.js?v=cs1109"></script>
-<script src="xj.js?v=xj-dm1109"></script>
+<script src="xj.js?v=xj-sh1109"></script>
 <script>try{XZM.install(XZM.preset.fl());}catch(e){}</script>
 </body>
 </html>
