@@ -643,7 +643,7 @@
         (H.goRead ? '<button class="btn gold" data-xj="goread">' + esc(f9('去讀今天的課', 'Go to today’s lesson')) + '</button>' : '') + '</div>';
     }
     if (doneToday()) return '<div class="card xjdone ok"><b>✅ ' + esc(f9('今天的晨讀／晚禱完成了', 'Today’s morning reading / evening prayer is done')) + '</b><p class="note">' + esc(f9('感謝主！明天再一起親近祂。', 'Thank the Lord! See you tomorrow.')) + '</p></div>';
-    return '<div class="card xjdone"><b>🙏 ' + esc(f9('今天晨讀／晚禱了嗎？', 'Morning reading or evening prayer today?')) + '</b><p class="note" style="margin-bottom:10px">' + esc(f9('參加晨讀或晚禱後，按一下讓家人一起歡喜。', 'After morning reading or evening prayer, tap to share the joy with your group.')) + '</p>' +
+    return '<div class="card xjdone"><b>🙏 ' + esc(f9('今天晨讀／晚禱了嗎？', 'Morning reading or evening prayer today?')) + '</b><p class="note" style="margin-bottom:10px">' + esc(H.hintZh ? f9(H.hintZh, H.hintEn || '') : f9('參加晨讀或晚禱後，按一下讓家人一起歡喜。', 'After morning reading or evening prayer, tap to share the joy with your group.')) + '</p>' +
       '<button class="btn gold" data-xj="finish">' + esc(f9('我今天完成晨讀／晚禱了', 'I finished morning reading / evening prayer')) + '</button></div>';
   }
   function todayCard() {
