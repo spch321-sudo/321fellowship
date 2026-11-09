@@ -13,7 +13,13 @@
   if (!H || window.XJ321) return;
   var NEWS = 'https://church-news.spch321.workers.dev';
   var CHAT = 'https://church-chat.spch321.workers.dev';
-  var PAGES = H.PAGES, f9 = H.f9, esc = H.esc;
+  var PAGES = H.PAGES, esc = H.esc;
+  /* 宿主可以換掉「晨讀／晚禱」這個詞（教會生活用「靈修」） */
+  var f9 = function (zh, en) {
+    if (H.wordZh) zh = String(zh).split('晨讀／晚禱').join(H.wordZh);
+    if (H.wordEn && en) en = String(en).replace(/[Mm]orning reading (\/|or) evening prayer/g, function (m) { return m.charAt(0) === 'M' ? H.wordEn.charAt(0).toUpperCase() + H.wordEn.slice(1) : H.wordEn; });
+    return H.f9(zh, en);
+  };
   /* 共用給其他 App（教會生活）：存檔前綴、App 名稱、入口說明都可以由宿主覆寫 */
   var P = H.prefix || 'fl321_';
   var APPZ = H.appZh || '國度321空中團契', APPE = H.appEn || 'Kingdom 321 Fellowship';
@@ -43,7 +49,7 @@
   function findGroup(c) { for (var i = 0; i < GL.length; i++) if (GL[i].code === c) return GL[i]; return null; }
   function saveDays() { ls(P + 'xjdays', JSON.stringify(DAYS)); }
   function dev() { var d = lg(P + 'xjdev'); if (!d) { d = 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); ls(P + 'xjdev', d); } return d; }
-  function nick() { return trim(lg(P + 'xjnick') || ''); }
+  function nick() { var n = trim(lg(P + 'xjnick') || ''); if (!n && H.myName) { try { n = trim(H.myName() || ''); } catch (e) { } } return n.slice(0, 20); }
   function setNick(n) { ls(P + 'xjnick', trim(n).slice(0, 20)); }
   function trim(s) { return String(s == null ? '' : s).replace(/^\s+|\s+$/g, ''); }
   function now() { return Date.now(); }
@@ -631,6 +637,11 @@
       (CC.unread ? '<span class="xjdot">' + esc(f9(CC.unread + ' 則新訊息', CC.unread + ' new')) + '</span>' : '<span class="note" style="margin:0">' + esc(f9('進入', 'Open')) + ' ›</span>') + '</div></div>';
   }
   function doneCard() {
+    if (H.autoDone) {
+      if (doneToday()) return '<div class="card xjdone ok"><b>✅ ' + esc(f9('今天的晨讀／晚禱完成了', 'Today’s morning reading / evening prayer is done')) + '</b><p class="note">' + esc(f9('完成課程後，名字已自動出現在小家的「今天完成」名單。', 'Your name was added to “Finished today” automatically.')) + '</p></div>';
+      return '<div class="card xjdone"><b>🙏 ' + esc(f9('今天晨讀／晚禱了嗎？', 'Morning reading or evening prayer today?')) + '</b><p class="note" style="margin-bottom:10px">' + esc(f9('完成今天的課程，名字就會自動出現在每個小家的「今天完成」名單（可在下方設定隱藏）。', 'Finish today’s lesson and your name appears on “Finished today” in every group automatically (you can hide it below).')) + '</p>' +
+        (H.goRead ? '<button class="btn gold" data-xj="goread">' + esc(f9('去讀今天的課', 'Go to today’s lesson')) + '</button>' : '') + '</div>';
+    }
     if (doneToday()) return '<div class="card xjdone ok"><b>✅ ' + esc(f9('今天的晨讀／晚禱完成了', 'Today’s morning reading / evening prayer is done')) + '</b><p class="note">' + esc(f9('感謝主！明天再一起親近祂。', 'Thank the Lord! See you tomorrow.')) + '</p></div>';
     return '<div class="card xjdone"><b>🙏 ' + esc(f9('今天晨讀／晚禱了嗎？', 'Morning reading or evening prayer today?')) + '</b><p class="note" style="margin-bottom:10px">' + esc(f9('參加晨讀或晚禱後，按一下讓家人一起歡喜。', 'After morning reading or evening prayer, tap to share the joy with your group.')) + '</p>' +
       '<button class="btn gold" data-xj="finish">' + esc(f9('我今天完成晨讀／晚禱了', 'I finished morning reading / evening prayer')) + '</button></div>';
@@ -794,6 +805,7 @@
       }
     }
     if (r === 'xj' && X) {
+      autoSync();
       var stale = !DATA || now() - NW.at > 60000, tdStale = !TD.list || TD.day !== today() || now() - TD.at > 60000;
       if (stale) fetchHome(false, function (j) { if (j) rr('xj'); });
       if (tdStale) tdFetch(false, function (L) { if (L) rr('xj'); });
@@ -820,6 +832,7 @@
     if (!t || t === document) return;
     var a = t.getAttribute('data-xj'), id = t.getAttribute('data-id');
     if (a === 'join') join();
+    else if (a === 'goread') { if (H.goRead) H.goRead(); }
     else if (a === 'sw') switchTo(t.getAttribute('data-k'));
     else if (a === 'addgrp') { JN.adding = 1; H.render('xj'); try { window.scrollTo(0, 0); } catch (e) { } }
     else if (a === 'joinback') { JN.adding = 0; ls(P + 'xjpend', null); H.render('xj'); }
@@ -945,7 +958,29 @@
     '@media (prefers-reduced-motion:reduce){.xjrw,.xjrw *{animation:none!important}.xjrw i.cf{display:none}}';
   document.head.appendChild(st);
 
-  window.XJ321 = { finish: finish, state: function () { return X; }, groups: function () { return GL; }, unread: function () { return CC.unread; }, go: function () { H.go('xj'); } };
+  /* 宿主（教會生活）完成一課時呼叫：記到每個小家的「今天完成」，不另外放獎勵動畫 */
+  function autoDone(cb) {
+    var d = today(); if (!DAYS[d]) { DAYS[d] = now(); saveDays(); }
+    if (!GL.length) { if (cb) cb(); return; }
+    shareAll(true);
+    var left = GL.length;
+    for (var i = 0; i < GL.length; i++) (function (g) {
+      api(CHAT, 'POST', '/c/' + g.code + '/done', { dev: dev(), nick: nick(), day: d, hide: g.hideName ? 1 : 0 }, function (j) {
+        if (j && X && g.code === X.code) { TD.list = j.list; TD.day = d; TD.at = now(); }
+        g.doneDay = d; save();
+        if (--left === 0) { if (cb) cb(); var r = route(); if (r === 'xj') rr('xj'); }
+      });
+    })(GL[i]);
+  }
+  /* 今天已經完成課程、但某個小家還沒記到（例如剛加入）：補送一次 */
+  function autoSync() {
+    if (!H.didToday || !H.didToday()) return;
+    var d = today(), need = !DAYS[d];
+    for (var i = 0; i < GL.length; i++) if (GL[i].doneDay !== d) need = true;
+    if (need && !autoSync.busy) { autoSync.busy = 1; autoDone(function () { autoSync.busy = 0; }); }
+  }
+  window.XJ321 = { finish: finish, autoDone: autoDone, autoSync: autoSync,
+    open: function (c) { if (c && findGroup(c)) { CUR = c; pick(); NW.at = 0; NW.f = ''; resetLive(); save(); } JN.adding = c === '+' ? 1 : 0; H.go('xj'); }, state: function () { return X; }, groups: function () { return GL; }, unread: function () { return CC.unread; }, go: function () { H.go('xj'); } };
   /* 已經停在小家相關頁（重新載入）就重畫一次 */
   var r0 = route(); if (r0 === 'xj' || r0 === 'xjchat' || r0 === 'xjcare' || r0 === 'home' || r0 === 'connect') { try { H.render(r0); } catch (e) { } }
 })();
