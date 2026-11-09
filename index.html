@@ -22869,7 +22869,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109';
+var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -25210,6 +25210,15 @@ window.X321.cpar = {
   wrapRender: function (after) { var o = render; render = function () { var r = o.apply(this, arguments); try { after(arguments[0] || currentRoute()); } catch (e) {} return r; }; },
   getD: function () { return D; }, setD: function (v) { D = v; }, langData: function () { return langData(); }
 };
+/* 我的小家（-xj1109）：把頁面表、路由與小工具交給 xj.js，不改任何既有行為 */
+window.X321.xj = {
+  PAGES: PAGES, TITLES: TITLES, CR_SKIP: CR_SKIP,
+  go: function (r) { go(r); }, render: function (r) { render(r); }, route: function () { return currentRoute(); },
+  wrapRender: function (after) { var o = render; render = function () { var r = o.apply(this, arguments); try { after(arguments[0] || currentRoute()); } catch (e) {} return r; }; },
+  f9: f9, esc: esc, note: function (m) { note(m); }, lang: function () { return curLang(); },
+  pageHead: pageHead, sect: sect, rowlink: rowlink, simp: function (el) { simpifyEl(el); },
+  nTr: function (t, b, cb) { nTr(t, b, cb); }
+};
 window.updIdle = updIdle; window.renderAIC = renderAIC; window.renderVoiceBlock = renderVoiceBlock;
 
 if(document.readyState!=="loading") init();
@@ -25218,7 +25227,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
@@ -25340,6 +25349,7 @@ else document.addEventListener("DOMContentLoaded",init);
 </script>
 <script src="xzm.js?v=xzm1103"></script>
 <script src="cpar.js?v=cs1109"></script>
+<script src="xj.js?v=xj1109"></script>
 <script>try{XZM.install(XZM.preset.fl());}catch(e){}</script>
 </body>
 </html>
