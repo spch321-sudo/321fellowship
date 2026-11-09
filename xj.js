@@ -567,14 +567,7 @@
   try { H.TITLES.xj = '我的小家'; H.TITLES.xjchat = '小家聊天室'; H.TITLES.xjcare = '關懷名單'; } catch (e) { }
   try { H.CR_SKIP.xj = 1; H.CR_SKIP.xjchat = 1; H.CR_SKIP.xjcare = 1; } catch (e) { }
 
-  /* 更多頁、連結同行頁、首頁的入口 */
-  var more0 = PAGES.more;
-  PAGES.more = function () {
-    var h = more0.apply(this, arguments);
-    var row = H.rowlink('users', f9('我的小家', 'My Small Group'), X ? (X.name + (CC.unread ? ' · ' + f9(CC.unread + ' 則新訊息', CC.unread + ' new') : '')) : f9('建立或加入小家 · 聊天室 · 彼此代禱', 'Create or join · chat · pray together'), 'xj');
-    var i = h.indexOf('<div class="hr"></div>');
-    return i >= 0 ? h.slice(0, i) + row + h.slice(i) : h + row;
-  };
+  /* 入口：底部導覽「小家」分頁、連結同行頁、首頁的小家卡片 */
   function homeCard() {
     var c = tdChips(6);
     return '<div class="card xjhome" data-xj="gohome" role="button"><div class="xjrow"><b class="xjgrow">🏡 ' + esc(X.name) + '</b><span id="xjHomeUnread">' + (CC.unread ? '<span class="xjdot">' + esc(f9(CC.unread + ' 則新訊息', CC.unread + ' new')) + '</span>' : '') + (unreadNews() ? ' <span class="xjdot">' + esc(f9(unreadNews() + ' 則消息', unreadNews() + ' news')) + '</span>' : '') + '</span></div>' +
@@ -584,6 +577,10 @@
   function after(r) {
     var view = $('view'); if (!view) return;
     try { document.body.classList[r === 'xjchat' ? 'add' : 'remove']('xjchatmode'); } catch (e) { }
+    if (r === 'xjchat' || r === 'xjcare') {
+      var tabs = document.querySelectorAll('#tabbar .tab');
+      for (var ti = 0; ti < tabs.length; ti++) { var on = tabs[ti].getAttribute('data-route') === 'xj'; tabs[ti].className = 'tab' + (on ? ' on' : ''); if (on) tabs[ti].setAttribute('aria-current', 'page'); else tabs[ti].removeAttribute('aria-current'); }
+    }
     if (r === 'home' && X) {
       var old = $('xjHome'); if (old) old.parentNode.removeChild(old);
       var box = document.createElement('div'); box.id = 'xjHome'; box.innerHTML = homeCard();
@@ -732,5 +729,5 @@
 
   window.XJ321 = { finish: finish, state: function () { return X; }, go: function () { H.go('xj'); } };
   /* 已經停在小家相關頁（重新載入）就重畫一次 */
-  var r0 = route(); if (r0 === 'xj' || r0 === 'xjchat' || r0 === 'xjcare' || r0 === 'home' || r0 === 'connect' || r0 === 'more') { try { H.render(r0); } catch (e) { } }
+  var r0 = route(); if (r0 === 'xj' || r0 === 'xjchat' || r0 === 'xjcare' || r0 === 'home' || r0 === 'connect') { try { H.render(r0); } catch (e) { } }
 })();

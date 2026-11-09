@@ -1701,7 +1701,7 @@ var TRAD2SIMP_TABLE = {"凱": "凯", "呂": "吕", "嚮": "向", "嫻": "娴", "
 var I18N = {
   "zh-Hant": {
     brand:"國度321空中團契", brandTag:"三 二 一 理 念",
-    tabHome:"首頁", tabRes:"資源", tabApps:"App", tabMeet:"聚會", tabNew:"新朋友", tabMore:"更多",
+    tabHome:"首頁", tabRes:"資源", tabApps:"App", tabMeet:"聚會", tabXj:"小家", tabNew:"新朋友", tabMore:"更多",
     back:"返回", searchPh:"搜尋信息、經文或主題…",
     settings:"設定", fontSize:"字級大小", fsStd:"標準", fsBig:"大", fsXl:"特大", fsXxl:"超大",
     fsNote:"為長輩與眼力吃緊的家人預備。字級會記住你的選擇。",
@@ -1745,7 +1745,7 @@ var I18N = {
   },
   "zh-Hans": {
     brand:"国度321空中团契", brandTag:"三 二 一 理 念",
-    tabHome:"首页", tabRes:"资源", tabApps:"App", tabMeet:"聚会", tabNew:"新朋友", tabMore:"更多",
+    tabHome:"首页", tabRes:"资源", tabApps:"App", tabMeet:"聚会", tabXj:"小家", tabNew:"新朋友", tabMore:"更多",
     back:"返回", searchPh:"搜索信息、经文或主题…",
     settings:"设置", fontSize:"字号大小", fsStd:"标准", fsBig:"大", fsXl:"特大", fsXxl:"超大",
     fsNote:"为长辈与眼力吃紧的家人预备。字号会记住你的选择。",
@@ -1789,7 +1789,7 @@ var I18N = {
   },
   "en": {
     brand:"Kingdom 321 Online Fellowship", brandTag:"T H R E E · T W O · O N E",
-    tabHome:"Home", tabRes:"Resources", tabApps:"Apps", tabMeet:"Meet", tabNew:"New Friend", tabMore:"More",
+    tabHome:"Home", tabRes:"Resources", tabApps:"Apps", tabMeet:"Meet", tabXj:"Group", tabNew:"New Friend", tabMore:"More",
     back:"Back", searchPh:"Search messages, verses, topics…",
     settings:"Settings", fontSize:"Text Size", fsStd:"Standard", fsBig:"Large", fsXl:"X-Large", fsXxl:"XX-Large",
     fsNote:"For elders and those with tired eyes. Your choice is remembered.",
@@ -20625,6 +20625,7 @@ var PAGES = {
       rowlink("book",f9("觀念","Mindset"),f9("321理念 · 恩典循環 · 關鍵字詞","3-2-1 ideology \u00b7 cycle of grace \u00b7 key terms"),"concept")+
       rowlink("seed",f9("生命裝備","Equipping"),f9("課程 · 專題 · 營會","Courses \u00b7 topics \u00b7 camps"),"equip")+
       rowlink("spark",f9("生活實踐","Practice"),f9("操練 · 見證 · 檢視","Practices \u00b7 testimonies \u00b7 review"),"practice")+
+      rowlink("zoom",f9("聚會與工具","Meetings & Tools"),f9("線上聚會 Zoom · YouTube · 聚會時間表 · 奉獻","Zoom \u00b7 YouTube \u00b7 schedule \u00b7 giving"),"meet")+
       rowlink("users",f9("連結同行","Walk Together"),f9("小家 · 235 · 各國團契","Small groups \u00b7 2-3-5 \u00b7 nations"),"connect")+
       rowlink("hands",f9("235 屬靈家譜","2-3-5 Family Tree"),f9("看見生命繁殖生命 · 只存你的手機","See life multiply life \u00b7 stored only on your phone"),"family")+
       rowlink("serve",f9("事奉服侍","Serve"),f9("事工 · 同工 · 我要服侍","Ministries \u00b7 co-workers \u00b7 I want to serve"),"serve")+
@@ -20639,7 +20640,7 @@ var TABS=[
   {r:"home",key:"tabHome",ic:"home"},
   {r:"resources",key:"tabRes",ic:"book"},
   {r:"apps",key:"tabApps",ic:"grid"},
-  {r:"meet",key:"tabMeet",ic:"zoom"},
+  {r:"xj",key:"tabXj",ic:"users"},
   {r:"newfriend",key:"tabNew",ic:"heart"},
   {r:"more",key:"tabMore",ic:"more"}
 ];
@@ -20655,7 +20656,7 @@ function renderTabs(active){
 }
 
 /* ---- 路由 ---- */
-var TAB_ROUTES={home:1,resources:1,apps:1,meet:1,newfriend:1,more:1};
+var TAB_ROUTES={home:1,resources:1,apps:1,xj:1,newfriend:1,more:1};
 function go(route){ if(location.hash!=="#/"+route) location.hash="#/"+route; else render(route); }
 function currentRoute(){ var h=location.hash.replace(/^#\//,"");
   /* 內嵌 App 開著時頁面重新載入（自動更新等）：把剛才開的那個 App 接回來，留在原 App，不要跳回團契首頁 */
@@ -22869,7 +22870,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109';
+var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -25227,7 +25228,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
@@ -25349,7 +25350,7 @@ else document.addEventListener("DOMContentLoaded",init);
 </script>
 <script src="xzm.js?v=xzm1103"></script>
 <script src="cpar.js?v=cs1109"></script>
-<script src="xj.js?v=xj1109"></script>
+<script src="xj.js?v=xj1109-tb1109"></script>
 <script>try{XZM.install(XZM.preset.fl());}catch(e){}</script>
 </body>
 </html>
