@@ -22870,7 +22870,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109';
+var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -24970,9 +24970,9 @@ var AUPD = (function () {
   };
   var U = { reg: null, target: '', pending: false, applying: 0, inited: 0 };
   var TX = {
-    zh: { newVer: '有新版本，點一下立即更新', updating: '正在更新到新版…', latest: '目前已是最新版 v', found: '找到新版本，正在更新…', foundBusy: '找到新版本，忙完就會自動更新', netErr: '無法檢查更新，請確認網路', checking: '檢查更新中…', done: '已更新到新版 v' },
-    zs: { newVer: '有新版本，点一下立即更新', updating: '正在更新到新版…', latest: '目前已是最新版 v', found: '找到新版本，正在更新…', foundBusy: '找到新版本，忙完就会自动更新', netErr: '无法检查更新，请确认网络', checking: '检查更新中…', done: '已更新到新版 v' },
-    en: { newVer: 'A new version is ready. Tap to update', updating: 'Updating to the new version…', latest: 'You are on the latest version v', found: 'New version found, updating…', foundBusy: 'New version found. It will update when you are idle', netErr: 'Cannot check for updates. Please check your connection', checking: 'Checking for updates…', done: 'Updated to version ' }
+    zh: { newVer: '有新版本，點一下立即更新', updating: '正在更新到新版…', latest: '目前已是最新版 v', found: '找到新版本，正在更新…', foundBusy: '找到新版本，忙完就會自動更新', netErr: '無法檢查更新，請確認網路', checking: '檢查更新中…', done: '已更新到最新版本' },
+    zs: { newVer: '有新版本，点一下立即更新', updating: '正在更新到新版…', latest: '目前已是最新版 v', found: '找到新版本，正在更新…', foundBusy: '找到新版本，忙完就会自动更新', netErr: '无法检查更新，请确认网络', checking: '检查更新中…', done: '已更新到最新版本' },
+    en: { newVer: 'A new version is ready. Tap to update', updating: 'Updating to the new version…', latest: 'You are on the latest version v', found: 'New version found, updating…', foundBusy: 'New version found. It will update when you are idle', netErr: 'Cannot check for updates. Please check your connection', checking: 'Checking for updates…', done: 'Updated to the latest version' }
   };
   function now() { return +new Date(); }
   function ver() { try { return String(CFG.ver()); } catch (e) { return ''; } }
@@ -25122,7 +25122,7 @@ var AUPD = (function () {
     if (U.inited) return; U.inited = 1;
     if (!/^https?:/.test(location.protocol)) return;
     try { if (/[?&]u=\d+/.test(location.search) && history.replaceState) { var s = location.search.replace(/([?&])u=\d+&?/, '$1').replace(/[?&]$/, ''); history.replaceState(null, '', location.pathname + s + location.hash); } } catch (e) { }
-    if (ssGet('auTry') && ssGet('auTry') === ver()) { ssSet('auTry', ''); ssSet('auHard', ''); setTimeout(function () { say(T('done') + ver()); }, 1200); }
+    if (ssGet('auTry') && ssGet('auTry') === ver()) { ssSet('auTry', ''); ssSet('auHard', ''); setTimeout(function () { say(T('done')); }, 1200); }
     register();
     setTimeout(function () { check(0); }, 2500);
     setInterval(function () { check(0); }, 30 * 60 * 1000);
@@ -25232,7 +25232,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
