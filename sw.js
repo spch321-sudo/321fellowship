@@ -7,7 +7,7 @@
            音訊、影片與帶 Range 的請求一律不攔截（試聽、拖曳、錄影混音才不會壞）
    ‧ 同網域底下還有其他 321 App，本 SW 只管自己這個資料夾
    ===================================================================== */
-var VER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109';
+var VER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109';
 var V = 'k321-' + VER;
 var SHELL = ['./', './index.html', './manifest.json', './media.js', './xz2.js', './xzm.js', './cpar.js', './xj.js', './peerjs.min.js', './qrcode.js', './data.json', './icon-192.png?v=3', './icon-512.png?v=3', './apple-touch-icon.png?v=3'];
 
@@ -38,9 +38,9 @@ var OFFLINE = "<meta charset='utf-8'><meta name='viewport' content='width=device
 /* rf1105（互動聖經 v2.58.3）：網路優先，但慢網路（超過 SHELL_WAIT 毫秒沒回）先用完全相同的快取開；網路那份繼續下載並更新快取。
    只有導覽請求才可以退回 index.html（程式檔退回 HTML 會造成 Unexpected token '<'）。 */
 var SHELL_WAIT = 1000;
-function shellFetch(e, req, key, url, nav) {
+function shellFetch(e, req, key, url, nav, strict) {
   var net = fetch(url, { cache: 'no-cache', credentials: 'same-origin' }).then(function (resp) {
-    if (resp && resp.ok) { var cp = resp.clone(); caches.open(V).then(function (c) { c.put(key, cp); }); }
+    if (resp && resp.ok) { var cp = resp.clone(), cp2 = strict ? resp.clone() : null; caches.open(V).then(function (c) { c.put(key, cp); if (cp2) c.put(url, cp2); }); }
     return resp;
   });
   e.waitUntil(net.then(function () { }, function () { }));
@@ -50,7 +50,10 @@ function shellFetch(e, req, key, url, nav) {
   }
   return new Promise(function (resolve) {
     var done = false;
-    var t = setTimeout(function () { fallback().then(function (h) { if (h && !done) { done = true; resolve(h); } }); }, SHELL_WAIT);
+    /* np1109：帶 ?v= 版本號的程式檔，慢網路時只接受「同一個版本」的快取，不拿舊版頂替（舊版會讓新功能看起來沒更新） */
+    var t = setTimeout(function () {
+      (strict ? caches.open(V).then(function (c) { return c.match(url); }) : fallback()).then(function (h) { if (h && !done) { done = true; resolve(h); } });
+    }, SHELL_WAIT);
     net.then(function (resp) { if (!done) { done = true; clearTimeout(t); resolve(resp); } }, function () {
       clearTimeout(t);
       if (done) return;
@@ -75,7 +78,7 @@ self.addEventListener('fetch', function (e) {
   if (nav && self.navigator && self.navigator.onLine !== false) return;
   var key = nav ? './index.html' : (/\.(json|js|css)$/.test(p) ? u.origin + p : r);
   if (nav || /\.(json|js|css)$/.test(p)) {
-    e.respondWith(shellFetch(e, r, key, nav ? u.origin + p + u.search : r.url, nav));
+    e.respondWith(shellFetch(e, r, key, nav ? u.origin + p + u.search : r.url, nav, !nav && /[?&]v=/.test(u.search)));
     return;
   }
   e.respondWith(caches.match(r, { ignoreSearch: true }).then(function (h) {
