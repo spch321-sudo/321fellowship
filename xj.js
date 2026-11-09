@@ -19,10 +19,24 @@
   function lg(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
   function ls(k, v) { try { if (v == null) window.localStorage.removeItem(k); else window.localStorage.setItem(k, v); } catch (e) { } }
   function lj(k, d) { try { var v = JSON.parse(lg(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
-  var X = lj('fl321_xj', null);             /* {code,name,pin,seen,chatSeen,share,shAt,hideName} */
-  var DATA = lj('fl321_xjdata', null);       /* church-news 回傳的小家資料 */
+  /* 可以同時參加好幾個小家（mg1109）：GL＝參加的小家清單，DM＝各小家的資料快取，CUR＝目前看的小家 */
+  var GL = lj('fl321_xjs', null);            /* [{code,name,pin,seen,chatSeen,share,shAt,hideName}] */
+  var DM = lj('fl321_xjdm', {}) || {};       /* {code: church-news 回傳的小家資料} */
+  var CUR = lg('fl321_xjcur') || '';
+  if (!GL) {                                  /* 舊版只存一個小家：搬進清單 */
+    GL = []; var old0 = lj('fl321_xj', null);
+    if (old0 && old0.code) { GL.push(old0); var od0 = lj('fl321_xjdata', null); if (od0) DM[old0.code] = od0; CUR = old0.code; }
+  }
+  var X = null, DATA = null;
+  function pick() {
+    X = null; for (var i = 0; i < GL.length; i++) if (GL[i].code === CUR) X = GL[i];
+    if (!X && GL.length) X = GL[0];
+    CUR = X ? X.code : ''; DATA = X ? (DM[X.code] || null) : null;
+  }
+  pick();
   var DAYS = lj('fl321_xjdays', {});         /* 完成晨讀／晚禱的日子 {YYYY-MM-DD: ts}，只存這支手機 */
-  function save() { ls('fl321_xj', X ? JSON.stringify(X) : null); ls('fl321_xjdata', DATA ? JSON.stringify(DATA) : null); }
+  function save() { if (X && DATA) DM[X.code] = DATA; ls('fl321_xjs', JSON.stringify(GL)); ls('fl321_xjdm', JSON.stringify(DM)); ls('fl321_xjcur', CUR); }
+  function findGroup(c) { for (var i = 0; i < GL.length; i++) if (GL[i].code === c) return GL[i]; return null; }
   function saveDays() { ls('fl321_xjdays', JSON.stringify(DAYS)); }
   function dev() { var d = lg('fl321_xjdev'); if (!d) { d = 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); ls('fl321_xjdev', d); } return d; }
   function nick() { return trim(lg('fl321_xjnick') || ''); }
@@ -41,7 +55,11 @@
     var m = location.search.match(/[?&]xj=([A-Za-z0-9]{4,10})/);
     if (m) { ls('fl321_xjpend', m[1].toUpperCase()); try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { } }
   })();
-  function pend() { var p = lg('fl321_xjpend') || ''; if (p && X && X.code === p) { ls('fl321_xjpend', null); return ''; } return p; }
+  function pend() {
+    var p = lg('fl321_xjpend') || '';
+    if (p && findGroup(p)) { ls('fl321_xjpend', null); if (!X || X.code !== p) { CUR = p; pick(); save(); resetLive(); } return ''; }
+    return p;
+  }
 
   /* ── 連線 ── */
   function api(base, m, path, body, cb, tmo) {
@@ -377,7 +395,8 @@
     var d = today(), fresh = !DAYS[d];
     if (fresh) { DAYS[d] = now(); saveDays(); }
     if (!X) { reward(0, []); rerenderAll(); return; }
-    shareProg(true);
+    shareAll(true);
+    for (var gi = 0; gi < GL.length; gi++) if (GL[gi] !== X) (function (g) { api(CHAT, 'POST', '/c/' + g.code + '/done', { dev: dev(), nick: nick(), day: d, hide: g.hideName ? 1 : 0 }, function () { }); })(GL[gi]);
     var shown = 0;
     var t = setTimeout(function () { shown = 1; reward(0, TD.day === d ? TD.list : []); rerenderAll(); }, 2500);
     api(CHAT, 'POST', '/c/' + X.code + '/done', { dev: dev(), nick: nick(), day: d, hide: X.hideName ? 1 : 0 }, function (j) {
@@ -450,12 +469,14 @@
 
   /* ── 關懷名單 ── */
   var CR2 = { list: null, err: '', f: 'all', busy: 0, rows: [] };
-  function shareProg(force, cb) {
-    if (!X || X.share !== 1) { if (cb) cb(); return; }
-    if (!force && X.shAt && now() - X.shAt < 6 * 3600e3) { if (cb) cb(); return; }
+  function shareProg(force, cb, grp) {
+    var G = grp || X;
+    if (!G || G.share !== 1) { if (cb) cb(); return; }
+    if (!force && G.shAt && now() - G.shAt < 6 * 3600e3) { if (cb) cb(); return; }
     var g = progress(); g.dev = dev(); g.nick = nick(); g.share = 1;
-    api(CHAT, 'POST', '/c/' + X.code + '/prog', g, function (j, e) { if (j) { X.shAt = now(); save(); } if (cb) cb(j, e); });
+    api(CHAT, 'POST', '/c/' + G.code + '/prog', g, function (j, e) { if (j) { G.shAt = now(); save(); } if (cb) cb(j, e); });
   }
+  function shareAll(force) { for (var i = 0; i < GL.length; i++) shareProg(force, null, GL[i]); }
   function setShare(on) {
     var nk = $('xjShNick');
     if (on && nk) { var n = trim(nk.value); if (!n) { note(f9('請先填你的稱呼', 'Please enter your name first')); nk.focus(); return; } setNick(n); }
@@ -540,7 +561,7 @@
   }
 
   /* ── 建立／加入 ── */
-  var JN = { busy: 0, needKey: 0 };
+  var JN = { busy: 0, needKey: 0, adding: 0 };
   function join() {
     var c = trim(($('xjCode') || {}).value || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase(), n = trim(($('xjJNick') || {}).value || '');
     if (c.length < 4) { note(f9('請輸入小家代碼', 'Please enter the group code')); return; }
@@ -549,8 +570,8 @@
     api(NEWS, 'GET', '/c/' + c + '?day=' + today(), null, function (j, e) {
       JN.busy = 0; if (!j) { note(errTxt(e)); return; }
       setNick(n);
-      X = { code: j.code, name: j.name, pin: '', seen: maxTs(j), chatSeen: 0, share: -1, shAt: 0, hideName: 0 };
-      DATA = j; NW.at = now(); ls('fl321_xjpend', null); save(); resetLive();
+      addGroup({ code: j.code, name: j.name, pin: '', seen: maxTs(j), chatSeen: 0, share: -1, shAt: 0, hideName: 0 }, j);
+      ls('fl321_xjpend', null);
       note(f9('已加入「' + j.name + '」', 'Joined “' + j.name + '”'));
       H.render('xj');
     });
@@ -567,26 +588,36 @@
       JN.busy = 0;
       if (!j) { if (e === 'createkey' || e === 'badkey') { JN.needKey = 1; H.render('xj'); } note(errTxt(e)); return; }
       setNick(nk);
-      X = { code: j.code, name: j.name, pin: p, seen: 1, chatSeen: 0, share: -1, shAt: 0, hideName: 0 };
-      DATA = j; NW.at = now(); save(); resetLive();
+      addGroup({ code: j.code, name: j.name, pin: p, seen: 1, chatSeen: 0, share: -1, shAt: 0, hideName: 0 }, j);
       H.render('xj');
       modal('<h3>' + esc(f9('小家建立好了', 'Your small group is ready')) + '</h3><p class="note">' + esc(f9('這是你們的小家代碼，家人輸入代碼或點邀請連結就能加入：', 'This is your group code. Members can enter it or tap your invitation link:')) + '</p>' +
         '<p class="xjcode">' + esc(j.code) + '</p><p class="note">' + esc(f9('請記好家長密碼，發佈消息、看關懷名單時要用。', 'Keep the leader password — you need it to post news and see the care list.')) + '</p>' +
         '<div class="xjbtns"><button class="btn ghost" data-xj="mclose">' + esc(f9('阿們', 'Amen')) + '</button><button class="btn" data-xj="invite">' + esc(f9('邀請家人加入', 'Invite members')) + '</button></div>');
     });
   }
+  function addGroup(g, data) {
+    var ex = findGroup(g.code);
+    if (ex) { ex.name = g.name; if (g.pin) ex.pin = g.pin; } else GL.push(g);
+    CUR = g.code; pick(); DATA = data; DM[g.code] = data; NW.at = now(); JN.adding = 0; save(); resetLive();
+  }
+  function switchTo(c) {
+    if (!findGroup(c) || (X && X.code === c)) return;
+    CUR = c; pick(); NW.at = 0; NW.f = ''; resetLive(); save(); H.render('xj'); try { window.scrollTo(0, 0); } catch (e) { }
+  }
   function resetLive() { CC.msgs = []; CC.last = 0; CC.unread = 0; CC.uAt = 0; CC.loaded = 0; TD.list = null; TD.at = 0; CR2.list = null; }
   function inviteUrl() { return location.origin + location.pathname.replace(/index\.html$/, '') + '?xj=' + X.code; }
   function invite() {
-    shareText(f9('邀請你加入我們的小家「' + X.name + '」，在《國度321空中團契》App 裡一起晨讀／晚禱、聊天、彼此代禱。\n點這個連結：' + inviteUrl() + '\n或在 App「更多 → 我的小家」輸入代碼：' + X.code,
-      'You’re invited to join our small group “' + X.name + '” in the Kingdom 321 Fellowship app — morning reading, evening prayer and chat together.\nTap: ' + inviteUrl() + '\nOr open More → My Small Group and enter the code: ' + X.code));
+    shareText(f9('邀請你加入我們的小家「' + X.name + '」，在《國度321空中團契》App 裡一起晨讀／晚禱、聊天、彼此代禱。\n點這個連結：' + inviteUrl() + '\n或在 App 底部「小家」→「加入或建立其他小家」輸入代碼：' + X.code,
+      'You’re invited to join our small group “' + X.name + '” in the Kingdom 321 Fellowship app — morning reading, evening prayer and chat together.\nTap: ' + inviteUrl() + '\nOr open the Group tab and enter the code: ' + X.code));
   }
   var ARM = { leave: 0 };
   function leave(btn) {
     if (!ARM.leave) { ARM.leave = 1; btn.textContent = f9('再按一次離開', 'Tap again to leave'); setTimeout(function () { ARM.leave = 0; }, 4000); return; }
     ARM.leave = 0;
     if (X && X.share === 1) api(CHAT, 'POST', '/c/' + X.code + '/prog', { dev: dev(), share: 0 }, function () { });
-    X = null; DATA = null; save(); resetLive(); note(f9('已離開這個小家', 'You left the group')); H.render('xj');
+    var lc = X.code, ln = X.name;
+    GL = GL.filter(function (g) { return g.code !== lc; }); delete DM[lc];
+    CUR = ''; pick(); save(); resetLive(); note(f9('已離開「' + ln + '」', 'You left “' + ln + '”')); H.render('xj');
   }
 
   /* ── 畫面 ── */
@@ -641,7 +672,9 @@
   }
   function joinView() {
     var p = pend();
-    var h = H.pageHead(f9('關係 · 彼此相顧', 'RELATIONSHIPS · CARING FOR ONE ANOTHER'), f9('我的小家', 'My Small Group'), f9('和小家家人一起晨讀／晚禱、聊天、彼此代禱', 'Morning reading, evening prayer and chat with your small group'));
+    var h = (X ? '<button class="xjsm" data-xj="joinback" style="margin:0 0 10px">‹ ' + esc(f9('回到「' + X.name + '」', 'Back to “' + X.name + '”')) + '</button>' : '') +
+      H.pageHead(f9('關係 · 彼此相顧', 'RELATIONSHIPS · CARING FOR ONE ANOTHER'), X ? f9('加入或建立其他小家', 'Join or create another group') : f9('我的小家', 'My Small Group'),
+        X ? f9('可以同時參加好幾個小家，在小家頁上方切換。', 'You can be in several groups and switch at the top of the group page.') : f9('和小家家人一起晨讀／晚禱、聊天、彼此代禱', 'Morning reading, evening prayer and chat with your small group'));
     h += '<div class="card"><h3>🏡 ' + esc(f9('加入小家', 'Join a small group')) + '</h3>' +
       (p ? '<p class="note" style="color:var(--gold-text)">' + esc(f9('你收到一個小家的邀請，按「加入」就可以了。', 'You received an invitation — just tap Join.')) + '</p>' : '<p class="note">' + esc(f9('向小家家長索取代碼，或直接點家長傳給你的邀請連結。', 'Ask your group leader for the code, or tap the invitation link they sent you.')) + '</p>') +
       fld(f9('小家代碼', 'Group code'), '<input id="xjCode" class="xjcodein" type="text" maxlength="10" autocapitalize="characters" placeholder="ABC234" value="' + esc(p) + '">') +
@@ -657,14 +690,20 @@
     h += '<p class="note" style="margin:6px 4px 20px">' + esc(f9('「又要彼此相顧，激發愛心，勉勵行善。」（希伯來書 10:24）', '“Let’s consider how to provoke one another to love and good works.” (Hebrews 10:24)')) + '</p>';
     return h;
   }
+  function switcher() {
+    var h = '<div class="xjsw">';
+    for (var i = 0; i < GL.length; i++) h += '<button class="xjchip btn-chip' + (GL[i].code === CUR ? ' on' : '') + '" data-xj="sw" data-k="' + esc(GL[i].code) + '">🏡 ' + esc(GL[i].name) + (GL[i].pin ? ' 🔑' : '') + '</button>';
+    return h + '<button class="xjchip btn-chip xjadd" data-xj="addgrp">＋ ' + esc(f9('加入或建立其他小家', 'Join or create another')) + '</button></div>';
+  }
   PAGES.xj = function () {
-    if (!X) return joinView();
-    var h = H.pageHead(f9('我的小家', 'MY SMALL GROUP'), X.name || f9('我的小家', 'My Small Group'), f9('小家代碼 ', 'Group code ') + X.code);
+    var pp = pend();
+    if (!X || JN.adding || pp) return joinView();
+    var h = switcher() + H.pageHead(f9('我的小家', 'MY SMALL GROUP') + (GL.length > 1 ? ' · ' + f9('共 ' + GL.length + ' 個', GL.length + ' groups') : ''), X.name || f9('我的小家', 'My Small Group'), f9('小家代碼 ', 'Group code ') + X.code);
     h += doneCard() + todayCard() + chatCard() + careAsk();
     if (X.pin) h += '<div class="xjadm"><button class="btn" data-xj="nnew">＋ ' + esc(f9('發佈消息', 'Post news')) + '</button><button class="btn ghost" data-xj="gocare">💌 ' + esc(f9('關懷名單', 'Care list')) + '</button><button class="btn ghost" data-xj="tools">⚙️ ' + esc(f9('家長工具', 'Leader tools')) + '</button></div>';
     h += H.sect('消', f9('小家消息', 'Group News')) + newsHtml();
     h += H.sect('我', f9('我的設定', 'My Settings')) + settingsLines();
-    h += '<div class="xjadm"><button class="btn ghost" data-xj="invite">📨 ' + esc(f9('邀請家人加入', 'Invite members')) + '</button>' +
+    h += '<div class="xjadm"><button class="btn ghost" data-xj="addgrp">＋ ' + esc(f9('加入或建立其他小家', 'Join or create another group')) + '</button><button class="btn ghost" data-xj="invite">📨 ' + esc(f9('邀請家人加入', 'Invite members')) + '</button>' +
       (X.pin ? '' : '<button class="btn ghost" data-xj="login">🔑 ' + esc(f9('家長登入', 'Leader sign-in')) + '</button>') +
       '<button class="btn ghost" data-xj="leave">' + esc(f9('離開這個小家', 'Leave this group')) + '</button></div>';
     var mx = maxTs(DATA); if (DATA && mx > (X.seen || 0)) { X.seen = mx; save(); }
@@ -717,7 +756,7 @@
   /* 入口：底部導覽「小家」分頁、連結同行頁、首頁的小家卡片 */
   function homeCard() {
     var c = tdChips(6);
-    return '<div class="card xjhome" data-xj="gohome" role="button"><div class="xjrow"><b class="xjgrow">🏡 ' + esc(X.name) + '</b><span id="xjHomeUnread">' + (CC.unread ? '<span class="xjdot">' + esc(f9(CC.unread + ' 則新訊息', CC.unread + ' new')) + '</span>' : '') + (unreadNews() ? ' <span class="xjdot">' + esc(f9(unreadNews() + ' 則消息', unreadNews() + ' news')) + '</span>' : '') + '</span></div>' +
+    return '<div class="card xjhome" data-xj="gohome" role="button"><div class="xjrow"><b class="xjgrow">🏡 ' + esc(X.name) + (GL.length > 1 ? ' <span class="note" style="font-weight:400">' + esc(f9('等 ' + GL.length + ' 個小家', '+' + (GL.length - 1) + ' more')) + '</span>' : '') + '</b><span id="xjHomeUnread">' + (CC.unread ? '<span class="xjdot">' + esc(f9(CC.unread + ' 則新訊息', CC.unread + ' new')) + '</span>' : '') + (unreadNews() ? ' <span class="xjdot">' + esc(f9(unreadNews() + ' 則消息', unreadNews() + ' news')) + '</span>' : '') + '</span></div>' +
       (c.total ? '<div class="note" style="margin:4px 0 0">' + esc(f9('今天 ' + c.total + ' 位家人完成晨讀／晚禱', c.total + ' finished today')) + '</div><div class="xjchips">' + c.html + '</div>' : '<div class="note" style="margin:4px 0 0">' + esc(f9('今天還沒有人完成晨讀／晚禱，你來作第一位', 'No one has finished today — be the first')) + '</div>') +
       (doneToday() ? '<div class="note" style="margin:8px 0 0;color:#2E7D32;font-weight:700">✅ ' + esc(f9('我今天完成晨讀／晚禱了', 'I finished today’s reading / prayer')) + '</div>' : '<button class="btn gold" style="margin-top:10px" data-xj="finish">🙏 ' + esc(f9('我今天完成晨讀／晚禱了', 'I finished morning reading / evening prayer')) + '</button>') + '</div>';
   }
@@ -776,6 +815,9 @@
     if (!t || t === document) return;
     var a = t.getAttribute('data-xj'), id = t.getAttribute('data-id');
     if (a === 'join') join();
+    else if (a === 'sw') switchTo(t.getAttribute('data-k'));
+    else if (a === 'addgrp') { JN.adding = 1; H.render('xj'); try { window.scrollTo(0, 0); } catch (e) { } }
+    else if (a === 'joinback') { JN.adding = 0; ls('fl321_xjpend', null); H.render('xj'); }
     else if (a === 'create') create();
     else if (a === 'gohome') H.go('xj');
     else if (a === 'gochat') H.go('xjchat');
@@ -880,6 +922,7 @@
     '.xjview{position:fixed;inset:0;z-index:96;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px}.xjview img{max-width:100%;max-height:80vh;object-fit:contain;border-radius:8px}.xjview .bar{display:flex;gap:10px;margin-top:14px}' +
     '.xjvoice audio{display:block;width:230px;max-width:100%;height:40px}.xjvoice small{display:block;font-size:.74em;opacity:.8;margin-top:2px}.xjm.mine .xjvoice{background:var(--white);color:var(--ink);border-color:var(--line)}' +
     '.xjrec{align-items:center;gap:8px;background:#FDECEC;border-radius:12px;padding:8px 10px;margin-bottom:6px;color:#9B2C2C}.xjrec .dot{flex:none;width:10px;height:10px;border-radius:50%;background:#D23B3B;animation:xjBlink 1s infinite}@keyframes xjBlink{50%{opacity:.25}}' +
+    '.xjsw{display:flex;gap:6px;overflow-x:auto;padding:2px 0 12px;margin:0 0 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}.xjsw::-webkit-scrollbar{display:none}.xjsw .xjchip{white-space:nowrap;flex:none;padding:6px 12px}.xjsw .xjadd{border-style:dashed;color:var(--head)}' +
     '.xjcr{padding:12px 14px}.xjchatmode .aic-fab,.xjchatmode .help-fab{display:none!important}' +
     '@media (prefers-color-scheme:dark){html:not([data-theme="light"]) .xjtd{background:#22304A;border-color:#33445F}html:not([data-theme="light"]) .xjft,html:not([data-theme="light"]) .xjt,html:not([data-theme="light"]) .xjsm,html:not([data-theme="light"]) .xjchip,html:not([data-theme="light"]) .xjinp{background:#16243A;color:#E8EEF6}}' +
     'html[data-theme="dark"] .xjtd{background:#22304A;border-color:#33445F}html[data-theme="dark"] .xjft,html[data-theme="dark"] .xjt,html[data-theme="dark"] .xjsm,html[data-theme="dark"] .xjchip,html[data-theme="dark"] .xjinp{background:#16243A;color:#E8EEF6}' +
