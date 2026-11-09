@@ -44,9 +44,9 @@
   function pend() { var p = lg('fl321_xjpend') || ''; if (p && X && X.code === p) { ls('fl321_xjpend', null); return ''; } return p; }
 
   /* ── 連線 ── */
-  function api(base, m, path, body, cb) {
+  function api(base, m, path, body, cb, tmo) {
     var x; try { x = new XMLHttpRequest(); x.open(m, base + path, true); } catch (e) { cb(null, 'net'); return; }
-    x.timeout = 15000;
+    x.timeout = tmo || 15000;
     if (body) x.setRequestHeader('Content-Type', 'application/json');
     x.onreadystatechange = function () {
       if (x.readyState !== 4) return;
@@ -63,7 +63,9 @@
       createkey: f9('建立小家需要「建立碼」，請向團契同工索取', 'Creating a group needs a creation code — ask a fellowship co-worker'),
       badkey: f9('建立碼不對', 'Wrong creation code'), slow: f9('說太快了，等一下再送', 'Too fast — wait a moment'),
       full: f9('今天的訊息太多了，明天再聊', 'Too many messages today — try tomorrow'), forbid: f9('只能刪除自己的訊息', 'You can only delete your own messages'),
-      empty: f9('請輸入內容', 'Please write something'), dev: f9('裝置資料不完整，請重新打開 App', 'Please reopen the app')
+      empty: f9('請輸入內容', 'Please write something'), toobig: f9('檔案太大，上限 5MB', 'File too large — 5 MB maximum'),
+      attfull: f9('今天小家傳的相片和檔案太多了，明天再傳', 'Too many photos and files today — try tomorrow'), mime: f9('這種相片格式不支援', 'This image format isn’t supported'),
+      http413: f9('檔案太大，上限 5MB', 'File too large — 5 MB maximum'), dev: f9('裝置資料不完整，請重新打開 App', 'Please reopen the app')
     };
     return M[e] || (f9('連不上小家服務，請稍後再試', 'Can’t reach the small-group service — try again later') + (e ? '（' + e + '）' : ''));
   }
@@ -151,12 +153,163 @@
         (m.mine ? '' : '<div class="xjav" style="background:' + col(m.who) + '">' + esc(String(m.nick || '?').slice(0, 1)) + '</div>') +
         '<div class="xjb">' + (m.mine ? '' : '<div class="xjn">' + esc(m.nick || '') + (m.lead ? ' · ' + esc(f9('家長', 'Leader')) : '') + '</div>') +
         (m.del ? '<div class="xjt gone">' + esc(f9('這則訊息已刪除', 'Message deleted')) + '</div>' :
-          '<div class="xjt" data-xj="tap" data-id="' + m.id + '">' + (q ? '<div class="xjq">↩ ' + esc((q.nick || '') + '：' + (q.del ? '…' : q.text)) + '</div>' : '') + linkify(m.text) + '</div>') +
+          (m.kind ? attHtml(m, q) : '<div class="xjt" data-xj="tap" data-id="' + m.id + '">' + (q ? '<div class="xjq">↩ ' + esc((q.nick || '') + '：' + (q.del ? '…' : q.text)) + '</div>' : '') + linkify(m.text) + '</div>')) +
         (sel && !m.del ? '<div class="xjacts"><button data-xj="reply" data-id="' + m.id + '">' + esc(f9('回覆', 'Reply')) + '</button><button data-xj="copy" data-id="' + m.id + '">' + esc(f9('複製', 'Copy')) + '</button>' +
           (m.mine || isAdm ? '<button data-xj="mdel" data-id="' + m.id + '">' + esc(CC.arm === m.id ? f9('再按一次刪除', 'Tap again to delete') : f9('刪除', 'Delete')) + '</button>' : '') + '</div>' : '') +
-        '</div><div class="xjtime">' + fmtTime(m.ts) + '</div></div>';
+        '</div><div class="xjtime">' + (m.kind && !m.del ? '<button class="xjmore" data-xj="tap" data-id="' + m.id + '" aria-label="more">⋯</button>' : '') + fmtTime(m.ts) + '</div></div>';
     }
     return h;
+  }
+  /* ── 相片、檔案、貼圖 ── */
+  var STKS = [
+    ['amen', '🙏', '阿們', 'Amen', '#F6E7B4', '#7A5800'], ['halle', '🙌', '哈利路亞', 'Hallelujah', '#FFE1C6', '#A4481A'],
+    ['thanks', '💐', '感謝主', 'Thank the Lord', '#FBE4E9', '#A33A55'], ['pray', '🕊️', '為你禱告', 'Praying for you', '#E1EBF7', '#2F5C93'],
+    ['love', '❤️', '愛你', 'Love you', '#FBE0E0', '#B33535'], ['peace', '🌿', '平安', 'Peace', '#E3F0E1', '#356B32'],
+    ['cheer', '💪', '加油', 'Keep going', '#FFF0C8', '#8A5A10'], ['praise', '🎶', '讚美主', 'Praise the Lord', '#ECE3F5', '#6C3F8A'],
+    ['good', '👍', '好棒', 'Well done', '#DDF3F0', '#1C6E63'], ['hug', '🤗', '抱抱', 'Hugs', '#FDE8D8', '#9A4E28'],
+    ['morning', '🌅', '早安', 'Good morning', '#FFF3D6', '#94621A'], ['night', '🌙', '晚安', 'Good night', '#E2E5F5', '#3A4A8C'],
+    ['welcome', '🎉', '歡迎', 'Welcome', '#FCE7F0', '#A3346E'], ['bible', '📖', '讀經去', 'Time for the Word', '#E7EDF6', '#12233F'],
+    ['withyou', '✝️', '主與你同在', 'The Lord is with you', '#F3ECDC', '#6E5019'], ['sorry', '🥺', '對不起', 'Sorry', '#EDEDED', '#4A4A4A']
+  ];
+  function stkFind(k) { for (var i = 0; i < STKS.length; i++) if (STKS[i][0] === k) return STKS[i]; return null; }
+  function stkHtml(k) { var s = stkFind(k); if (!s) return '<div class="xjt">[' + esc(f9('貼圖', 'Sticker')) + ']</div>'; return '<div class="xjstk" style="background:' + s[4] + ';color:' + s[5] + '"><span class="e">' + s[1] + '</span><b>' + esc(f9(s[2], s[3])) + '</b></div>'; }
+  function attUrl(id) { return CHAT + '/c/' + X.code + '/att/' + id; }
+  function fmtSize(n) { n = +n || 0; return n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB'; }
+  function attHtml(m, q) {
+    var mt = m.meta || {}, qh = q ? '<div class="xjq">↩ ' + esc((q.nick || '') + '：' + (q.del ? '…' : q.text)) + '</div>' : '';
+    if (m.kind === 'stk') return (qh ? '<div class="xjt">' + qh + '</div>' : '') + stkHtml(mt.stk);
+    if (m.kind === 'img' && m.att) {
+      var ar = mt.w && mt.h ? ' style="aspect-ratio:' + mt.w + '/' + mt.h + '"' : '';
+      return (qh ? '<div class="xjt">' + qh + '</div>' : '') + '<img class="xjimg" src="' + esc(attUrl(m.att)) + '" alt="' + esc(f9('相片', 'Photo')) + '" loading="lazy" data-xj="img" data-id="' + m.att + '"' + ar + '>';
+    }
+    if (m.kind === 'voice' && m.att) return '<div class="xjt xjvoice">' + qh + '<audio controls preload="none" src="' + esc(attUrl(m.att)) + '"></audio>' + (mt.dur ? '<small>🎤 ' + fmtDur(mt.dur) + '</small>' : '') + '</div>';
+    if (m.att) return '<a class="xjt xjfile" href="' + esc(attUrl(m.att)) + '" target="_blank" rel="noopener" download="' + esc(mt.name || 'file') + '">' + qh + '<span class="fi">📄</span><span class="fn"><b>' + esc(mt.name || f9('檔案', 'File')) + '</b><small>' + esc(fmtSize(mt.size)) + ' · ' + esc(f9('點一下下載', 'Tap to download')) + '</small></span></a>';
+    return '<div class="xjt">' + linkify(m.text) + '</div>';
+  }
+  function viewImg(id) {
+    var old = $('xjView'); if (old) old.parentNode.removeChild(old);
+    var u = attUrl(id), el = document.createElement('div'); el.id = 'xjView'; el.className = 'xjview';
+    el.innerHTML = '<img src="' + esc(u) + '" alt=""><div class="bar"><a class="xjsm" href="' + esc(u) + '" target="_blank" rel="noopener" download>' + esc(f9('下載／另存', 'Download')) + '</a><button class="xjsm" data-xj="vclose">' + esc(f9('關閉', 'Close')) + '</button></div>';
+    document.body.appendChild(el);
+    el.onclick = function (e) { if (e.target === el || e.target.tagName === 'IMG') el.parentNode.removeChild(el); };
+  }
+  function fmtDur(n) { n = Math.round(+n || 0); return Math.floor(n / 60) + ':' + ('0' + (n % 60)).slice(-2); }
+  /* 語音錄音：點🎤開始，最長 3 分鐘；可取消或送出 */
+  var RC = { rec: null, stream: null, chunks: [], t0: 0, timer: 0, cancel: 0 };
+  function recMime() {
+    var L = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus'];
+    try { for (var i = 0; i < L.length; i++) if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(L[i])) return L[i]; } catch (e) { }
+    return '';
+  }
+  function recBar(on) {
+    var b = $('xjRec'); if (!b) return;
+    b.style.display = on ? 'flex' : 'none'; fitChat();
+  }
+  function recTick() {
+    var s = Math.floor((now() - RC.t0) / 1000), el = $('xjRecT'); if (el) el.textContent = fmtDur(s);
+    if (s >= 180) recStop(0);
+  }
+  function recStart() {
+    if (RC.rec) return;
+    if (needNick()) return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { note(f9('這支手機的瀏覽器不支援錄音', 'Recording isn’t supported in this browser')); return; }
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(function (st) {
+      var mt = recMime(), r;
+      try { r = mt ? new MediaRecorder(st, { mimeType: mt, audioBitsPerSecond: 48000 }) : new MediaRecorder(st); } catch (e) { r = new MediaRecorder(st); }
+      RC.rec = r; RC.stream = st; RC.chunks = []; RC.cancel = 0; RC.t0 = now();
+      r.ondataavailable = function (e) { if (e.data && e.data.size) RC.chunks.push(e.data); };
+      r.onstop = function () {
+        var dur = Math.round((now() - RC.t0) / 1000), type = (r.mimeType || mt || 'audio/webm').split(';')[0];
+        try { st.getTracks().forEach(function (t) { t.stop(); }); } catch (e) { }
+        clearInterval(RC.timer); RC.rec = null; RC.stream = null; recBar(0);
+        if (RC.cancel || !RC.chunks.length) return;
+        if (dur < 1) { note(f9('錄音太短了', 'Too short')); return; }
+        var blob = new Blob(RC.chunks, { type: type });
+        if (blob.size > 5 * 1048576) { note(errTxt('toobig')); return; }
+        upShow(f9('語音上傳中…', 'Uploading voice…'));
+        readDataUrl(blob, function (d) {
+          if (!d) { $('xjUp').style.display = 'none'; return; }
+          post({ kind: 'voice', data: d, mime: type, name: 'voice.' + (/mp4|aac|m4a/.test(type) ? 'm4a' : /ogg/.test(type) ? 'ogg' : 'webm'), dur: dur, text: '' });
+        });
+      };
+      r.start(1000);
+      RC.timer = setInterval(recTick, 250); recTick(); recBar(1);
+      try { if (navigator.vibrate) navigator.vibrate(30); } catch (e) { }
+    })['catch'](function () { note(f9('沒有取得麥克風權限，請在瀏覽器設定允許使用麥克風', 'Microphone permission was not granted — allow it in your browser settings')); });
+  }
+  function recStop(cancel) { if (!RC.rec) return; RC.cancel = cancel ? 1 : 0; try { RC.rec.stop(); } catch (e) { recBar(0); } }
+  function readDataUrl(file, cb) { var r = new FileReader(); r.onload = function () { cb(String(r.result || '')); }; r.onerror = function () { cb(''); }; r.readAsDataURL(file); }
+  function prepImage(file, cb) {
+    var MAX = 1600;
+    if (/gif$/i.test(file.type) && file.size <= 4.5 * 1048576) { readDataUrl(file, function (d) { cb(d ? { data: d, mime: 'image/gif', name: file.name || 'photo.gif', w: 0, h: 0 } : null); }); return; }
+    var url; try { url = URL.createObjectURL(file); } catch (e) { cb(null); return; }
+    var im = new Image();
+    im.onload = function () {
+      var w = im.naturalWidth, h = im.naturalHeight, k = Math.min(1, MAX / Math.max(w, h));
+      var cw = Math.max(1, Math.round(w * k)), ch = Math.max(1, Math.round(h * k));
+      var cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
+      var g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cw, ch); g.drawImage(im, 0, 0, cw, ch);
+      var q = 0.82, d = cv.toDataURL('image/jpeg', q);
+      while (d.length * 0.75 > 4.5 * 1048576 && q > 0.4) { q -= 0.15; d = cv.toDataURL('image/jpeg', q); }
+      try { URL.revokeObjectURL(url); } catch (e) { }
+      cb({ data: d, mime: 'image/jpeg', name: (file.name || 'photo').replace(/\.[^.]+$/, '') + '.jpg', w: cw, h: ch });
+    };
+    im.onerror = function () { try { URL.revokeObjectURL(url); } catch (e) { } cb(null); };
+    im.src = url;
+  }
+  function needNick() {
+    var nk = $('xjNick');
+    if (nk) { var n = trim(nk.value); if (!n) { note(f9('請先填你的稱呼', 'Please enter your name first')); nk.focus(); return true; } setNick(n); }
+    return false;
+  }
+  function post(body, done) {
+    if (CC.sending) return; CC.sending = 1;
+    var btn = $('xjSend'); if (btn) btn.disabled = true;
+    body.dev = dev(); body.nick = nick(); body.re = CC.re || 0; body.after = CC.last;
+    api(CHAT, 'POST', '/c/' + X.code + '/send', body, function (j, e) {
+      CC.sending = 0; var b = $('xjSend'); if (b) b.disabled = false;
+      var up = $('xjUp'); if (up) up.style.display = 'none';
+      if (!j) { note(errTxt(e)); return; }
+      var hadRe = CC.re; CC.re = 0;
+      merge(j.msgs);
+      if (done) done();
+      if (hadRe || $('xjNick')) { H.render('xjchat'); return; }
+      paintChat(true);
+    }, body.data ? 120000 : 15000);
+  }
+  function upShow(t) { var up = $('xjUp'); if (up) { up.textContent = t; up.style.display = 'block'; fitChat(); } }
+  function pickPhoto(inp) {
+    var f = inp.files && inp.files[0]; inp.value = ''; if (!f) return;
+    if (needNick()) return;
+    upShow(f9('相片處理中…', 'Preparing photo…'));
+    prepImage(f, function (r) {
+      if (!r) { upShow(''); $('xjUp').style.display = 'none'; note(f9('這張相片讀不出來，請換一張', 'Couldn’t read this photo — try another')); return; }
+      upShow(f9('相片上傳中…', 'Uploading photo…'));
+      post({ kind: 'img', data: r.data, mime: r.mime, name: r.name, w: r.w, h: r.h, text: '' });
+    });
+  }
+  function pickFile(inp) {
+    var f = inp.files && inp.files[0]; inp.value = ''; if (!f) return;
+    if (needNick()) return;
+    if (f.size > 5 * 1048576) { note(errTxt('toobig')); return; }
+    if (/^image\/(jpeg|png|webp|gif)$/i.test(f.type) && f.size > 1.5 * 1048576) { pickPhoto({ files: [f], value: '' }); return; }
+    upShow(f9('檔案上傳中…', 'Uploading file…') + ' ' + fmtSize(f.size));
+    readDataUrl(f, function (d) {
+      if (!d) { $('xjUp').style.display = 'none'; note(f9('檔案讀不出來', 'Couldn’t read this file')); return; }
+      var img = /^image\/(jpeg|png|webp|gif)$/i.test(f.type);
+      post({ kind: img ? 'img' : 'file', data: d, mime: f.type || 'application/octet-stream', name: f.name || 'file', text: '' });
+    });
+  }
+  function sendStk(k) {
+    if (needNick()) return;
+    var s = stkFind(k); if (!s) return;
+    CC.stk = 0; var pn = $('xjStk'); if (pn) pn.style.display = 'none';
+    post({ kind: 'stk', stk: k, text: '[貼圖] ' + s[2] });
+  }
+  function stkPanel() {
+    var h = '<div class="xjstkp" id="xjStk" style="display:' + (CC.stk ? 'grid' : 'none') + '">';
+    for (var i = 0; i < STKS.length; i++) h += '<button data-xj="stk" data-k="' + STKS[i][0] + '" aria-label="' + esc(f9(STKS[i][2], STKS[i][3])) + '">' + stkHtml(STKS[i][0]) + '</button>';
+    return h + '</div>';
   }
   function paintChat(stick) {
     var box = $('xjList'); if (!box) return;
@@ -178,17 +331,7 @@
     var ta = $('xjIn'), nk = $('xjNick');
     if (nk) { var n = trim(nk.value); if (!n) { note(f9('請先填你的稱呼', 'Please enter your name first')); nk.focus(); return; } setNick(n); }
     var text = trim(ta ? ta.value : ''); if (!text) { note(errTxt('empty')); return; }
-    if (CC.sending) return; CC.sending = 1;
-    var btn = $('xjSend'); if (btn) btn.disabled = true;
-    api(CHAT, 'POST', '/c/' + X.code + '/send', { dev: dev(), nick: nick(), text: text, re: CC.re || 0, after: CC.last }, function (j, e) {
-      CC.sending = 0; var b = $('xjSend'); if (b) b.disabled = false;
-      if (!j) { note(errTxt(e)); return; }
-      CC.draft = ''; var hadRe = CC.re; CC.re = 0;
-      var t2 = $('xjIn'); if (t2) { t2.value = ''; growTa(t2); }
-      merge(j.msgs);
-      if (nk || hadRe) { H.render('xjchat'); return; }
-      paintChat(true);
-    });
+    post({ text: text }, function () { CC.draft = ''; var t2 = $('xjIn'); if (t2) { t2.value = ''; growTa(t2); } });
   }
   function delMsg(id) {
     if (CC.arm !== id) { CC.arm = id; paintChat(); return; }
@@ -536,7 +679,11 @@
       '<div class="xjft" id="xjFt"><div class="in">' +
       (q ? '<div class="xjre"><span>↩ ' + esc(f9('回覆 ', 'Reply to ') + (q.nick || '')) + '：' + esc(q.text) + '</span><button data-xj="recancel">✕</button></div>' : '') +
       (nick() ? '' : '<input id="xjNick" class="xjinp" type="text" maxlength="20" placeholder="' + esc(f9('你的稱呼（大家會看到）', 'Your name (everyone will see it)')) + '">') +
-      '<div class="xjrow"><textarea id="xjIn" class="xjinp" rows="1" maxlength="600" placeholder="' + esc(f9('說些什麼…', 'Say something…')) + '">' + esc(CC.draft) + '</textarea><button class="btn" id="xjSend" data-xj="send" style="width:auto">' + esc(f9('送出', 'Send')) + '</button></div></div></div>';
+      stkPanel() + '<div class="xjup" id="xjUp" style="display:none"></div>' +
+      '<div class="xjrec" id="xjRec" style="display:none"><span class="dot"></span><b>' + esc(f9('錄音中', 'Recording')) + '</b><span id="xjRecT">0:00</span><span class="xjgrow"></span><button class="xjsm" data-xj="reccancel">' + esc(f9('取消', 'Cancel')) + '</button><button class="btn" data-xj="recsend" style="width:auto;padding:8px 16px;min-height:0">' + esc(f9('送出', 'Send')) + '</button></div>' +
+      '<div class="xjrow"><button class="xjtool" data-xj="photo" aria-label="' + esc(f9('傳相片', 'Send photo')) + '">🖼️</button><button class="xjtool" data-xj="file" aria-label="' + esc(f9('傳檔案', 'Send file')) + '">📎</button><button class="xjtool" data-xj="rec" aria-label="' + esc(f9('錄音', 'Record voice')) + '">🎤</button><button class="xjtool" data-xj="stkp" aria-label="' + esc(f9('貼圖', 'Stickers')) + '">😊</button>' +
+      '<input type="file" id="xjPhoto" accept="image/*" style="display:none"><input type="file" id="xjFile" style="display:none">' +
+      '<textarea id="xjIn" class="xjinp" rows="1" maxlength="600" placeholder="' + esc(f9('說些什麼…', 'Say something…')) + '">' + esc(CC.draft) + '</textarea><button class="btn" id="xjSend" data-xj="send" style="width:auto">' + esc(f9('送出', 'Send')) + '</button></div></div></div>';
     return h;
   };
   PAGES.xjcare = function () {
@@ -577,6 +724,7 @@
   function after(r) {
     var view = $('view'); if (!view) return;
     try { document.body.classList[r === 'xjchat' ? 'add' : 'remove']('xjchatmode'); } catch (e) { }
+    if (r !== 'xjchat' && RC.rec) recStop(1);
     if (r === 'xjchat' || r === 'xjcare') {
       var tabs = document.querySelectorAll('#tabbar .tab');
       for (var ti = 0; ti < tabs.length; ti++) { var on = tabs[ti].getAttribute('data-route') === 'xj'; tabs[ti].className = 'tab' + (on ? ' on' : ''); if (on) tabs[ti].setAttribute('aria-current', 'page'); else tabs[ti].removeAttribute('aria-current'); }
@@ -611,6 +759,9 @@
     if (r === 'xjchat' && X) {
       var ta = $('xjIn');
       if (ta) { ta.oninput = function () { growTa(ta); }; ta.onkeydown = function (e) { if (e.keyCode === 13 && !e.shiftKey && !e.isComposing && window.innerWidth > 760) { e.preventDefault(); send(); } }; if (CC.draft) growTa(ta); }
+      var ph = $('xjPhoto'), fl = $('xjFile');
+      if (ph) ph.onchange = function () { pickPhoto(ph); };
+      if (fl) fl.onchange = function () { pickFile(fl); };
       setTimeout(fitChat, 0); setTimeout(fitChat, 300);
       if (!CC.loaded) { CC.loaded = 1; pull(1); } else { paintChat(true); pull(0); }
     }
@@ -663,6 +814,15 @@
     else if (a === 'nshare') { var n = findNews(id); if (n) shareText('【' + X.name + '・' + kindTxt(n.kind) + '】' + (nTi(n) ? nTi(n) + '\n' : '') + (nBo(n) || '') + (n.link ? '\n' + n.link : '')); }
     else if (a === 'nf') { NW.f = t.getAttribute('data-k') || ''; rr('xj'); }
     else if (a === 'send') send();
+    else if (a === 'photo') { var ip = $('xjPhoto'); if (ip) ip.click(); }
+    else if (a === 'file') { var ifl = $('xjFile'); if (ifl) ifl.click(); }
+    else if (a === 'stkp') { CC.stk = CC.stk ? 0 : 1; var pn = $('xjStk'); if (pn) pn.style.display = CC.stk ? 'grid' : 'none'; fitChat(); }
+    else if (a === 'stk') sendStk(t.getAttribute('data-k'));
+    else if (a === 'rec') recStart();
+    else if (a === 'recsend') recStop(0);
+    else if (a === 'reccancel') recStop(1);
+    else if (a === 'img') viewImg(id);
+    else if (a === 'vclose') { var vw = $('xjView'); if (vw) vw.parentNode.removeChild(vw); }
     else if (a === 'cref') pull(1);
     else if (a === 'tap') { var mid = +id; CC.sel = CC.sel === mid ? 0 : mid; CC.arm = 0; paintChat(); }
     else if (a === 'reply') { CC.re = +id; CC.sel = 0; H.render('xjchat'); var ta = $('xjIn'); if (ta) ta.focus(); }
@@ -710,6 +870,16 @@
     '.xjft{position:fixed;left:50%;transform:translateX(-50%);width:100%;max-width:var(--maxw);bottom:0;z-index:34;background:var(--white);border-top:1px solid var(--line);padding:8px 12px}' +
     '.xjft .xjrow{align-items:flex-end;gap:8px}.xjft textarea{min-height:46px;max-height:130px;height:46px;resize:none;line-height:1.5;margin:0}.xjft .btn{min-height:46px;padding:10px 18px;flex:none}' +
     '.xjre{display:flex;align-items:center;gap:8px;font-size:.8em;color:var(--head);margin-bottom:6px}.xjre span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.xjre button{border:0;background:none;color:var(--muted);cursor:pointer}' +
+    '.xjtool{flex:none;width:40px;height:46px;border:0;background:none;font-size:1.35em;cursor:pointer;padding:0;border-radius:10px}.xjtool:active{background:var(--sky)}' +
+    '.xjft .xjrow{gap:2px}.xjft textarea{margin-left:4px!important}.xjup{font-size:.82em;color:var(--head);background:var(--sky);border-radius:10px;padding:6px 10px;margin-bottom:6px}' +
+    '.xjstkp{grid-template-columns:repeat(4,1fr);gap:8px;max-height:min(44vh,330px);overflow:auto;padding:4px 0 8px}.xjstkp button{border:0;background:none;padding:0;cursor:pointer}.xjstkp .xjstk{width:100%;height:auto;aspect-ratio:1;min-width:0}.xjstkp .xjstk .e{font-size:1.8em}.xjstkp .xjstk b{font-size:.72em}' +
+    '.xjstk{width:124px;height:124px;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;box-shadow:0 3px 10px rgba(18,35,63,.12);text-align:center;padding:6px}.xjstk .e{font-size:2.6em;line-height:1}.xjstk b{font-size:.92em;line-height:1.25;font-family:var(--font-display)}' +
+    '.xjimg{display:block;max-width:min(240px,100%);max-height:320px;width:auto;border-radius:14px;border:1px solid var(--line);cursor:zoom-in;background:var(--sky);object-fit:cover}' +
+    '.xjfile{display:flex!important;align-items:center;gap:10px;text-decoration:none;color:inherit;flex-wrap:wrap}.xjfile .fi{font-size:1.7em}.xjfile .fn{display:flex;flex-direction:column;min-width:0}.xjfile .fn b{word-break:break-all}.xjfile small{opacity:.75;font-size:.78em}' +
+    '.xjmore{border:0;background:none;color:var(--muted);font-size:1.2em;line-height:1;padding:0 4px;cursor:pointer;display:block;margin:0 auto 2px}' +
+    '.xjview{position:fixed;inset:0;z-index:96;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px}.xjview img{max-width:100%;max-height:80vh;object-fit:contain;border-radius:8px}.xjview .bar{display:flex;gap:10px;margin-top:14px}' +
+    '.xjvoice audio{display:block;width:230px;max-width:100%;height:40px}.xjvoice small{display:block;font-size:.74em;opacity:.8;margin-top:2px}.xjm.mine .xjvoice{background:var(--white);color:var(--ink);border-color:var(--line)}' +
+    '.xjrec{align-items:center;gap:8px;background:#FDECEC;border-radius:12px;padding:8px 10px;margin-bottom:6px;color:#9B2C2C}.xjrec .dot{flex:none;width:10px;height:10px;border-radius:50%;background:#D23B3B;animation:xjBlink 1s infinite}@keyframes xjBlink{50%{opacity:.25}}' +
     '.xjcr{padding:12px 14px}.xjchatmode .aic-fab,.xjchatmode .help-fab{display:none!important}' +
     '@media (prefers-color-scheme:dark){html:not([data-theme="light"]) .xjtd{background:#22304A;border-color:#33445F}html:not([data-theme="light"]) .xjft,html:not([data-theme="light"]) .xjt,html:not([data-theme="light"]) .xjsm,html:not([data-theme="light"]) .xjchip,html:not([data-theme="light"]) .xjinp{background:#16243A;color:#E8EEF6}}' +
     'html[data-theme="dark"] .xjtd{background:#22304A;border-color:#33445F}html[data-theme="dark"] .xjft,html[data-theme="dark"] .xjt,html[data-theme="dark"] .xjsm,html[data-theme="dark"] .xjchip,html[data-theme="dark"] .xjinp{background:#16243A;color:#E8EEF6}' +
