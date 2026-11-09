@@ -276,7 +276,7 @@ var AUPD = (function () {
     if (!on) { if (b && b.parentNode) b.parentNode.removeChild(b); return; }
     if (!b) {
       b = document.createElement('div'); b.id = 'updbar'; b.className = 'updbar';
-      b.style.cssText = 'position:fixed;left:0;right:0;top:0;z-index:2147483000;background:#B98A2E;color:#fff;font-weight:700;text-align:center;font-size:15px;cursor:pointer;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top,0px))';
+      b.style.cssText = 'position:fixed;left:0;right:0;top:0;bottom:auto;transform:none;border-radius:0;white-space:normal;box-shadow:0 2px 10px rgba(0,0,0,.2);z-index:2147483000;background:#B98A2E;color:#fff;font-weight:700;text-align:center;font-size:15px;cursor:pointer;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top,0px))';
       b.onclick = function () { apply(ssGet('auTry') === U.target); };
       document.body.appendChild(b);
     }
