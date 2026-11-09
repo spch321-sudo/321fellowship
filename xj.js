@@ -14,18 +14,22 @@
   var NEWS = 'https://church-news.spch321.workers.dev';
   var CHAT = 'https://church-chat.spch321.workers.dev';
   var PAGES = H.PAGES, f9 = H.f9, esc = H.esc;
+  /* 共用給其他 App（教會生活）：存檔前綴、App 名稱、入口說明都可以由宿主覆寫 */
+  var P = H.prefix || 'fl321_';
+  var APPZ = H.appZh || '國度321空中團契', APPE = H.appEn || 'Kingdom 321 Fellowship';
+  var WHEREZ = H.whereZh || '底部「小家」→「加入或建立其他小家」', WHEREE = H.whereEn || 'the Group tab';
 
   /* ── 存檔 ── */
   function lg(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
   function ls(k, v) { try { if (v == null) window.localStorage.removeItem(k); else window.localStorage.setItem(k, v); } catch (e) { } }
   function lj(k, d) { try { var v = JSON.parse(lg(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
   /* 可以同時參加好幾個小家（mg1109）：GL＝參加的小家清單，DM＝各小家的資料快取，CUR＝目前看的小家 */
-  var GL = lj('fl321_xjs', null);            /* [{code,name,pin,seen,chatSeen,share,shAt,hideName}] */
-  var DM = lj('fl321_xjdm', {}) || {};       /* {code: church-news 回傳的小家資料} */
-  var CUR = lg('fl321_xjcur') || '';
+  var GL = lj(P + 'xjs', null);            /* [{code,name,pin,seen,chatSeen,share,shAt,hideName}] */
+  var DM = lj(P + 'xjdm', {}) || {};       /* {code: church-news 回傳的小家資料} */
+  var CUR = lg(P + 'xjcur') || '';
   if (!GL) {                                  /* 舊版只存一個小家：搬進清單 */
-    GL = []; var old0 = lj('fl321_xj', null);
-    if (old0 && old0.code) { GL.push(old0); var od0 = lj('fl321_xjdata', null); if (od0) DM[old0.code] = od0; CUR = old0.code; }
+    GL = []; var old0 = lj(P + 'xj', null);
+    if (old0 && old0.code) { GL.push(old0); var od0 = lj(P + 'xjdata', null); if (od0) DM[old0.code] = od0; CUR = old0.code; }
   }
   var X = null, DATA = null;
   function pick() {
@@ -34,13 +38,13 @@
     CUR = X ? X.code : ''; DATA = X ? (DM[X.code] || null) : null;
   }
   pick();
-  var DAYS = lj('fl321_xjdays', {});         /* 完成晨讀／晚禱的日子 {YYYY-MM-DD: ts}，只存這支手機 */
-  function save() { if (X && DATA) DM[X.code] = DATA; ls('fl321_xjs', JSON.stringify(GL)); ls('fl321_xjdm', JSON.stringify(DM)); ls('fl321_xjcur', CUR); }
+  var DAYS = lj(P + 'xjdays', {});         /* 完成晨讀／晚禱的日子 {YYYY-MM-DD: ts}，只存這支手機 */
+  function save() { if (X && DATA) DM[X.code] = DATA; ls(P + 'xjs', JSON.stringify(GL)); ls(P + 'xjdm', JSON.stringify(DM)); ls(P + 'xjcur', CUR); }
   function findGroup(c) { for (var i = 0; i < GL.length; i++) if (GL[i].code === c) return GL[i]; return null; }
-  function saveDays() { ls('fl321_xjdays', JSON.stringify(DAYS)); }
-  function dev() { var d = lg('fl321_xjdev'); if (!d) { d = 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); ls('fl321_xjdev', d); } return d; }
-  function nick() { return trim(lg('fl321_xjnick') || ''); }
-  function setNick(n) { ls('fl321_xjnick', trim(n).slice(0, 20)); }
+  function saveDays() { ls(P + 'xjdays', JSON.stringify(DAYS)); }
+  function dev() { var d = lg(P + 'xjdev'); if (!d) { d = 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); ls(P + 'xjdev', d); } return d; }
+  function nick() { return trim(lg(P + 'xjnick') || ''); }
+  function setNick(n) { ls(P + 'xjnick', trim(n).slice(0, 20)); }
   function trim(s) { return String(s == null ? '' : s).replace(/^\s+|\s+$/g, ''); }
   function now() { return Date.now(); }
   function today() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
@@ -53,11 +57,11 @@
   /* 邀請連結 ?xj=CODE：頁首小腳本已先存到 fl321_xjpend */
   (function () {
     var m = location.search.match(/[?&]xj=([A-Za-z0-9]{4,10})/);
-    if (m) { ls('fl321_xjpend', m[1].toUpperCase()); try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { } }
+    if (m) { ls(P + 'xjpend', m[1].toUpperCase()); try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { } }
   })();
   function pend() {
-    var p = lg('fl321_xjpend') || '';
-    if (p && findGroup(p)) { ls('fl321_xjpend', null); if (!X || X.code !== p) { CUR = p; pick(); save(); resetLive(); } return ''; }
+    var p = lg(P + 'xjpend') || '';
+    if (p && findGroup(p)) { ls(P + 'xjpend', null); if (!X || X.code !== p) { CUR = p; pick(); save(); resetLive(); } return ''; }
     return p;
   }
 
@@ -287,6 +291,7 @@
     api(CHAT, 'POST', '/c/' + X.code + '/send', body, function (j, e) {
       CC.sending = 0; var b = $('xjSend'); if (b) b.disabled = false;
       var up = $('xjUp'); if (up) up.style.display = 'none';
+      if (!j && (e === 'slow' || e === 'http429') && !body._r) { body._r = 1; upShow(f9('稍等一下，馬上送出…', 'Sending in a moment…')); setTimeout(function () { post(body, done); }, 1700); return; }
       if (!j) { note(errTxt(e)); return; }
       var hadRe = CC.re; CC.re = 0;
       merge(j.msgs);
@@ -571,7 +576,7 @@
       JN.busy = 0; if (!j) { note(errTxt(e)); return; }
       setNick(n);
       addGroup({ code: j.code, name: j.name, pin: '', seen: maxTs(j), chatSeen: 0, share: -1, shAt: 0, hideName: 0 }, j);
-      ls('fl321_xjpend', null);
+      ls(P + 'xjpend', null);
       note(f9('已加入「' + j.name + '」', 'Joined “' + j.name + '”'));
       H.render('xj');
     });
@@ -607,8 +612,8 @@
   function resetLive() { CC.msgs = []; CC.last = 0; CC.unread = 0; CC.uAt = 0; CC.loaded = 0; TD.list = null; TD.at = 0; CR2.list = null; }
   function inviteUrl() { return location.origin + location.pathname.replace(/index\.html$/, '') + '?xj=' + X.code; }
   function invite() {
-    shareText(f9('邀請你加入我們的小家「' + X.name + '」，在《國度321空中團契》App 裡一起晨讀／晚禱、聊天、彼此代禱。\n點這個連結：' + inviteUrl() + '\n或在 App 底部「小家」→「加入或建立其他小家」輸入代碼：' + X.code,
-      'You’re invited to join our small group “' + X.name + '” in the Kingdom 321 Fellowship app — morning reading, evening prayer and chat together.\nTap: ' + inviteUrl() + '\nOr open the Group tab and enter the code: ' + X.code));
+    shareText(f9('邀請你加入我們的小家「' + X.name + '」，在《' + APPZ + '》App 裡一起晨讀／晚禱、聊天、彼此代禱。\n點這個連結：' + inviteUrl() + '\n或在 App ' + WHEREZ + ' 輸入代碼：' + X.code,
+      'You’re invited to join our small group “' + X.name + '” in the ' + APPE + ' app — morning reading, evening prayer and chat together.\nTap: ' + inviteUrl() + '\nOr open ' + WHEREE + ' and enter the code: ' + X.code));
   }
   var ARM = { leave: 0 };
   function leave(btn) {
@@ -817,14 +822,14 @@
     if (a === 'join') join();
     else if (a === 'sw') switchTo(t.getAttribute('data-k'));
     else if (a === 'addgrp') { JN.adding = 1; H.render('xj'); try { window.scrollTo(0, 0); } catch (e) { } }
-    else if (a === 'joinback') { JN.adding = 0; ls('fl321_xjpend', null); H.render('xj'); }
+    else if (a === 'joinback') { JN.adding = 0; ls(P + 'xjpend', null); H.render('xj'); }
     else if (a === 'create') create();
     else if (a === 'gohome') H.go('xj');
     else if (a === 'gochat') H.go('xjchat');
     else if (a === 'gocare') { CR2.list = null; CR2.err = ''; H.go('xjcare'); }
     else if (a === 'finish') { ev.stopPropagation(); finish(); }
     else if (a === 'rwclose') { var el = $('xjRw'); if (el) el.parentNode.removeChild(el); }
-    else if (a === 'rwshare') shareText(f9('我今天在《國度321空中團契》完成晨讀／晚禱了！', 'I joined today’s morning reading / evening prayer in the Kingdom 321 Fellowship app!') + '\n' + RWTXT);
+    else if (a === 'rwshare') shareText(f9('我今天在《' + APPZ + '》完成晨讀／晚禱了！', 'I joined today’s morning reading / evening prayer in the ' + APPE + ' app!') + '\n' + RWTXT);
     else if (a === 'shareon') setShare(1);
     else if (a === 'shareoff') setShare(0);
     else if (a === 'hidename') toggleName();
@@ -940,7 +945,7 @@
     '@media (prefers-reduced-motion:reduce){.xjrw,.xjrw *{animation:none!important}.xjrw i.cf{display:none}}';
   document.head.appendChild(st);
 
-  window.XJ321 = { finish: finish, state: function () { return X; }, go: function () { H.go('xj'); } };
+  window.XJ321 = { finish: finish, state: function () { return X; }, groups: function () { return GL; }, unread: function () { return CC.unread; }, go: function () { H.go('xj'); } };
   /* 已經停在小家相關頁（重新載入）就重畫一次 */
   var r0 = route(); if (r0 === 'xj' || r0 === 'xjchat' || r0 === 'xjcare' || r0 === 'home' || r0 === 'connect') { try { H.render(r0); } catch (e) { } }
 })();
