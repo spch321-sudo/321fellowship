@@ -291,8 +291,8 @@
   function pickFile(inp) {
     var f = inp.files && inp.files[0]; inp.value = ''; if (!f) return;
     if (needNick()) return;
+    if ((/^image\//i.test(f.type) && !/svg/i.test(f.type) && (f.size > 1.5 * 1048576 || !/^image\/(jpeg|png|webp|gif)$/i.test(f.type))) || /\.(heic|heif)$/i.test(f.name || '')) { pickPhoto({ files: [f], value: '' }); return; }
     if (f.size > 5 * 1048576) { note(errTxt('toobig')); return; }
-    if (/^image\/(jpeg|png|webp|gif)$/i.test(f.type) && f.size > 1.5 * 1048576) { pickPhoto({ files: [f], value: '' }); return; }
     upShow(f9('檔案上傳中…', 'Uploading file…') + ' ' + fmtSize(f.size));
     readDataUrl(f, function (d) {
       if (!d) { $('xjUp').style.display = 'none'; note(f9('檔案讀不出來', 'Couldn’t read this file')); return; }
@@ -681,7 +681,7 @@
       (nick() ? '' : '<input id="xjNick" class="xjinp" type="text" maxlength="20" placeholder="' + esc(f9('你的稱呼（大家會看到）', 'Your name (everyone will see it)')) + '">') +
       stkPanel() + '<div class="xjup" id="xjUp" style="display:none"></div>' +
       '<div class="xjrec" id="xjRec" style="display:none"><span class="dot"></span><b>' + esc(f9('錄音中', 'Recording')) + '</b><span id="xjRecT">0:00</span><span class="xjgrow"></span><button class="xjsm" data-xj="reccancel">' + esc(f9('取消', 'Cancel')) + '</button><button class="btn" data-xj="recsend" style="width:auto;padding:8px 16px;min-height:0">' + esc(f9('送出', 'Send')) + '</button></div>' +
-      '<div class="xjrow"><button class="xjtool" data-xj="photo" aria-label="' + esc(f9('傳相片', 'Send photo')) + '">🖼️</button><button class="xjtool" data-xj="file" aria-label="' + esc(f9('傳檔案', 'Send file')) + '">📎</button><button class="xjtool" data-xj="rec" aria-label="' + esc(f9('錄音', 'Record voice')) + '">🎤</button><button class="xjtool" data-xj="stkp" aria-label="' + esc(f9('貼圖', 'Stickers')) + '">😊</button>' +
+      '<div class="xjrow"><button class="xjtool" data-xj="file" aria-label="' + esc(f9('傳相片或檔案', 'Send photo or file')) + '">📎</button><button class="xjtool" data-xj="rec" aria-label="' + esc(f9('錄音', 'Record voice')) + '">🎤</button><button class="xjtool" data-xj="stkp" aria-label="' + esc(f9('貼圖', 'Stickers')) + '">😊</button>' +
       '<input type="file" id="xjPhoto" accept="image/*" style="display:none"><input type="file" id="xjFile" style="display:none">' +
       '<textarea id="xjIn" class="xjinp" rows="1" maxlength="600" placeholder="' + esc(f9('說些什麼…', 'Say something…')) + '">' + esc(CC.draft) + '</textarea><button class="btn" id="xjSend" data-xj="send" style="width:auto">' + esc(f9('送出', 'Send')) + '</button></div></div></div>';
     return h;
