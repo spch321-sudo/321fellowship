@@ -1,6 +1,6 @@
 /* =====================================================================
    我的小家（xj1109，2026-11-09）— 移植自《321教會生活》「我的教會」
-   建立／加入小家、小家消息（家長發佈）、小家聊天室、今天完成靈修的家人名字＋獎勵動畫、
+   建立／加入小家、小家消息（家長發佈）、小家聊天室、今天完成晨讀／晚禱的家人名字＋獎勵動畫、
    關懷名單（家人自己同意後才分享進度）。ES5。
    後端沿用已上線的兩個 Cloudflare Worker，不必另外開通：
      church-news.spch321.workers.dev  ── 小家本身（名稱、代碼、家長密碼、消息）
@@ -21,7 +21,7 @@
   function lj(k, d) { try { var v = JSON.parse(lg(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
   var X = lj('fl321_xj', null);             /* {code,name,pin,seen,chatSeen,share,shAt,hideName} */
   var DATA = lj('fl321_xjdata', null);       /* church-news 回傳的小家資料 */
-  var DAYS = lj('fl321_xjdays', {});         /* 完成靈修的日子 {YYYY-MM-DD: ts}，只存這支手機 */
+  var DAYS = lj('fl321_xjdays', {});         /* 完成晨讀／晚禱的日子 {YYYY-MM-DD: ts}，只存這支手機 */
   function save() { ls('fl321_xj', X ? JSON.stringify(X) : null); ls('fl321_xjdata', DATA ? JSON.stringify(DATA) : null); }
   function saveDays() { ls('fl321_xjdays', JSON.stringify(DAYS)); }
   function dev() { var d = lg('fl321_xjdev'); if (!d) { d = 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); ls('fl321_xjdev', d); } return d; }
@@ -426,7 +426,7 @@
     for (var i = 0; i < (list || []).length && others.length < 8; i++) if (list[i].nick && list[i].nick !== nm) others.push(list[i].nick);
     var h = '<div class="rays"></div><div class="box">' + MEDAL +
       '<h2>' + esc(f9('今天又和主親近了！', 'Another day close to the Lord!')) + '</h2>' +
-      (rank ? '<div class="rk">' + esc(rank === 1 ? f9('你是小家今天第一位完成靈修的家人！', 'You’re the first in your small group to finish today!') : f9('你是小家今天第 ' + rank + ' 位完成靈修的家人', 'You’re number ' + rank + ' in your small group today')) + '</div>' : '') +
+      (rank ? '<div class="rk">' + esc(rank === 1 ? f9('你是小家今天第一位完成晨讀／晚禱的家人！', 'You’re the first in your small group to finish today!') : f9('你是小家今天第 ' + rank + ' 位完成晨讀／晚禱的家人', 'You’re number ' + rank + ' in your small group today')) + '</div>' : '') +
       '<p class="cheer">' + esc(cheer) + '</p><div class="vs">' + (isEN() ? '“' + esc(vt) + '”' : '「' + esc(vt) + '」') + '<small>' + esc(vr) + '</small></div>' +
       (others.length ? '<p class="wt">' + esc(f9('今天一起完成的有：', 'Also finished today:')) + '<br>' + others.map(function (x) { return '<span>🌟 ' + esc(x) + '</span>'; }).join('') + '</p>' : '') +
       '<div class="acts"><button class="btn ghost" data-xj="rwshare">' + esc(f9('分享喜樂', 'Share the joy')) + '</button><button class="btn gold" data-xj="rwclose">' + esc(f9('阿們！', 'Amen!')) + '</button></div></div>';
@@ -578,8 +578,8 @@
   function resetLive() { CC.msgs = []; CC.last = 0; CC.unread = 0; CC.uAt = 0; CC.loaded = 0; TD.list = null; TD.at = 0; CR2.list = null; }
   function inviteUrl() { return location.origin + location.pathname.replace(/index\.html$/, '') + '?xj=' + X.code; }
   function invite() {
-    shareText(f9('邀請你加入我們的小家「' + X.name + '」，在《國度321空中團契》App 裡一起靈修、聊天、彼此代禱。\n點這個連結：' + inviteUrl() + '\n或在 App「更多 → 我的小家」輸入代碼：' + X.code,
-      'You’re invited to join our small group “' + X.name + '” in the Kingdom 321 Fellowship app — devotions, chat and prayer together.\nTap: ' + inviteUrl() + '\nOr open More → My Small Group and enter the code: ' + X.code));
+    shareText(f9('邀請你加入我們的小家「' + X.name + '」，在《國度321空中團契》App 裡一起晨讀／晚禱、聊天、彼此代禱。\n點這個連結：' + inviteUrl() + '\n或在 App「更多 → 我的小家」輸入代碼：' + X.code,
+      'You’re invited to join our small group “' + X.name + '” in the Kingdom 321 Fellowship app — morning reading, evening prayer and chat together.\nTap: ' + inviteUrl() + '\nOr open More → My Small Group and enter the code: ' + X.code));
   }
   var ARM = { leave: 0 };
   function leave(btn) {
@@ -595,29 +595,29 @@
       (CC.unread ? '<span class="xjdot">' + esc(f9(CC.unread + ' 則新訊息', CC.unread + ' new')) + '</span>' : '<span class="note" style="margin:0">' + esc(f9('進入', 'Open')) + ' ›</span>') + '</div></div>';
   }
   function doneCard() {
-    if (doneToday()) return '<div class="card xjdone ok"><b>✅ ' + esc(f9('今天的靈修完成了', 'Today’s devotion is done')) + '</b><p class="note">' + esc(f9('感謝主！明天再一起親近祂。', 'Thank the Lord! See you tomorrow.')) + '</p></div>';
-    return '<div class="card xjdone"><b>🙏 ' + esc(f9('今天靈修了嗎？', 'Done your devotion today?')) + '</b><p class="note" style="margin-bottom:10px">' + esc(f9('讀完晨讀、今日金句或課文後，按一下讓家人一起歡喜。', 'After your morning reading, verse or lesson, tap to share the joy with your group.')) + '</p>' +
-      '<button class="btn gold" data-xj="finish">' + esc(f9('我今天完成靈修了', 'I finished today’s devotion')) + '</button></div>';
+    if (doneToday()) return '<div class="card xjdone ok"><b>✅ ' + esc(f9('今天的晨讀／晚禱完成了', 'Today’s morning reading / evening prayer is done')) + '</b><p class="note">' + esc(f9('感謝主！明天再一起親近祂。', 'Thank the Lord! See you tomorrow.')) + '</p></div>';
+    return '<div class="card xjdone"><b>🙏 ' + esc(f9('今天晨讀／晚禱了嗎？', 'Morning reading or evening prayer today?')) + '</b><p class="note" style="margin-bottom:10px">' + esc(f9('參加晨讀或晚禱後，按一下讓家人一起歡喜。', 'After morning reading or evening prayer, tap to share the joy with your group.')) + '</p>' +
+      '<button class="btn gold" data-xj="finish">' + esc(f9('我今天完成晨讀／晚禱了', 'I finished morning reading / evening prayer')) + '</button></div>';
   }
   function todayCard() {
     var c = tdChips(40);
     if (!TD.list || TD.day !== today()) return '';
-    if (!c.total) return '<div class="card xjtd"><b>🙏 ' + esc(f9('今天完成靈修的家人', 'Finished today')) + '</b><p class="note">' + esc(f9('今天還沒有人完成，你來作第一位！', 'No one yet today — be the first!')) + '</p></div>';
-    return '<div class="card xjtd"><div class="xjrow"><b class="xjgrow">🙏 ' + esc(f9('今天完成靈修的家人', 'Finished today')) + '</b><span class="xjnum">' + c.total + '</span></div><div class="xjchips">' + c.html + '</div></div>';
+    if (!c.total) return '<div class="card xjtd"><b>🙏 ' + esc(f9('今天完成晨讀／晚禱的家人', 'Finished today')) + '</b><p class="note">' + esc(f9('今天還沒有人完成，你來作第一位！', 'No one yet today — be the first!')) + '</p></div>';
+    return '<div class="card xjtd"><div class="xjrow"><b class="xjgrow">🙏 ' + esc(f9('今天完成晨讀／晚禱的家人', 'Finished today')) + '</b><span class="xjnum">' + c.total + '</span></div><div class="xjchips">' + c.html + '</div></div>';
   }
   function careAsk() {
     if (!X || X.share === 1 || X.share === 0) return '';
-    return '<div class="card xjask"><b>🤝 ' + esc(f9('讓家長知道你的靈修進度？', 'Let your leader see your devotion progress?')) + '</b><p class="note" style="margin:6px 0 10px">' +
-      esc(f9('家長可以看到你的稱呼、最近一次完成靈修的日期、完成天數，方便為你禱告、關心你。不會送出筆記、畫線或禱告內容，隨時可以關閉。', 'Your leader can see your name, the last day you finished, and how many days — so they can pray for and care for you. Notes, highlights and prayers are never sent. You can turn this off any time.')) + '</p>' +
+    return '<div class="card xjask"><b>🤝 ' + esc(f9('讓家長知道你的晨讀／晚禱進度？', 'Let your leader see your progress?')) + '</b><p class="note" style="margin:6px 0 10px">' +
+      esc(f9('家長可以看到你的稱呼、最近一次完成晨讀／晚禱的日期、完成天數，方便為你禱告、關心你。不會送出筆記、畫線或禱告內容，隨時可以關閉。', 'Your leader can see your name, the last day you finished, and how many days — so they can pray for and care for you. Notes, highlights and prayers are never sent. You can turn this off any time.')) + '</p>' +
       (nick() ? '' : '<input id="xjShNick" class="xjinp" type="text" maxlength="20" placeholder="' + esc(f9('你的稱呼（家人會看到）', 'Your name (others will see it)')) + '">') +
       '<div class="xjrow"><button class="btn" data-xj="shareon">' + esc(f9('好，分享給家長', 'Yes, share with my leader')) + '</button><button class="btn ghost" data-xj="shareoff" style="width:auto;white-space:nowrap;padding:15px 16px">' + esc(f9('先不要', 'Not now')) + '</button></div></div>';
   }
   function settingsLines() {
     var on = X.share === 1, hid = !!X.hideName, h = '';
-    if (X.share === 1 || X.share === 0) h += '<div class="xjline"><span>' + (on ? '🤝 ' : '') + esc(on ? f9('已分享靈修進度給家長', 'Sharing progress with my leader') : f9('沒有分享靈修進度給家長', 'Not sharing progress with my leader')) + '</span><button class="xjsm" data-xj="' + (on ? 'shareoff' : 'shareon') + '">' + esc(on ? f9('關閉分享', 'Turn off') : f9('開啟分享', 'Turn on')) + '</button></div>';
+    if (X.share === 1 || X.share === 0) h += '<div class="xjline"><span>' + (on ? '🤝 ' : '') + esc(on ? f9('已分享晨讀／晚禱進度給家長', 'Sharing progress with my leader') : f9('沒有分享晨讀／晚禱進度給家長', 'Not sharing progress with my leader')) + '</span><button class="xjsm" data-xj="' + (on ? 'shareoff' : 'shareon') + '">' + esc(on ? f9('關閉分享', 'Turn off') : f9('開啟分享', 'Turn on')) + '</button></div>';
     h += '<div class="xjline"><span>🌟 ' + esc(f9('在「今天完成」顯示我的名字：', 'Show my name on “Finished today”: ')) + esc(hid ? f9('已隱藏', 'Hidden') : f9('顯示中', 'Shown')) + '</span><button class="xjsm" data-xj="hidename">' + esc(hid ? f9('顯示', 'Show') : f9('隱藏', 'Hide')) + '</button></div>';
     h += '<div class="xjline"><span>🙋 ' + esc(f9('我的稱呼：', 'My name: ')) + esc(nick() || f9('（還沒填）', '(not set)')) + '</span><button class="xjsm" data-xj="nick">' + esc(f9('修改', 'Edit')) + '</button></div>';
-    return '<div class="card xjset">' + h + '<p class="note">' + esc(f9('完成靈修的家人，名字會顯示在小家頁一起歡喜；筆記和禱告內容不會送出。', 'Names of members who finish are shown on the group page; notes and prayers are never sent.')) + '</p></div>';
+    return '<div class="card xjset">' + h + '<p class="note">' + esc(f9('完成晨讀／晚禱的家人，名字會顯示在小家頁一起歡喜；筆記和禱告內容不會送出。', 'Names of members who finish are shown on the group page; notes and prayers are never sent.')) + '</p></div>';
   }
   function newsHtml() {
     var L = (DATA && DATA.news) || [], isAdm = !!X.pin, h = '', tdy = today(), seen = X.seen || 0, list = [];
@@ -641,7 +641,7 @@
   }
   function joinView() {
     var p = pend();
-    var h = H.pageHead(f9('關係 · 彼此相顧', 'RELATIONSHIPS · CARING FOR ONE ANOTHER'), f9('我的小家', 'My Small Group'), f9('和小家家人一起靈修、聊天、彼此代禱', 'Devotions, chat and prayer with your small group'));
+    var h = H.pageHead(f9('關係 · 彼此相顧', 'RELATIONSHIPS · CARING FOR ONE ANOTHER'), f9('我的小家', 'My Small Group'), f9('和小家家人一起晨讀／晚禱、聊天、彼此代禱', 'Morning reading, evening prayer and chat with your small group'));
     h += '<div class="card"><h3>🏡 ' + esc(f9('加入小家', 'Join a small group')) + '</h3>' +
       (p ? '<p class="note" style="color:var(--gold-text)">' + esc(f9('你收到一個小家的邀請，按「加入」就可以了。', 'You received an invitation — just tap Join.')) + '</p>' : '<p class="note">' + esc(f9('向小家家長索取代碼，或直接點家長傳給你的邀請連結。', 'Ask your group leader for the code, or tap the invitation link they sent you.')) + '</p>') +
       fld(f9('小家代碼', 'Group code'), '<input id="xjCode" class="xjcodein" type="text" maxlength="10" autocapitalize="characters" placeholder="ABC234" value="' + esc(p) + '">') +
@@ -718,8 +718,8 @@
   function homeCard() {
     var c = tdChips(6);
     return '<div class="card xjhome" data-xj="gohome" role="button"><div class="xjrow"><b class="xjgrow">🏡 ' + esc(X.name) + '</b><span id="xjHomeUnread">' + (CC.unread ? '<span class="xjdot">' + esc(f9(CC.unread + ' 則新訊息', CC.unread + ' new')) + '</span>' : '') + (unreadNews() ? ' <span class="xjdot">' + esc(f9(unreadNews() + ' 則消息', unreadNews() + ' news')) + '</span>' : '') + '</span></div>' +
-      (c.total ? '<div class="note" style="margin:4px 0 0">' + esc(f9('今天 ' + c.total + ' 位家人完成靈修', c.total + ' finished today')) + '</div><div class="xjchips">' + c.html + '</div>' : '<div class="note" style="margin:4px 0 0">' + esc(f9('今天還沒有人完成靈修，你來作第一位', 'No one has finished today — be the first')) + '</div>') +
-      (doneToday() ? '<div class="note" style="margin:8px 0 0;color:#2E7D32;font-weight:700">✅ ' + esc(f9('我今天完成靈修了', 'I finished today')) + '</div>' : '<button class="btn gold" style="margin-top:10px" data-xj="finish">🙏 ' + esc(f9('我今天完成靈修了', 'I finished today’s devotion')) + '</button>') + '</div>';
+      (c.total ? '<div class="note" style="margin:4px 0 0">' + esc(f9('今天 ' + c.total + ' 位家人完成晨讀／晚禱', c.total + ' finished today')) + '</div><div class="xjchips">' + c.html + '</div>' : '<div class="note" style="margin:4px 0 0">' + esc(f9('今天還沒有人完成晨讀／晚禱，你來作第一位', 'No one has finished today — be the first')) + '</div>') +
+      (doneToday() ? '<div class="note" style="margin:8px 0 0;color:#2E7D32;font-weight:700">✅ ' + esc(f9('我今天完成晨讀／晚禱了', 'I finished today’s reading / prayer')) + '</div>' : '<button class="btn gold" style="margin-top:10px" data-xj="finish">🙏 ' + esc(f9('我今天完成晨讀／晚禱了', 'I finished morning reading / evening prayer')) + '</button>') + '</div>';
   }
   function after(r) {
     var view = $('view'); if (!view) return;
@@ -744,7 +744,7 @@
       if (lab && !$('xjConn')) {
         var d = document.createElement('div'); d.id = 'xjConn';
         d.innerHTML = '<div class="card xjcard" data-xj="gohome" role="button"><div class="xjrow"><div class="xjic">🏡</div><div class="xjgrow"><b>' + esc(f9('我的小家', 'My Small Group')) + '</b><div class="note" style="margin:2px 0 0">' +
-          esc(X ? X.name + ' · ' + f9('消息、聊天室、彼此代禱', 'news, chat, prayer') : f9('建立或加入小家，一起靈修、聊天、彼此代禱', 'Create or join a group — devotions, chat and prayer together')) + '</div></div><span class="note" style="margin:0">›</span></div></div>';
+          esc(X ? X.name + ' · ' + f9('消息、聊天室、彼此代禱', 'news, chat, prayer') : f9('建立或加入小家，一起晨讀／晚禱、聊天、彼此代禱', 'Create or join a group — morning reading, evening prayer and chat together')) + '</div></div><span class="note" style="margin:0">›</span></div></div>';
         lab.parentNode.insertBefore(d, lab.nextSibling);
         try { H.simp(d); } catch (e) { }
       }
@@ -782,7 +782,7 @@
     else if (a === 'gocare') { CR2.list = null; CR2.err = ''; H.go('xjcare'); }
     else if (a === 'finish') { ev.stopPropagation(); finish(); }
     else if (a === 'rwclose') { var el = $('xjRw'); if (el) el.parentNode.removeChild(el); }
-    else if (a === 'rwshare') shareText(f9('我今天在《國度321空中團契》完成靈修了！', 'I finished today’s devotion in the Kingdom 321 Fellowship app!') + '\n' + RWTXT);
+    else if (a === 'rwshare') shareText(f9('我今天在《國度321空中團契》完成晨讀／晚禱了！', 'I joined today’s morning reading / evening prayer in the Kingdom 321 Fellowship app!') + '\n' + RWTXT);
     else if (a === 'shareon') setShare(1);
     else if (a === 'shareoff') setShare(0);
     else if (a === 'hidename') toggleName();
