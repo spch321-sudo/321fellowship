@@ -7,7 +7,7 @@
            音訊、影片與帶 Range 的請求一律不攔截（試聽、拖曳、錄影混音才不會壞）
    ‧ 同網域底下還有其他 321 App，本 SW 只管自己這個資料夾
    ===================================================================== */
-var VER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110';
+var VER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110-vv1110';
 var V = 'k321-' + VER;
 var SHELL = ['./', './index.html', './manifest.json', './media.js', './xz2.js', './xzm.js', './cpar.js', './xj.js', './peerjs.min.js', './qrcode.js', './data.json', './icon-192.png?v=3', './icon-512.png?v=3', './apple-touch-icon.png?v=3'];
 
