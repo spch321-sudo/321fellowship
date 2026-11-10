@@ -1228,7 +1228,7 @@ input,textarea,select{min-width:0;max-width:100%;}
 .nh-title{margin:2px 0 6px;font-family:"Songti TC","Noto Serif TC","PMingLiU",serif;font-weight:900;color:#12233F;
   font-size:calc(21px * var(--fs));line-height:1.35;letter-spacing:.02em}
 .nh-item:not(.first) .nh-title{font-size:calc(18px * var(--fs))}
-.nh-body{margin:0;white-space:pre-line;color:#3A3220;font-size:calc(16px * var(--fs));line-height:1.75}
+.nh-body{margin:0;white-space:pre-line;color:#3A3220;font-size:calc(16px * var(--fs));line-height:1.75}.nh-files{display:flex;flex-direction:column;gap:8px;margin:10px 0 4px}.nh-file{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:var(--white);border-radius:14px;padding:10px 12px;cursor:pointer;font-family:inherit;color:var(--ink)}.nh-file .fi{font-size:1.7em;line-height:1}.nh-file .fn{flex:1;min-width:0;display:flex;flex-direction:column}.nh-file b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--head)}.nh-file small{color:var(--muted);font-size:.8em}.nh-fimg{border:0;padding:0;background:none;cursor:pointer;text-align:left}.nh-fimg img{max-width:100%;max-height:320px;border-radius:14px;display:block;box-shadow:0 2px 10px rgba(18,35,63,.12)}.nf-row{display:flex;align-items:center;gap:8px;justify-content:space-between;border:1px dashed var(--line);border-radius:10px;padding:4px 4px 4px 10px;margin:4px 0}.nf-row span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.nf-row .btn{width:auto;min-height:0;padding:4px 10px}
 .nh-link{display:inline-flex;align-items:center;gap:4px;margin-top:10px;padding:8px 16px;border-radius:999px;
   background:#12233F;color:#F2D68E!important;font-weight:800;text-decoration:none;font-size:calc(14px * var(--fs))}
 .newshero .nadmbar{margin:6px 0 4px}.newshero .nadmbar .note{color:#8A6416}
@@ -19982,7 +19982,7 @@ var PAGES = {
             '<span class="nh-kind k-'+esc(a.kind||"news")+'">'+esc(KL[a.kind]||KL.news)+'</span>'+
             (a.date?'<span class="nh-date">'+esc(md(a.date))+'</span>':'')+'</div>'+
           (ti?'<h3 class="nh-title">'+esc(ti)+'</h3>':'')+
-          (bo?'<p class="nh-body">'+esc(bo)+'</p>':'')+
+          (function(){ var sp=nSplit(bo), sp0=nSplit(a.body); return (sp.text?'<p class="nh-body">'+esc(sp.text)+'</p>':'')+nFilesHtml(sp.files.length?sp.files:sp0.files); })()+
           (a.link?'<a class="nh-link" href="'+esc(safeUrl(a.link))+'" target="_blank" rel="noopener">'+esc((en&&a.link_text_en)?a.link_text_en:(a.link_text||f9("查看詳情","Details")))+' \u203a</a>':'')+
           newsCardTail(a)+'</article>';
       }).join("");
@@ -22478,9 +22478,35 @@ function init(){
 
 /* 版本比較："2.8.0" → [2,8,0]；回傳 1 / 0 / -1 */
 /* 最新消息：Cloudflare Worker（fellowship-news）＋ 負責人在 App 內發佈／修改／刪除 */
+document.addEventListener("click", function(ev){
+  var t=ev.target; while(t && t!==document && !(t.getAttribute && t.getAttribute("data-natt"))) t=t.parentNode;
+  if(!t || t===document) return;
+  ev.preventDefault();
+  var url=t.getAttribute("data-natt"), name=t.getAttribute("data-nname")||"file";
+  if(window.XJ321 && XJ321.getFile) XJ321.getFile(url, name, "", ""); else window.open(url, "_blank");
+});
 var NEWS_URL = (window.APP_CONFIG && window.APP_CONFIG.newsEndpoint) || "https://fellowship-news.spch321.workers.dev";
 var NEWS_SRC = "";
 var NADM_KEY = "k321_newspin";
+/* 最新消息附件（nf1110）：檔案存在 church-chat 的 TMNWFL21 房（不會過期清除），網址以「📎 檔名 網址」一行寫在內容最後；舊版 App 也看得到可點的連結 */
+var NATT_ROOM = "TMNWFL21", NATT_RE = /^📎 (.+) (https:\/\/church-chat\.spch321\.workers\.dev\/c\/TMNW[A-Z0-9]{4}\/att\/\d+)\s*$/;
+function nSplit(body){
+  var lines=String(body||"").split("\n"), txt=[], files=[];
+  for(var i=0;i<lines.length;i++){ var m=NATT_RE.exec(lines[i]); if(m) files.push({ name:m[1], url:m[2] }); else if(!/church-chat\.spch321\.workers\.dev\/c\/TMNW/.test(lines[i])) txt.push(lines[i]); }
+  while(txt.length && !trimS(txt[txt.length-1])) txt.pop();
+  return { text:txt.join("\n"), files:files };
+}
+function nJoin(text, files){ var s=trimS(text||""); if(files&&files.length){ s+=(s?"\n\n":""); for(var i=0;i<files.length;i++) s+=(i?"\n":"")+"📎 "+String(files[i].name).replace(/\s+/g," ")+" "+files[i].url; } return s; }
+function nIsImg(n){ return /\.(jpe?g|png|gif|webp|heic)$/i.test(n||""); }
+function nFilesHtml(files){
+  if(!files||!files.length) return "";
+  var h='<div class="nh-files">';
+  for(var i=0;i<files.length;i++){ var f=files[i];
+    h+= nIsImg(f.name) ? '<button class="nh-fimg" data-natt="'+esc(f.url)+'" data-nname="'+esc(f.name)+'"><img src="'+esc(f.url)+'" alt="" loading="lazy"></button>'
+      : '<button class="nh-file" data-natt="'+esc(f.url)+'" data-nname="'+esc(f.name)+'"><span class="fi">'+(/\.pdf$/i.test(f.name)?'📕':/\.(pptx?|ppsx|key)$/i.test(f.name)?'📊':/\.(docx?|pages)$/i.test(f.name)?'📝':/\.(xlsx?|numbers|csv)$/i.test(f.name)?'📈':'📄')+'</span><span class="fn"><b>'+esc(f.name)+'</b><small>'+esc(f9("點一下開啟／下載","Tap to open / download"))+'</small></span></button>';
+  }
+  return h+'</div>';
+}
 function nPin(){ try{ return window.localStorage.getItem(NADM_KEY) || ""; }catch(e){ return ""; } }
 function nSetPin(p){ try{ if(p) window.localStorage.setItem(NADM_KEY, p); else window.localStorage.removeItem(NADM_KEY); }catch(e){} }
 function nAdm(){ return !!nPin(); }
@@ -22534,7 +22560,10 @@ function nEdit(id){
   var m=nModal('<h3>'+esc(id?f9("修改消息","Edit news"):f9("發佈消息","Post news"))+'</h3>'+
     '<label class="fld"><span>'+esc(f9("類別","Type"))+'</span><select id="nKind">'+ks+'</select></label>'+
     '<label class="fld"><span>'+esc(f9("標題","Title"))+'</span><input id="nTitle" type="text" maxlength="120" value="'+esc(a.title||"")+'"></label>'+
-    '<label class="fld"><span>'+esc(f9("內容","Message"))+'</span><textarea id="nBody" rows="5" maxlength="3000">'+esc(a.body||"")+'</textarea></label>'+
+    '<label class="fld"><span>'+esc(f9("內容","Message"))+'</span><textarea id="nBody" rows="5" maxlength="2400">'+esc(nSplit(a.body).text)+'</textarea></label>'+
+    '<div class="fld"><span>'+esc(f9("附件（相片、PDF、投影片、Word…，可不加）","Attachments (photos, PDF, slides, Word… optional)"))+'</span><div id="nFiles"></div>'+
+      '<button type="button" class="btn ghost" id="nAddF" style="margin-top:6px">📎 '+esc(f9("加入檔案","Add a file"))+'</button><input type="file" id="nFileIn" multiple style="display:none">'+
+      '<div class="note" id="nFileSt" style="margin-top:4px">'+esc(f9("每個檔案 5MB 以內；投影片、Word、Excel 太大會自動壓縮。最多 6 個。","Up to 5 MB each; large slides/Word/Excel are compressed automatically. Up to 6 files."))+'</div></div>'+
     '<label class="fld"><span>'+esc(f9("日期","Date"))+'</span><input id="nDate" type="date" value="'+esc(a.date||td)+'"></label>'+
     '<label class="fld"><span>'+esc(f9("顯示到哪一天（過了自動收起，可不填）","Show until (optional)"))+'</span><input id="nUntil" type="date" value="'+esc(a.until||"")+'"></label>'+
     '<label class="fld"><span>'+esc(f9("連結（可不填）","Link (optional)"))+'</span><input id="nLink" type="url" placeholder="https://" value="'+esc(a.link||"")+'"></label>'+
@@ -22542,13 +22571,38 @@ function nEdit(id){
     '<details id="nEnBox"'+((a.title_en||a.body_en)?" open":"")+'><summary class="note">'+esc(f9("英文版（不填會在發佈時自動翻譯；簡體會自動轉換）","English version (left blank, it is translated automatically when you publish)"))+'</summary>'+
     '<button type="button" class="btn ghost" id="nTrBtn" style="margin:6px 0 4px">✨ '+esc(f9((a.title_en||a.body_en)?"中文改過了？重新翻譯成英文":"先翻譯成英文看看","Translate to English now"))+'</button>'+
     '<label class="fld"><span>Title (English)</span><input id="nTitleEn" type="text" maxlength="160" value="'+esc(a.title_en||"")+'"></label>'+
-    '<label class="fld"><span>Message (English)</span><textarea id="nBodyEn" rows="4" maxlength="4000">'+esc(a.body_en||"")+'</textarea></label></details>'+
+    '<label class="fld"><span>Message (English)</span><textarea id="nBodyEn" rows="4" maxlength="3400">'+esc(nSplit(a.body_en).text)+'</textarea></label></details>'+
     '<div class="nm-btns"><button class="btn ghost" id="nCancel">'+esc(f9("取消","Cancel"))+'</button><button class="btn" id="nSave">'+esc(id?f9("儲存","Save"):f9("發佈","Publish"))+'</button></div>');
   m.querySelector("#nCancel").onclick=nClose;
+  var NF = nSplit(a.body).files.slice(), nfBusy=0;
+  var nfPaint=function(){
+    var box=document.getElementById("nFiles"); if(!box) return; var h="";
+    for(var i=0;i<NF.length;i++) h+='<div class="nf-row"><span>'+(nIsImg(NF[i].name)?'🖼️':'📄')+' '+esc(NF[i].name)+'</span><button type="button" class="btn ghost" data-nfrm="'+i+'">✕</button></div>';
+    box.innerHTML=h;
+    var bs=box.querySelectorAll("[data-nfrm]"); for(var k=0;k<bs.length;k++) bs[k].onclick=function(){ NF.splice(+this.getAttribute("data-nfrm"),1); nfPaint(); };
+  };
+  nfPaint();
+  var fin=m.querySelector("#nFileIn"), st=m.querySelector("#nFileSt"), stTxt=st.textContent;
+  m.querySelector("#nAddF").onclick=function(){ if(nfBusy) return; if(NF.length>=6){ note(f9("最多 6 個檔案","Up to 6 files")); return; } if(!window.XJ321||!XJ321.uploadTo){ note(f9("請稍候再試","Please try again in a moment")); return; } fin.click(); };
+  fin.onchange=function(){
+    var list=[].slice.call(fin.files||[]).slice(0, 6-NF.length); fin.value=""; if(!list.length) return;
+    var sv=document.getElementById("nSave"); nfBusy=1; if(sv) sv.disabled=true;
+    var one=function(i){
+      if(i>=list.length){ nfBusy=0; if(sv) sv.disabled=false; st.textContent=stTxt; nfPaint(); return; }
+      var f=list[i];
+      XJ321.uploadTo(NATT_ROOM, f, function(t){ st.textContent=(list.length>1?"("+(i+1)+"/"+list.length+") ":"")+f.name+" · "+t; }, function(r, e){
+        if(r){ NF.push({ name:r.name||f.name, url:r.url }); nfPaint(); }
+        else note(f.name+"："+(e==="toobig"?f9("檔案太大（上限 5MB），請先壓小或另存 PDF","File too large (5 MB max) — compress it or save as PDF first"):XJ321.errTxt(e)));
+        one(i+1);
+      });
+    };
+    one(0);
+  };
   m.querySelector("#nSave").onclick=function(){
+    if(nfBusy){ note(f9("檔案還在上傳，請稍候","Files are still uploading")); return; }
     var g=function(x){ var el=document.getElementById(x); return el?el.value:""; };
     var it={ id:id||"", kind:g("nKind"), title:g("nTitle"), body:g("nBody"), date:g("nDate"), until:g("nUntil"), link:g("nLink"),
-      top:!!(document.getElementById("nTop")||{}).checked, title_en:g("nTitleEn"), body_en:g("nBodyEn") };
+      top:!!(document.getElementById("nTop")||{}).checked, title_en:g("nTitleEn"), body_en:nSplit(g("nBodyEn")).text, files:NF };
     var btn=this; btn.disabled=true;
     if(!trimS(it.title_en) && !trimS(it.body_en) && (trimS(it.title) || trimS(it.body))){
       var lbl=btn.textContent; btn.textContent=f9("正在翻譯成英文…","Translating…");
@@ -22575,6 +22629,8 @@ function nEdit(id){
   };
 }
 function nSaveGo(it, id, btn){
+    var files=it.files||[]; delete it.files;
+    it.body=nJoin(it.body, files); if(trimS(it.body_en)||trimS(it.title_en)) it.body_en=nJoin(it.body_en, files);
     nPost("/news", { pin:nPin(), item:it }, function(j,e){
       btn.disabled=false;
       if(!j){ note(nErr(e)); if(e==="badpin"){ nSetPin(""); nClose(); render(); } return; }
@@ -22870,7 +22926,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110';
+var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -25232,7 +25288,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
@@ -25354,7 +25410,7 @@ else document.addEventListener("DOMContentLoaded",init);
 </script>
 <script src="xzm.js?v=xzm1103"></script>
 <script src="cpar.js?v=cs1109"></script>
-<script src="xj.js?v=xj-oz1110"></script>
+<script src="xj.js?v=xj-nf1110"></script>
 <script>try{XZM.install(XZM.preset.fl());}catch(e){}</script>
 </body>
 </html>
