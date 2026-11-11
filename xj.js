@@ -2151,6 +2151,7 @@
     /* 只有狀態列設為 black-translucent（畫面延伸到狀態列下面）時，App 高度才等於螢幕高度；其他 App 狀態列另佔空間，不能用螢幕高度 */
     var mt = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
     if (!mt || mt.getAttribute('content') !== 'black-translucent') sa = false;
+    if (window.K321_INAPP) sa = false;   /* vg1111c：從其他 321 App 點進來的內建瀏覽視窗，上方有網址列，不能用螢幕高度 */
     if (sa && !vvTyping() && screen && screen.height && window.innerWidth === screen.width && screen.height > b && screen.height - b < screen.height * 0.6 && (!v || v.height >= window.innerHeight - 2)) b = screen.height;
     return b;
   }

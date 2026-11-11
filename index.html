@@ -1272,6 +1272,27 @@ body.crOn .appbar{top:calc(40px + env(safe-area-inset-top));padding-top:14px}
 </style>
 </head>
 <body>
+<script>
+/* vg1111c：偵測「從其他 321 App 點進來的 iPhone 內建瀏覽視窗」（ES5）
+   這種視窗屬於主畫面 App 的一部分（navigator.standalone 為真），但上方多了一條網址列，頁面沒有延伸到狀態列下面。
+   xj.js 的 vv 修正會把貼底元素推到「螢幕高度」，在這裡反而推到畫面外；K321_INAPP 為真時改用實際可見高度。 */
+(function(){
+  try{
+    var root=document.documentElement, ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+    if(!ios) return;
+    var fromApp=/[?&]from=321app/.test(location.search);
+    if(fromApp) sessionStorage.setItem('k321_inapp','1'); else fromApp=sessionStorage.getItem('k321_inapp')==='1';
+    var sa=window.navigator.standalone===true;
+    var noTop=false;
+    if(sa&&document.body&&screen&&screen.height>=780){
+      var pr=document.createElement('div'); pr.style.cssText='position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none';
+      document.body.appendChild(pr); noTop=pr.offsetHeight<10; document.body.removeChild(pr);
+    }
+    if(fromApp||noTop) window.K321_INAPP=true;
+    if(fromApp) root.className+=' k321-inapp';   /* 只有確定是從其他 321 App 點進來（底部有浮動工具列）才把導覽列抬高 */
+  }catch(e){}
+})();
+</script>
 <style id="k321gateCss">
 html.k321-locked,html.k321-locked body{overflow:hidden!important;height:100%}
 html.k321-locked body>*:not(#k321gate):not(#k321cel){visibility:hidden!important;pointer-events:none!important}
@@ -22926,7 +22947,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110-vv1110-vb1110-kb1110-kf1110-ac1111-vg1111b';
+var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110-vv1110-vb1110-kb1110-kf1110-ac1111-vg1111c';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -25288,7 +25309,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110-vv1110-vb1110-kb1110-kf1110-ac1111-vg1111b";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110-vv1110-vb1110-kb1110-kf1110-ac1111-vg1111c";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
@@ -25410,10 +25431,10 @@ else document.addEventListener("DOMContentLoaded",init);
 </script>
 <script src="xzm.js?v=xzm1103"></script>
 <script src="cpar.js?v=cs1109"></script>
-<script src="xj.js?v=xj-kf1110"></script>
+<script src="xj.js?v=xj-kf1110-vg1111c"></script>
 <script>try{XZM.install(XZM.preset.fl());}catch(e){}</script>
-<script src="../321steward/k321acct.js?v=ac1111-vg1111b"></script>
-<script src="k321acct-addon.js?v=ac1111-vg1111b"></script>
+<script src="../321steward/k321acct.js?v=ac1111-vg1111c"></script>
+<script src="k321acct-addon.js?v=ac1111-vg1111c"></script>
 <style id="vvgapcss">
 /* vg1111b：從其他 321 App 點進來（網址帶 from=321app）且是 iPhone 主畫面 App 內的瀏覽視窗時，底部有一排浮動工具列蓋住頁面；把導覽列與小智按鈕抬到工具列上方 */
 html.k321-inapp body .tabbar{bottom:76px;padding-bottom:4px;border-radius:16px;border:1px solid var(--line);box-shadow:0 6px 20px rgba(0,0,0,.12);width:calc(100% - 16px)}
@@ -25421,17 +25442,5 @@ html.k321-inapp body .help-fab{bottom:166px}
 html.k321-inapp body .aic-fab:not([style*="top:"]){bottom:166px!important}
 html.k321-inapp body{padding-bottom:80px}
 </style>
-<script>
-/* vg1111b：偵測是否從其他 321 App 點進來的 iPhone 內建瀏覽視窗（ES5） */
-(function(){
-  try{
-    var root=document.documentElement;
-    var fromApp=/[?&]from=321app/.test(location.search);
-    if(fromApp) sessionStorage.setItem('k321_inapp','1'); else fromApp=sessionStorage.getItem('k321_inapp')==='1';
-    var ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-    if(fromApp&&ios&&navigator.standalone!==true) root.className+=' k321-inapp';
-  }catch(e){}
-})();
-</script>
 </body>
 </html>
