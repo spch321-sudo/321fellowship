@@ -1,6 +1,58 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head><script>(function(){try{var q=location.search,m=q.match(/[?&]join=([A-Za-z0-9]{6})/);if(m){sessionStorage.setItem('cr_j',JSON.stringify({j:m[1],s:/[?&]screen=1/.test(q)?1:0,t:Date.now()}));}else{var o=JSON.parse(sessionStorage.getItem('cr_j')||'null');if(o&&Date.now()-o.t<20000){history.replaceState(null,'',location.pathname+'?join='+o.j+(o.s?'&screen=1':'')+location.hash);}}if(/[?&]screen=1/.test(location.search))window.CR_SCREEN=true;}catch(e){}})();</script>
+<head><script>/* XL1111：日文、韓文、印尼文、Cebuano。介面與程式走英文路徑（curLang() 回 'en'），內容換成該語言的 APP_EN 層，畫面文字用對照表翻譯 */
+(function(){
+var XLS=window.XLS={ja:1,ko:1,id:1,ceb:1};
+window.XLC={
+ ja:{nm:'日本語',sh:'日',bcp:'ja-JP',num:['さんにいち','きゅうにぜろ','にさんご'],ref:function(b,c,v,v2){return b+c+'章'+v+'節'+(v2?'から'+v2+'節':'');}},
+ ko:{nm:'한국어',sh:'한',bcp:'ko-KR',num:['삼이일','구이영','이삼오'],ref:function(b,c,v,v2){return b+' '+c+'장 '+v+(v2?'절에서 '+v2+'절':'절');}},
+ id:{nm:'Bahasa Indonesia',sh:'ID',bcp:'id-ID',num:['tiga dua satu','sembilan dua nol','dua tiga lima'],ref:function(b,c,v,v2){return b+' pasal '+c+(v2?' ayat '+v+' sampai '+v2:' ayat '+v);}},
+ ceb:{nm:'Cebuano',sh:'CEB',bcp:'fil-PH',num:['tulo duha usa','siyam duha sero','duha tulo lima'],ref:function(b,c,v,v2){return b+' kapitulo '+c+(v2?' bersikulo '+v+' hangtod '+v2:' bersikulo '+v);}}
+};
+window.XL_DIR={"ko": "\n\nIMPORTANT — LANGUAGE (this overrides any earlier instruction about reply language): write your entire reply in natural, warm, elegant Korean (한국어), using the vocabulary of the Korean Protestant church (하나님, 예수 그리스도, 성령님, 은혜, 구원, 기도). When you quote Scripture, use the wording of the 개역한글 (Korean Revised Version, 1961) and give references with Korean book names, for example 요한복음 3:16. Do not answer in English or Chinese unless the user explicitly asks. Wherever this prompt mentions the reader's language, script or Chinese/English wording, it means Korean.", "ja": "\n\nIMPORTANT — LANGUAGE (this overrides any earlier instruction about reply language): write your entire reply in natural, warm, elegant Japanese (日本語, polite です・ます style), using the vocabulary of the Japanese Protestant church (神, 主イエス・キリスト, 聖霊, 恵み, 救い, 祈り, 福音). When you quote Scripture, use the wording of the 口語訳聖書 (Japanese Colloquial Bible, 1955) and give references with Japanese book names, for example ヨハネによる福音書 3:16. Do not answer in English or Chinese unless the user explicitly asks. Wherever this prompt mentions the reader's language, script or Chinese/English wording, it means Japanese.", "id": "\n\nIMPORTANT — LANGUAGE (this overrides any earlier instruction about reply language): write your entire reply in natural, warm, elegant Indonesian (Bahasa Indonesia baku yang hangat), using the vocabulary of Indonesian Protestant/Evangelical churches (Allah, Tuhan, TUHAN, Tuhan Yesus, Roh Kudus, Injil, firman Tuhan, pertobatan, anugerah). When you quote Scripture, follow the wording of the Alkitab Yang Terbuka (AYT) / Terjemahan Baru and name books as in AYT (e.g. Yohanes 3:16, Kisah Para Rasul, Wahyu). Keep Xiaozhi as the name of the companion. Everything else in the instructions stays the same.", "ceb": "\n\nIMPORTANT — LANGUAGE (this overrides any earlier instruction about reply language): write your entire reply in natural, warm, elegant standard modern Cebuano (Binisaya / Sinugboanon, Latin script) — not Tagalog or Filipino, and avoid heavy Taglish. Address the reader respectfully as kamo/ninyo. When you quote Scripture, quote it in Cebuano in the style of the common Cebuano Bible (Ang Pulong sa Dios / Balaan nga Bibliya) and name books as in it (e.g. Juan 3:16, Mga Salmo 23, Pinadayag); use Dios, Ginoo, Jesu-Cristo, Balaang Espiritu, Maayong Balita in the usual Cebuano church vocabulary. Be respectful to readers of every background (including Catholic, Protestant, Muslim, Iglesia ni Cristo and folk-belief readers) and never disparage another faith or denomination. Keep Xiaozhi in Latin letters as the name of the companion, and use Western digits 0-9. Everything else in the instructions stays the same."};
+window.realLang=function(){try{return localStorage.getItem('k321_lang')||'zh-Hant';}catch(e){return 'zh-Hant';}};
+window.XLang=function(){var l=realLang();return XLS[l]?l:'';};
+var XLP=window.XLP={},XLW={};
+window.XD=null;
+window.xlLoad=function(l,cb){
+  if(XLP[l]){cb&&cb();return;}
+  (XLW[l]=XLW[l]||[]).push(cb);
+  if(XLW[l].length>1)return;
+  var done=function(j){var w=XLW[l];XLW[l]=[];if(j)XLP[l]=j;for(var i=0;i<w.length;i++)try{w[i]&&w[i](!!j);}catch(e){}};
+  try{fetch('xl-'+l+'.json?v=__XLV__').then(function(r){return r.ok?r.json():null;}).then(done,function(){done(null);});}catch(e){done(null);}
+};
+/* 畫面文字對照 */
+var SKIPT={SCRIPT:1,STYLE:1,TEXTAREA:1,INPUT:1,CODE:1};
+function look(k){var t=XD[k];if(t!=null)return t;
+  var m=k.match(/^([^A-Za-z0-9]*?)([A-Za-z0-9][\s\S]*?)([\s:：.…!?()（）]*)$/);if(m&&(m[1]||m[3])){t=XD[m[2]];if(t!=null)return m[1]+t+m[3];}
+  var nums=k.match(/\d+(?:[.,:]\d+)*/g);if(nums){var tk='#'+k.replace(/\d+(?:[.,:]\d+)*/g,'{n}');t=XD[tk];if(t==null&&m){tk='#'+m[2].replace(/\d+(?:[.,:]\d+)*/g,'{n}');t=XD[tk];if(t!=null)t=m[1]+t+m[3];}
+    if(t!=null){var i=0;return t.replace(/\{n\}/g,function(){return nums[i++]||'';});}}
+  return null;}
+function tx(n){var v=n.nodeValue;if(!v||v.length>900)return;var k=v.replace(/^\s+|\s+$/g,'');if(!k||!/[A-Za-z]/.test(k))return;var t=look(k);if(t!=null&&t!==k)n.nodeValue=v.replace(k,t);}
+function ta(el){var A=['placeholder','title','aria-label'];for(var i=0;i<A.length;i++){var a=el.getAttribute&&el.getAttribute(A[i]);if(a){var k=a.replace(/^\s+|\s+$/g,''),t=/[A-Za-z]/.test(k)?look(k):null;if(t!=null&&t!==k)el.setAttribute(A[i],t);}}}
+window.xlWalk=function(root){if(!XD||!root)return;try{
+  if(root.nodeType===3){tx(root);return;}
+  if(root.nodeType!==1||SKIPT[root.nodeName])return;
+  ta(root);var all=root.getElementsByTagName('*');for(var i=0;i<all.length;i++)if(all[i].attributes.length)ta(all[i]);
+  var w=document.createTreeWalker(root,4,null,false),n;while((n=w.nextNode())){var p=n.parentNode;if(p&&SKIPT[p.nodeName])continue;tx(n);}
+}catch(e){}};
+try{new MutationObserver(function(ms){if(!XD)return;for(var i=0;i<ms.length;i++){var m=ms[i];if(m.type==='childList'){for(var j=0;j<m.addedNodes.length;j++)xlWalk(m.addedNodes[j]);}else if(m.type==='characterData')tx(m.target);else if(m.type==='attributes')ta(m.target);}})
+ .observe(document.documentElement,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['placeholder','title','aria-label']});}catch(e){}
+/* 小智：附上語言指示；朗讀：換成該語言的聲音；聖經資料：讀該語言的經文 */
+var VMAP={ja:['ja-JP-KeitaNeural','ja-JP-NanamiNeural','ja-JP-DaichiNeural'],ko:['ko-KR-InJoonNeural','ko-KR-SunHiNeural','ko-KR-HyunsuMultilingualNeural'],id:['id-ID-ArdiNeural','id-ID-GadisNeural','id-ID-ArdiNeural'],ceb:['fil-PH-AngeloNeural','fil-PH-BlessicaNeural','fil-PH-AngeloNeural']};
+function fixBody(url,body){var l=XLang();if(!l||typeof body!=='string')return body;
+  try{if(/xiaozhi-proxy/.test(url)){var o=JSON.parse(body);if(typeof o.system==='string')o.system+=XL_DIR[l];else if(o.system&&o.system.push)o.system.push({type:'text',text:XL_DIR[l]});else o.system=XL_DIR[l];return JSON.stringify(o);}
+      if(/azure-tts/.test(url)){var p=JSON.parse(body);if(p.voice&&!/^(ja|ko|id|fil)-/.test(p.voice)){var em=/Emma|Xiaochen|Nanami|SunHi|Gadis|Blessica/.test(p.voice);p.voice=VMAP[l][em?1:0];return JSON.stringify(p);}}}catch(e){}
+  return body;}
+function fixUrl(u){var l=XLang();if(l&&typeof u==='string')u=u.replace(/(\/bible\/bible\.)en\./,'$1'+l+'.');return u;}
+try{var XO=XMLHttpRequest.prototype.open,XS=XMLHttpRequest.prototype.send;
+XMLHttpRequest.prototype.open=function(m,u){this.__xu=String(u||'');var a=[].slice.call(arguments);a[1]=fixUrl(a[1]);return XO.apply(this,a);};
+XMLHttpRequest.prototype.send=function(b){return XS.call(this,fixBody(this.__xu||'',b));};}catch(e){}
+try{var F0=window.fetch;if(F0)window.fetch=function(u,o){try{if(typeof u==='string'){u=fixUrl(u);if(o&&o.body)o.body=fixBody(u,o.body);}}catch(e){}return F0.call(this,u,o);};}catch(e){}
+try{var SP=window.speechSynthesis;if(SP){var sp0=SP.speak.bind(SP);SP.speak=function(u){var l=XLang();if(l&&u)try{u.lang=XLC[l].bcp;}catch(e){}return sp0(u);};}}catch(e){}
+if(XLang())xlLoad(XLang(),function(){var l=XLang();if(l&&XLP[l]&&!XD){XD=XLP[l].ui;xlWalk(document.body);}});
+})();</script>
+<script>(function(){try{var q=location.search,m=q.match(/[?&]join=([A-Za-z0-9]{6})/);if(m){sessionStorage.setItem('cr_j',JSON.stringify({j:m[1],s:/[?&]screen=1/.test(q)?1:0,t:Date.now()}));}else{var o=JSON.parse(sessionStorage.getItem('cr_j')||'null');if(o&&Date.now()-o.t<20000){history.replaceState(null,'',location.pathname+'?join='+o.j+(o.s?'&screen=1':'')+location.hash);}}if(/[?&]screen=1/.test(location.search))window.CR_SCREEN=true;}catch(e){}})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#12233F">
@@ -1270,6 +1322,7 @@ body.crOn .appbar{top:calc(40px + env(safe-area-inset-top));padding-top:14px}
 .crsheet .eyebrow{font-size:.8em;color:var(--muted)}
 @media(max-width:360px){.crbar{gap:4px;padding-left:6px;padding-right:6px;font-size:13px}.crbar button{padding:5px 7px}}
 </style>
+<style id="xlcss">.xlpick{display:flex;flex-direction:column;gap:8px;padding:6px 2px}.xlpick .xbtn{width:100%;justify-content:center;font-size:1.05em;padding:12px}.xlpick .xbtn.on{background:var(--gold,#C9962A);color:#fff}</style>
 </head>
 <body>
 <script>
@@ -1360,7 +1413,7 @@ var K321_GATE = { hash: 'dbd788bb', key: 'k321_auth' };
     'en': { title:'Kingdom 321 Online Fellowship', sub:'Enter your access code to activate the app', label:'Access code', ph:'Enter access code', btn:'Activate', empty:'Please enter the access code', bad:'That code isn’t right — please check and try again', bad3:'Still not right. Please check with the co-worker who invited you.', good:'Activated — thank God!', help:'Don’t have a code yet?<br>Ask the co-worker or small-group leader who invited you, or the fellowship’s serving team.', verse:'“See how good and how pleasant it is for brothers to live together in unity!”', ref:'Psalm 133:1',
       sTitle:'Access code', sOk:'✓ Activated on this phone', sRe:'Enter the code again', sNews:'Leader (post news)', sNewsIn:'Leader (signed in)', sConfirm:'Return this phone to the not-activated state? The access code will be needed again.', sGen:'For co-workers: change the access code', sGenPh:'New access code', sGenBtn:'Make hash', sGenOut:'New hash: ', sGenNote:'Give this hash to the app maintainer to replace K321_GATE.hash in index.html. After the change, every phone must enter the new code.' }
   };
-  function lang(){ var l = lsGet('k321_lang'); return TX[l] ? l : 'zh-Hant'; }
+  function lang(){ var l = lsGet('k321_lang'); return TX[l] ? l : (window.XLS && XLS[l] ? 'en' : 'zh-Hant'); }
   function tx(){ return TX[lang()]; }
   G.tx = tx;
   var root = document.documentElement, langChanged = false, fails = 0;
@@ -1372,7 +1425,8 @@ var K321_GATE = { hash: 'dbd788bb', key: 'k321_auth' };
       '<div class="g-lang">' +
         '<button type="button" data-gl="zh-Hant" class="' + (L === 'zh-Hant' ? 'on' : '') + '">繁</button>' +
         '<button type="button" data-gl="zh-Hans" class="' + (L === 'zh-Hans' ? 'on' : '') + '">简</button>' +
-        '<button type="button" data-gl="en" class="' + (L === 'en' ? 'on' : '') + '">EN</button></div>' +
+        '<button type="button" data-gl="en" class="' + (L === 'en' && !(window.XLang && XLang()) ? 'on' : '') + '">EN</button>' +
+        (function(){ var r = '', o = [['ja','日'],['ko','한'],['id','ID'],['ceb','CEB']], cl = window.realLang ? realLang() : ''; for (var q = 0; q < o.length; q++) r += '<button type="button" data-gl="' + o[q][0] + '" class="' + (cl === o[q][0] ? 'on' : '') + '">' + o[q][1] + '</button>'; return r; })() + '</div>' +
       '<img class="g-icon" src="icon-192.png?v=3" alt="">' +
       '<h1>' + t.title + '</h1><div class="g-sub">' + t.sub + '</div>' +
       '<form class="g-card" id="k321form" autocomplete="off">' +
@@ -1383,7 +1437,7 @@ var K321_GATE = { hash: 'dbd788bb', key: 'k321_auth' };
         '<div class="g-help">' + t.help + '</div></form>' +
       '<div class="g-verse">' + t.verse + '<b>' + t.ref + '</b></div>';
     var bs = el.querySelectorAll('[data-gl]');
-    for (var i = 0; i < bs.length; i++) bs[i].onclick = function(){ var v = this.getAttribute('data-gl'); if (v !== lang()) { lsSet('k321_lang', v); langChanged = true; render(); } };
+    for (var i = 0; i < bs.length; i++) bs[i].onclick = function(){ var v = this.getAttribute('data-gl'); if (v !== (window.realLang ? realLang() : lang())) { lsSet('k321_lang', v); langChanged = true; if (window.XLS && XLS[v] && window.xlLoad) xlLoad(v, function(){ XD = (XLP[v] || {}).ui || null; render(); xlWalk(document.body); }); else XD = null; render(); } };
     document.getElementById('k321form').onsubmit = submit;
   }
   function submit(e){
@@ -1628,6 +1682,10 @@ var K321_GATE = { hash: 'dbd788bb', key: 'k321_auth' };
         <button data-lang="zh-Hant">繁體中文</button>
         <button data-lang="zh-Hans">简体中文</button>
         <button data-lang="en">English</button>
+        <button data-lang="ja">日本語</button>
+        <button data-lang="ko">한국어</button>
+        <button data-lang="id">Bahasa Indonesia</button>
+        <button data-lang="ceb">Cebuano</button>
       </div>
     </div>
     <p class="note" id="setLangNote">這裡切換的是介面文字；172 課的內容仍是原文，尚未逐課翻譯。</p>
@@ -1855,7 +1913,7 @@ var I18N = {
 };
 var LANG_FALLBACK="zh-Hant";
 function curLang(){
-  try{ return window.localStorage.getItem("k321_lang") || LANG_FALLBACK; }
+  try{ var l=window.localStorage.getItem("k321_lang") || LANG_FALLBACK; return XLS[l] ? "en" : l; }
   catch(e){ return LANG_FALLBACK; }
 }
 function t(key, vars){
@@ -22376,8 +22434,29 @@ function applyLang(v){
   applyLangData();
   if(typeof renderVoiceBlock==="function") renderVoiceBlock();
 }
+/* XL：切換語言時換內容層與對照表 */
+var APP_EN_ORIG=null, I18N_EN0=null;
+function xlSwap(l){
+  if(!APP_EN_ORIG) APP_EN_ORIG=window.APP_EN; if(!I18N_EN0) I18N_EN0=I18N.en;
+  if(l && XLP[l]){
+    window.APP_EN=XLP[l].content||APP_EN_ORIG; XD=XLP[l].ui||{};
+    var o={}, k; for(k in I18N_EN0){ if(Object.prototype.hasOwnProperty.call(I18N_EN0,k)) o[k]=(XD[I18N_EN0[k]]!=null?XD[I18N_EN0[k]]:I18N_EN0[k]); } I18N.en=o;
+    document.documentElement.setAttribute("data-xl",l);
+  } else {
+    window.APP_EN=APP_EN_ORIG; I18N.en=I18N_EN0; XD=null; document.documentElement.removeAttribute("data-xl");
+  }
+}
+var applyLang0=applyLang;
+applyLang=function(v){
+  if(v==="en" && XLang()) v=XLang();
+  if(XLS[v] && !XLP[v]){ xlLoad(v,function(ok){ if(ok && realLang()===v){ applyLang(v); try{ render(CUR_ROUTE); }catch(e){} } }); }
+  xlSwap(XLS[v] ? v : "");
+  applyLang0(XLS[v] ? "en" : v);
+  markLang(v);
+  if(XD) xlWalk(document.body);
+};
 function initLang(){
-  applyLang(curLang());
+  applyLang(realLang());
   var box=$("langOpts"); if(!box) return;
   var o=box.querySelectorAll("button");
   for(var i=0;i<o.length;i++){ (function(b){
@@ -22965,7 +23044,7 @@ function trim(s) { return String(s == null ? '' : s).replace(/^\s+|\s+$/g, ''); 
 function qs1(sel, root) { return (root || document).querySelector(sel); }
 function qa(sel, root) { var n = (root || document).querySelectorAll(sel), a = []; for (var i = 0; i < n.length; i++) a.push(n[i]); return a; }
 function eachA(a, f) { for (var i = 0; i < a.length; i++) f(a[i], i); }
-function Q(s) { return isEN() ? '“' + s + '”' : '「' + s + '」'; }
+function Q(s) { return XLang() === 'ja' ? '「' + s + '」' : isEN() ? '“' + s + '”' : '「' + s + '」'; }
 function toast(m, ms) { note(m, ms); }
 function fmtDate(ts) { var d = new Date(ts); return d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate(); }
 function ajax(method, url, body, type, cb, headers, timeout) {
@@ -23078,8 +23157,13 @@ var SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAB9
 var VOICES = {
   zh: [['zh-TW-YunJheNeural', '雲哲'], ['zh-CN-Yunfan:DragonHDLatestNeural', '雲帆 HD'], ['zh-CN-Xiaochen:DragonHDLatestNeural', '曉辰 HD']],
   zs: [['zh-CN-Yunfan:DragonHDLatestNeural', '云帆 HD'], ['zh-CN-Xiaochen:DragonHDLatestNeural', '晓辰 HD'], ['zh-TW-YunJheNeural', '云哲']],
-  en: [['en-US-AndrewNeural', 'Andrew'], ['en-US-EmmaNeural', 'Emma'], ['en-US-BrianNeural', 'Brian']]
+  en: [['en-US-AndrewNeural', 'Andrew'], ['en-US-EmmaNeural', 'Emma'], ['en-US-BrianNeural', 'Brian']],
+  ja: [['ja-JP-KeitaNeural', 'ケイタ'], ['ja-JP-NanamiNeural', 'ナナミ'], ['ja-JP-DaichiNeural', 'ダイチ']],
+  ko: [['ko-KR-InJoonNeural', '인준'], ['ko-KR-SunHiNeural', '선희'], ['ko-KR-HyunsuMultilingualNeural', '현수']],
+  id: [['id-ID-ArdiNeural', 'Ardi'], ['id-ID-GadisNeural', 'Gadis']],
+  ceb: [['fil-PH-AngeloNeural', 'Angelo'], ['fil-PH-BlessicaNeural', 'Blessica']]
 };
+function VL() { return XLang() || L(); }
 var RATES = ['-12%', '+0%', '+10%', '+20%'];
 (function () { /* 沿用舊版設定的聲音 */
   if (S.voice && S.voice.zh != null) return;
@@ -23088,8 +23172,8 @@ var RATES = ['-12%', '+0%', '+10%', '+20%'];
   if (typeof S.rate !== 'number' || S.rate < 0 || S.rate > 3) S.rate = 1;
   save();
 })();
-function voiceIdx() { var i = +(S.voice[L()] || 0); return (i >= 0 && i < 3) ? i : 0; }
-function voiceName() { return VOICES[L()][voiceIdx()][0]; }
+function voiceIdx() { var i = +(S.voice[VL()] || 0); return (i >= 0 && i < VOICES[VL()].length) ? i : 0; }
+function voiceName() { return VOICES[VL()][voiceIdx()][0]; }
 function rateAttr() { return RATES[S.rate] || '+0%'; }
 
 var spk = { on: false, items: [], idx: 0, cache: {}, native: false, abort: false, title: '' };
@@ -23144,6 +23228,7 @@ function bookMap() {
 /* 出處唸全名：「創 1:26」→「創世記1章26節」；前面黏著別的字就取最長的書名後綴；找不到書名就原樣 */
 function ttsRef(x) {
   return String(x || '').replace(/([^\s\d:：，。、；（）「」！？]{1,12}|[1-3]?\s?[A-Z][a-z]+\.?(?: of [A-Z][a-z]+)?)\s?(\d+)[:：](\d+)(?:\s*[–\-~～至]\s*(\d+))?/g, function (m, bk, c, v, v2) {
+    if (XLang()) return XLC[XLang()].ref(bk.replace(/\.$/, ''), c, v, v2);
     if (isEN()) return bk.replace(/\.$/, '') + ' chapter ' + c + (v2 ? ' verses ' + v + ' to ' + v2 : ' verse ' + v);
     var mp = bookMap(), pre = null, full = '';
     for (var k = 0; k < bk.length; k++) { var suf = bk.slice(k); if (mp[suf]) { pre = bk.slice(0, k); full = mp[suf]; break; } }
@@ -23155,6 +23240,7 @@ function ttsRef(x) {
 function ttsPrep(s) {
   var x = dropRefParens(String(s || '')).replace(/〔[^〕]*〕/g, '').replace(/\[[^\]]*\]/g, '').replace(EMOJI_RE, '');
   x = ttsRef(x);
+  if (XLang()) { var xn = XLC[XLang()].num; x = x.replace(/321/g, xn[0]).replace(/920/g, xn[1]).replace(/235/g, xn[2]); }
   if (isEN()) return trim(x.replace(/[*#>`_~|]/g, '').replace(/\s+/g, ' ').replace(/\s+([.,;:!?])/g, '$1'));
   x = sayNorm(x);
   x = x.replace(/[「」『』（）()〔〕\[\]《》〈〉*#>`_~|]/g, '').replace(/[—－]{1,2}/g, '，');
@@ -23219,7 +23305,7 @@ var HEAD_SEL = '.page-title,.page-sub,.section-label h2,h3.lh,.card h3';
 var SKIP_SEL = 'button,a,input,textarea,select,svg,script,style,.vact,.lnav,.chips,.tabbar,.audbar,.mk-hint,.mk-acts,.lrec,.hl-note,.vid-open,.rd-skip,.section-label .n,.eyebrow,.xpill,.qrimg,.kp-n';
 function splitS(text) {
   text = String(text || ''); var out = [], cur = '', i;
-  if (isEN()) {
+  if (isEN() && XLang() !== 'ja') {
     var re = /[^.!?]*[.!?]+["'”’\)\]]*(\s+|$)/g, m, last = 0;
     while ((m = re.exec(text)) !== null) { if (trim(m[0])) out.push(m[0]); last = re.lastIndex; if (re.lastIndex === m.index) re.lastIndex++; }
     if (last < text.length && trim(text.slice(last))) out.push(text.slice(last)); return out.length ? out : [text];
@@ -23248,6 +23334,7 @@ function readRoot() { return document.getElementById('view'); }
 function segKey(e) { return e.getAttribute('data-mk') || ''; }
 function headLead(h) {
   var t = trim((h.textContent || '').replace(EMOJI_RE, '')); if (!t) return '';
+  if (XLang()) return t + (XLang() === 'ja' ? '。' : (/[.!?]$/.test(t) ? ' ' : '. '));
   if (/page-title|page-sub/.test(h.className)) return isEN() ? t + '. ' : t + '。';
   if (/想更多|延伸|多想|再想|深思|Think (more|further)|Going deeper/i.test(t)) return isEN() ? 'If you want to think further, consider this. ' : f9('如果想更多一點，可以這樣想。', '');
   if (/禱告|祷告|Pray/i.test(t)) return isEN() ? 'Let us pray together. ' : f9('讓我們一起禱告。', '');
@@ -23258,7 +23345,7 @@ function headLead(h) {
 }
 /* 依文件順序：標題 → 帶入語；句子 → 併成 ≤130 字（英文 ≤320）的段，一句不切兩段 */
 function buildQueue(root, fromEl, sectOnly) {
-  var all = qa(HEAD_SEL + ',' + SENT_SEL, root), items = [], cur = { text: '', segs: [], lens: [], keys: [], at: -1 }, MAX = isEN() ? 320 : 130;
+  var all = qa(HEAD_SEL + ',' + SENT_SEL, root), items = [], cur = { text: '', segs: [], lens: [], keys: [], at: -1 }, MAX = XLang() === 'ja' ? 130 : (XLang() === 'ko' ? 170 : (isEN() ? 320 : 130));
   var started = !fromEl, lead = '', firstSect = null;
   for (var i = 0; i < all.length; i++) {
     var e = all[i], isHead = !/(^|\s)(mk-s|rd-s)(\s|$)/.test(e.className);
@@ -23271,7 +23358,7 @@ function buildQueue(root, fromEl, sectOnly) {
     if (e.offsetParent === null && !e.getClientRects().length) continue;
     var t = e.textContent || '';
     if ((lead || cur.text.length + t.length > MAX) && cur.text) { items.push(cur); cur = { text: '', segs: [], lens: [], keys: [], at: -1 }; }
-    cur.text += lead + t + (isEN() ? ' ' : ''); cur.segs.push(e); cur.keys.push(segKey(e)); cur.lens.push(Math.max(1, ttsPrep(lead + t).length)); lead = '';
+    cur.text += lead + t + (isEN() && XLang() !== 'ja' ? ' ' : ''); cur.segs.push(e); cur.keys.push(segKey(e)); cur.lens.push(Math.max(1, ttsPrep(lead + t).length)); lead = '';
   }
   if (cur.text) items.push(cur);
   var out = []; eachA(items, function (it) { if (ttsPrep(it.text)) out.push(it); }); return out;
@@ -23345,7 +23432,7 @@ function ttsPlayFrom(i) {
   else if (spk.cache[i] === 0) { var w = setInterval(function () { if (my !== spk || spk.cache[i] !== 0 || !spk.on) { clearInterval(w); go2(); } }, 120); }
   else go2();
 }
-function nativeLang() { return isEN() ? 'en-US' : (isZS() ? 'zh-CN' : 'zh-TW'); }
+function nativeLang() { return XLang() ? XLC[XLang()].bcp : isEN() ? 'en-US' : (isZS() ? 'zh-CN' : 'zh-TW'); }
 function ttsNativeFrom(i) {
   if (!('speechSynthesis' in window)) { toast(T('ttsErr')); stopAll(); return; }
   if (!spk.native) { spk.native = true; toast(T('ttsFallback') + (ttsLastErr ? '（' + ttsLastErr + '）' : '')); }
@@ -24623,7 +24710,7 @@ applyTheme = function (v) {
 
 /* ---------- 頂列：繁 简 EN ＋ A+ ---------- */
 function switchLang(v) {
-  if (v === curLang()) return;
+  if (v === realLang()) return;
   stopAll(); closeHSheet(); lsSet('k321_lang', v); applyLang(v); render(CUR_ROUTE);
   if (aic.open) renderAIC();
 }
@@ -24631,8 +24718,9 @@ var _renderTabs0 = renderTabs;
 renderTabs = function (active) {
   _renderTabs0(active);
   var bb = document.getElementById('brandBox'); if (!bb || bb.querySelector('.xpill')) return;
-  var lg = curLang(), h = '<span class="xpills">';
+  var lg = realLang(), h = '<span class="xpills">';
   eachA([['zh-Hant', '繁'], ['zh-Hans', '简'], ['en', 'EN']], function (x) { h += '<button class="xpill' + (lg === x[0] ? ' on' : '') + '" data-xact="lang" data-l="' + x[0] + '" aria-label="' + x[0] + '">' + x[1] + '</button>'; });
+  h += '<button class="xpill' + (XLS[lg] ? ' on' : '') + '" data-xact="langmore" aria-label="more languages">' + (XLS[lg] ? XLC[lg].sh : '🌐') + '</button>';
   h += '<button class="xpill fs" data-xact="fscycle" aria-label="text size">A<sup>+</sup></button></span>';
   bb.innerHTML = bb.innerHTML.replace(/<small>[\s\S]*<\/small>/, '<small class="xtag">' + esc(t('brandTag')) + '</small>') + h;
   var top = document.querySelector('.appbar');
@@ -24647,7 +24735,7 @@ renderTabs = function (active) {
 /* ---------- 設定頁：回答對象、朗讀聲音、版本與更新 ---------- */
 renderVoiceBlock = function () {
   var host = document.getElementById('setVoiceBlock'); if (!host) return;
-  var lg = L(), vs = VOICES[lg], vb = '', rb = '';
+  var lg = VL(), vs = VOICES[lg], vb = '', rb = '';
   eachA(vs, function (v, i) { vb += '<button data-xact="voice" data-i="' + i + '"' + (voiceIdx() === i ? ' class="on"' : '') + '>' + esc(isZS() ? toSimp(v[1]) : v[1]) + '</button>'; });
   eachA([T('rateSlow'), T('rateStd'), T('rateFast'), T('rateFaster')], function (x, i) { rb += '<button data-xact="rate" data-i="' + i + '"' + (S.rate === i ? ' class="on"' : '') + '>' + esc(x) + '</button>'; });
   host.innerHTML =
@@ -24943,6 +25031,8 @@ document.addEventListener('click', function (e) {
   var a = n.getAttribute('data-xact'), i = +n.getAttribute('data-i'), v = n.getAttribute('data-v');
   switch (a) {
     case 'lang': switchLang(n.getAttribute('data-l')); break;
+    case 'langmore': (function () { var ls = [['zh-Hant', '繁體中文'], ['zh-Hans', '简体中文'], ['en', 'English'], ['ja', '日本語'], ['ko', '한국어'], ['id', 'Bahasa Indonesia'], ['ceb', 'Cebuano']], hh = '<div class="xlpick">'; eachA(ls, function (x) { hh += '<button class="xbtn' + (realLang() === x[0] ? ' on' : '') + '" data-xact="langpick" data-l="' + x[0] + '">' + x[1] + '</button>'; }); hh += '</div>'; openHSheet(hh); })(); break;
+    case 'langpick': closeHSheet(); switchLang(n.getAttribute('data-l')); break;
     case 'fscycle': fsCycle(); break;
     case 'aud': setAud(n.getAttribute('data-a')); break;
     case 'ttspage': if (spk.on || sayKey) stopAll(); else ttsPage(null, '', false, currentRoute() === 'lesson' ? 'lesson' : ''); break;
@@ -25016,7 +25106,7 @@ document.addEventListener('click', function (e) {
     case 'plhint': if (PL && PL.hints < 3) { PL.hints++; render('play'); } break;
     case 'plgive': if (PL) { PL.solved = true; PL.gave = true; render('play'); } break;
     case 'rwagain': eachA(rwUnits(), function (c) { if (c.id === n.getAttribute('data-u')) rwShow(c, true); }); break;
-    case 'voice': S.voice[L()] = i; save(); renderVoiceBlock(); speakText(T('voiceSample'), 'vt', T('voiceT')); break;
+    case 'voice': S.voice[VL()] = i; save(); renderVoiceBlock(); speakText(T('voiceSample'), 'vt', T('voiceT')); break;
     case 'rate': S.rate = i; save(); renderVoiceBlock(); break;
     case 'voicetest': speakText(T('voiceSample'), 'vt', T('voiceT')); break;
     case 'ttsclear': window.rvClearCache(); TTS_MEM = {}; break;
@@ -25342,7 +25432,7 @@ else document.addEventListener("DOMContentLoaded",init);
     if (/^en/.test(l)) return 'en';
     if (/hans|cn|sg/.test(l)) return 'zs';
     try { if (typeof S !== 'undefined' && S && S.set && S.set.sc) return 'zs'; } catch (e) { }
-    try { var k = localStorage.getItem('k321_lang'); if (k === 'en') return 'en'; if (k === 'zh-Hans') return 'zs'; } catch (e) { }
+    try { var k = localStorage.getItem('k321_lang'); if (k === 'en' || (window.XLS && XLS[k])) return 'en'; if (k === 'zh-Hans') return 'zs'; } catch (e) { }
     return 'zh';
   }
   function esc(n) { return n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/ /g, '\\s*').replace(/^(\d)(?=[A-Za-z])/, '$1\\s*'); }
