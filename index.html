@@ -23030,7 +23030,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110-vv1110-vb1110-kb1110-kf1110-ac1111-vg1111d-xl1111-vf1111-eco1111';
+var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110-vv1110-vb1110-kb1110-kf1110-ac1111-vg1111d-xl1111-vf1111-eco1111-ef1111';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -25342,7 +25342,7 @@ PAGES.apps = function () {
   return pageHead(f9('工具 · 每天用得上', 'TOOLS · FOR EVERY DAY'), f9('321 App', '321 Apps'), f9('點一下就打開，會自動用你現在的語言', 'Tap to open — in the language you are using')) +
     sect('生', f9('321 App 生態系', 'The 3-2-1 App Ecosystem')) +
     '<p class="note" style="margin-bottom:10px">' + esc(f9('每天晨讀、讀經，親近神。點一下就在這裡打開：', 'Morning devotion and Bible reading, to draw near to God every day. Tap one to open it right here:')) + '</p>' +
-    foldItems('eco', main, 6, ecoCards) +
+    foldItems('eco2', main, 2, ecoCards) +
     (devo.length ? sect('靈', f9('321 靈修生活', '321 Devotional Life')) +
       '<p class="note" style="margin-bottom:10px">' + esc(f9('每天一口屬靈的食物：心靈快餐、真理點心，隨時隨地飽足心靈。', 'A bite of spiritual food every day: Soul Meal and Truth Snack, to feed your heart anywhere, any time.')) + '</p>' +
       ecoCards(devo) : '') +
@@ -25403,7 +25403,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110-vv1110-vb1110-kb1110-kf1110-ac1111-vg1111d-xl1111-vf1111-eco1111";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110-vv1110-vb1110-kb1110-kf1110-ac1111-vg1111d-xl1111-vf1111-eco1111-ef1111";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
