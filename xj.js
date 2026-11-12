@@ -232,9 +232,9 @@
       var m = CC.msgs[i]; if (hid[m.id]) continue; shown++;
       var day = fmtDay(m.ts); if (day !== lastDay) { h += '<div class="xjday"><span>' + esc(day) + '</span></div>'; lastDay = day; }
       var q = m.re ? findMsg(m.re) : null, pk = CC.shot ? (CC.shot.ids[m.id] ? ' xjpick on' : ' xjpick') : '';
-      h += '<div class="xjm' + (m.mine ? ' mine' : '') + pk + '" id="xjm' + m.id + '" data-mid="' + m.id + '"' + (CC.shot ? ' data-xj="shotsel"' : '') + '>' +
+      h += '<div class="xjm' + (m.mine ? ' mine' : '') + (/^🤖/.test(m.nick || '') ? ' xjbot' : '') + pk + '" id="xjm' + m.id + '" data-mid="' + m.id + '"' + (CC.shot ? ' data-xj="shotsel"' : '') + '>' +
         (CC.shot ? '<span class="xjck">' + (CC.shot.ids[m.id] ? '✓' : '') + '</span>' : '') +
-        (m.mine ? '' : '<div class="xjav" style="background:' + col(m.who) + '">' + esc(String(m.nick || '?').slice(0, 1)) + '</div>') +
+        (m.mine ? '' : '<div class="xjav" style="background:' + col(m.who) + '">' + (/^🤖/.test(m.nick || '') ? '🤖' : esc(String(m.nick || '?').slice(0, 1))) + '</div>') +
         '<div class="xjb">' + (m.mine ? '' : '<div class="xjn">' + esc(m.nick || '') + (m.lead ? ' · ' + esc(f9('家長', 'Leader')) : '') + '</div>') +
         (m.del ? '<div class="xjt gone">' + esc(f9('這則訊息已收回', 'This message was unsent')) + '</div>' :
           (m.kind ? attHtml(m, q) : '<div class="xjt' + (mentionsMe(m) ? ' ment' : '') + '" data-xj="tap" data-id="' + m.id + '">' + (q ? '<div class="xjq">↩ ' + esc((q.nick || '') + '：' + (q.del ? '…' : q.text)) + '</div>' : '') + fmtText(m.text) + '</div>')) +
@@ -413,7 +413,7 @@
     if (CC.shot) shotBar();
     if (nearEnd) setTimeout(function () { window.scrollTo(0, document.body.scrollHeight); }, 30);
     if (CC.dm) { var sm = dmSeenMap(), k = dmKey(CC.dm.who); if (CC.last > (sm[k] || 0)) { sm[k] = CC.last; ls(P + 'xjdmseen', JSON.stringify(sm)); } }
-    else if (X && !CC.alt && CC.last > chatSeen()) { X.chatSeen = CC.last; CC.unread = 0; save(); }
+    else if (X && !CC.alt && CC.last > chatSeen()) { if (XZA.seen[X.code] == null) XZA.seen[X.code] = chatSeen(); X.chatSeen = CC.last; CC.unread = 0; save(); }
     else if (CC.alt && H.chatSeen) { try { H.chatSeen(CC.alt.code, CC.last); } catch (e) { } }
   }
   function fitChat() {
@@ -428,7 +428,7 @@
     var ta = $('xjIn'), nk = $('xjNick');
     if (nk) { var n = trim(nk.value); if (!n) { note(f9('請先填你的稱呼', 'Please enter your name first')); nk.focus(); return; } setNick(n); }
     var text = trim(ta ? ta.value : ''); if (!text) { note(errTxt('empty')); return; }
-    post({ text: text }, function () { CC.draft = ''; var t2 = $('xjIn'); if (t2) { t2.value = ''; growTa(t2); } });
+    post({ text: text }, function () { CC.draft = ''; var t2 = $('xjIn'); if (t2) { t2.value = ''; growTa(t2); } if (!CC.dm && XZA_RE.test(text)) xzaReply(text); });
   }
   function delMsg(id, now2, hide) {
     var key = hide ? id + 'h' : id;
@@ -810,7 +810,7 @@
     var q = CC.re ? findMsg(CC.re) : null;
     var h = (CC.dm ? '<div class="xjchathd"><button class="xjsm" data-xj="dmback">‹ ' + esc(f9('回聊天室', 'Back')) + '</button><b>✉️ ' + esc(CC.dm.nick) + '</b><button class="xjsm" data-xj="search" aria-label="search">🔍</button><button class="xjsm" data-xj="menu" aria-label="menu">☰</button></div>' +
         '<div class="xjtip">' + esc(f9('這是你和「' + CC.dm.nick + '」的私訊，只有你們兩個人看得到。', 'Private messages with ' + CC.dm.nick + ' — only the two of you can see them.')) + '</div>'
-      : '<div class="xjchathd"><b>' + esc(ccName()) + ' · ' + esc(CC.alt ? (CC.alt.church ? f9('教會聊天室', 'Church chat') : f9('聊天室', 'Chat')) : f9('小家聊天室', 'Group chat')) + '</b><button class="xjsm" id="xjDmBtn" data-xj="dminbox" aria-label="private messages">✉️' + (DMS.unread && DMS.code === ccCode() ? '<span class="xjdot" style="margin-left:4px">' + DMS.unread + '</span>' : '') + '</button><button class="xjsm" data-xj="search" aria-label="search">🔍</button><button class="xjsm" data-xj="menu" aria-label="menu">☰</button></div>') +
+      : '<div class="xjchathd"><b>' + esc(ccName()) + ' · ' + esc(CC.alt ? (CC.alt.church ? f9('教會聊天室', 'Church chat') : f9('聊天室', 'Chat')) : f9('小家聊天室', 'Group chat')) + '</b><button class="xjsm" data-xza="menu" aria-label="' + esc(f9('小智', 'Xiaozhi')) + '">🤖</button><button class="xjsm" id="xjDmBtn" data-xj="dminbox" aria-label="private messages">✉️' + (DMS.unread && DMS.code === ccCode() ? '<span class="xjdot" style="margin-left:4px">' + DMS.unread + '</span>' : '') + '</button><button class="xjsm" data-xj="search" aria-label="search">🔍</button><button class="xjsm" data-xj="menu" aria-label="menu">☰</button></div>') +
       (CC.dm ? '' : '<div class="xjtip">') + (CC.dm ? '' : esc(CC.alt && !CC.alt.church ? f9('請彼此尊重、用愛心說誠實話；個人隱私與代禱細節請斟酌。每個人可以刪除自己的訊息。', 'Be respectful and speak the truth in love; take care with private details. You can delete your own messages.') : (CC.alt && CC.alt.church ? f9('請彼此尊重、用愛心說誠實話；個人隱私與代禱細節請斟酌。負責人可以刪除不合宜的訊息。', 'Be respectful and speak the truth in love; take care with private details. Leaders can remove messages.') : f9('請彼此尊重、用愛心說誠實話；個人隱私與代禱細節請斟酌。家長可以刪除不合宜的訊息。', 'Be respectful and speak the truth in love; take care with private details. The leader can remove messages.'))) + '') + (CC.dm ? '' : '</div>') +
       '<div id="xjPinBox">' + pinHtml() + '</div>' +
       '<div id="xjList" class="xjlist">' + listHtml() + '</div>' +
@@ -2207,6 +2207,129 @@
   if (window.visualViewport) window.visualViewport.addEventListener('resize', function () { if (window.visualViewport.height > window.innerHeight * 0.85) vfFix(); });
   document.addEventListener('focusout', function (e) { if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) setTimeout(vfFix, 250); });
   function vvInfo() { var v = window.visualViewport || {}; return 'iH ' + window.innerHeight + ' vvH ' + Math.round(v.height || 0) + ' vvT ' + Math.round(v.offsetTop || 0) + ' sH ' + (screen && screen.height) + ' fix ' + VV.els.map(function (e) { return (e.id || e.className || e.tagName).toString().slice(0, 10) + ':' + (e.getAttribute('data-vvfix') || 0); }).join(','); }
+  /* ── 小智在小家聊天室（xa1113）：@小智 在群組裡回答、聊天摘要（只有自己看）、小智幫我寫 ── */
+  var XZA_PROXY = 'https://xiaozhi-proxy.spch321.workers.dev', XZA_MODEL = 'claude-sonnet-4-6';
+  var XZA_RE = /@\s?(小智|Xiaozhi|샤오즈|シャオジー)/i;
+  var XZA_SYS = 'You are 小智 (Xiaozhi), the warm AI helper of the Kingdom 321 Fellowship (國度321空中團契), answering inside a small-group chat. ' +
+    'Answer briefly (under 450 Chinese characters or 280 English words), warmly and faithfully to the Bible; quote Bible verses word for word with references (Chinese Union Version 和合本 for Chinese, World English Bible for English). ' +
+    'Reply in the same language and script as the question (Traditional or Simplified Chinese as used). Use plain text — no markdown headings, tables or ** — short lines and simple bullets are fine. ' +
+    'Use the recent chat only as context; do not repeat other members\' private details unnecessarily. If someone seems in crisis or danger, gently encourage contacting the group leader, a pastor or local emergency help. ' +
+    'The 321 vision: Jesus is my model, the Bible is my standard, the Holy Spirit is my guide; let Jesus be King and receive all the glory.';
+  function xzaAsk(sys, user, maxT, cb) {
+    var x = new XMLHttpRequest();
+    try { x.open('POST', XZA_PROXY, true); } catch (e) { cb(''); return; }
+    x.setRequestHeader('Content-Type', 'application/json'); x.timeout = 90000;
+    x.onreadystatechange = function () {
+      if (x.readyState !== 4) return; var j = null, t = ''; try { j = JSON.parse(x.responseText); } catch (e) { }
+      if (j) { if (j.content && j.content.length) { for (var i = 0; i < j.content.length; i++) t += (j.content[i] && j.content[i].text) || ''; } else t = j.text || j.reply || ''; }
+      cb(x.status >= 200 && x.status < 300 ? trim(String(t).replace(/\*\*/g, '').replace(/^#+\s*/gm, '')) : '');
+    };
+    x.ontimeout = function () { cb(''); };
+    x.send(JSON.stringify({ model: XZA_MODEL, max_tokens: maxT || 900, system: sys, messages: [{ role: 'user', content: user }] }));
+  }
+  function xzaCtx(n, since) {
+    var L = [], i, m;
+    for (i = 0; i < CC.msgs.length; i++) { m = CC.msgs[i]; if (m.del || !m.text) continue; if (since && m.id <= since) continue; L.push(m); }
+    L = L.slice(-n);
+    return L.map(function (x) { return (x.nick || '?') + (x.mine ? '(' + f9('我', 'me') + ')' : '') + '［' + fmtTime(x.ts) + '］：' + x.text; }).join('\n');
+  }
+  function xzaBotDev() { return 'xzai' + String(baseDev()).replace(/[^a-z0-9]/gi, '').slice(-10); }
+  function xzaChunks(t) { var out = [], cur = '', ps = String(t).split('\n'); for (var i = 0; i < ps.length; i++) { var p = ps[i]; while (p.length > 580) { if (cur) { out.push(cur); cur = ''; } out.push(p.slice(0, 580)); p = p.slice(580); } if ((cur ? cur.length + 1 : 0) + p.length > 580) { out.push(cur); cur = p; } else cur = cur ? cur + '\n' + p : p; } if (cur) out.push(cur); return out.filter(function (s) { return trim(s); }).slice(0, 4); }
+  function xzaPost(text, cb) {
+    var parts = xzaChunks(text), i = 0, tries = 0, code = ccCode();
+    (function nx() {
+      if (i >= parts.length) { pull(0); if (cb) cb(true); return; }
+      api(CHAT, 'POST', '/c/' + code + '/send', { text: parts[i], dev: xzaBotDev(), nick: '🤖 ' + f9('小智', 'Xiaozhi'), re: 0, after: CC.last }, function (j, e) {
+        if (!j && (e === 'slow' || e === 'http429') && tries < 4) { tries++; setTimeout(nx, 1700); return; }
+        if (!j) { note(errTxt(e)); if (cb) cb(false); return; }
+        tries = 0; if (ccCode() === code) { merge(j.msgs); applyPack(j); paintChat(true); }
+        i++; setTimeout(nx, 1600);
+      });
+    })();
+  }
+  function xzaReply(q) {
+    if (!lg(P + 'xzaok')) { ls(P + 'xzaok', '1'); note(f9('小智會參考最近 15 則訊息來回答，回答會出現在聊天室裡大家都看得到。', 'Xiaozhi reads the last 15 messages for context; the answer appears in the chat for everyone.')); }
+    upShow(f9('🤖 小智正在想…', '🤖 Xiaozhi is thinking…'));
+    var ask = 'RECENT GROUP CHAT (oldest first):\n' + xzaCtx(15) + '\n\nQUESTION from ' + (nick() || '?') + ':\n' + String(q).replace(XZA_RE, '').trim();
+    xzaAsk(XZA_SYS, ask, 1000, function (t) {
+      var up = $('xjUp'); if (up) up.style.display = 'none';
+      if (!t) { note(f9('小智暫時沒有回應，請稍後再試', 'Xiaozhi could not answer — please try again later')); return; }
+      xzaPost(t);
+    });
+  }
+  /* 面板 */
+  var XZA = { k: '', out: '', busy: 0, seen: {} };
+  function xzaCss() {
+    if ($('xzaCss')) return; var s = document.createElement('style'); s.id = 'xzaCss';
+    s.textContent = '#xzaM{position:fixed;inset:0;z-index:2147481500;background:rgba(10,20,40,.45);display:flex;align-items:flex-end;justify-content:center}' +
+      '#xzaM .sh{width:100%;max-width:720px;max-height:86vh;overflow:auto;background:var(--bg,#fff);color:var(--ink,#1d1f24);border-radius:18px 18px 0 0;padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 30px rgba(0,0,0,.25)}' +
+      '#xzaM .hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}#xzaM .hd b{flex:1;font-size:1.08em}#xzaM .hd button{border:1px solid rgba(0,0,0,.12);background:transparent;color:inherit;border-radius:999px;padding:6px 12px}' +
+      '#xzaM .it{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;border:1px solid rgba(0,0,0,.12);background:transparent;color:inherit;border-radius:14px;padding:12px 14px;margin:8px 0;font-size:1em}#xzaM .it small{opacity:.65}' +
+      '#xzaM .chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}#xzaM .chips button{border:1px solid rgba(0,0,0,.15);background:transparent;color:inherit;border-radius:999px;padding:7px 13px;font-size:.92em}#xzaM .chips button.on{background:#1E3F8F;border-color:#1E3F8F;color:#fff}' +
+      '#xzaM textarea{width:100%;box-sizing:border-box;font:inherit;border:1px solid rgba(0,0,0,.15);border-radius:12px;padding:10px;background:transparent;color:inherit}' +
+      '#xzaM .go{width:100%;margin-top:10px;border:0;border-radius:14px;padding:12px;font-size:1em;font-weight:700;background:#1E3F8F;color:#fff}' +
+      '#xzaM .out{white-space:pre-wrap;line-height:1.7;background:rgba(127,127,127,.08);border-radius:12px;padding:12px;margin:8px 0}' +
+      '#xzaM .dr{border:1px solid rgba(0,0,0,.12);border-radius:12px;padding:10px 12px;margin:10px 0;white-space:pre-wrap;line-height:1.65}#xzaM .dr button{display:block;margin-top:8px;border:0;border-radius:10px;padding:7px 12px;background:#1E3F8F;color:#fff}' +
+      '#xzaM .hint{font-size:.85em;opacity:.7;margin:4px 0}' +
+      '.xjm.xjbot .xjav{background:linear-gradient(135deg,#FFD873,#E9A531)!important;font-size:15px}.xjm.xjbot .xjt{background:#FFF7E3;border:1px solid #F1D79A;color:#3B2A00}' +
+      '@media (prefers-color-scheme:dark){#xzaM .sh{background:#1C1F26;color:#ECEDF0}.xjm.xjbot .xjt{background:#3A3122;border-color:#6B5428;color:#F3E3BC}}';
+    document.head.appendChild(s);
+  }
+  function xzaClose() { var m = $('xzaM'); if (m) m.parentNode.removeChild(m); XZA.k = ''; }
+  function xzaOpen(k) {
+    xzaCss(); XZA.k = k || 'menu'; var m = $('xzaM');
+    if (!m) { m = document.createElement('div'); m.id = 'xzaM'; document.body.appendChild(m); m.addEventListener('click', function (e) { if (e.target === m) xzaClose(); }); }
+    var h = '<div class="sh" role="dialog" aria-modal="true"><div class="hd"><b>';
+    if (XZA.k === 'menu') {
+      h += '🤖 ' + esc(f9('小智', 'Xiaozhi')) + '</b><button data-xza="close">' + esc(f9('關閉', 'Close')) + '</button></div>' +
+        '<button class="it" data-xza="ask"><b>💬 ' + esc(f9('在聊天室問小智', 'Ask Xiaozhi in the chat')) + '</b><small>' + esc(f9('輸入「@小智 你的問題」，大家都看得到回答', 'Type “@Xiaozhi your question” — everyone sees the answer')) + '</small></button>' +
+        '<button class="it" data-xza="sum"><b>📋 ' + esc(f9('小智幫我摘要', 'Summarize for me')) + '</b><small>' + esc(f9('重點、代禱事項、等你回覆的訊息（只有你看得到）', 'Key points, prayer requests, messages waiting for you (only you see it)')) + '</small></button>' +
+        '<button class="it" data-xza="write"><b>✍️ ' + esc(f9('小智幫我寫', 'Help me write')) + '</b><small>' + esc(f9('祝福、安慰、回覆、生日祝賀…寫好可以先修改再送出', 'Blessings, comfort, replies, birthday wishes — edit before sending')) + '</small></button>';
+    } else if (XZA.k === 'sum') {
+      h += '📋 ' + esc(f9('聊天摘要', 'Chat summary')) + '</b><button data-xza="close">' + esc(f9('關閉', 'Close')) + '</button></div>';
+      if (XZA.busy) h += '<p class="hint">' + esc(f9('小智正在讀訊息…', 'Xiaozhi is reading…')) + '</p>';
+      else if (XZA.out) h += '<div class="out">' + esc(XZA.out) + '</div><p class="hint">' + esc(f9('摘要只有你看得到，不會送進聊天室。', 'Only you can see this summary.')) + '</p>';
+      else h += '<p class="hint">' + esc(f9('要摘要哪些訊息？', 'Which messages?')) + '</p><div class="chips"><button data-xza="sumgo" data-n="unread">' + esc(f9('還沒看的', 'Unread')) + '</button><button data-xza="sumgo" data-n="30">' + esc(f9('最近 30 則', 'Last 30')) + '</button><button data-xza="sumgo" data-n="100">' + esc(f9('最近 100 則', 'Last 100')) + '</button></div>';
+    } else if (XZA.k === 'write') {
+      var T2 = [['bless', f9('祝福', 'Blessing')], ['comfort', f9('安慰', 'Comfort')], ['reply', f9('回覆最後一則', 'Reply to the last message')], ['bday', f9('生日祝賀', 'Birthday wishes')], ['thanks', f9('感謝', 'Thanks')], ['cheer', f9('鼓勵', 'Encouragement')], ['pray', f9('代禱回應', 'Prayer response')]];
+      h += '✍️ ' + esc(f9('小智幫我寫', 'Help me write')) + '</b><button data-xza="close">' + esc(f9('關閉', 'Close')) + '</button></div><div class="chips">';
+      for (var i = 0; i < T2.length; i++) h += '<button data-xza="wk" data-k="' + T2[i][0] + '"' + (XZA.wk === T2[i][0] ? ' class="on"' : '') + '>' + esc(T2[i][1]) + '</button>';
+      h += '</div><textarea id="xzaNote" rows="3" placeholder="' + esc(f9('給誰、想說的重點（可不填）', 'To whom, and key points (optional)')) + '">' + esc(XZA.note || '') + '</textarea><button class="go" data-xza="wgo">' + esc(f9('請小智寫兩個版本', 'Write two versions')) + '</button>';
+      if (XZA.busy) h += '<p class="hint">' + esc(f9('小智正在寫…', 'Xiaozhi is writing…')) + '</p>';
+      if (XZA.drafts) for (var d = 0; d < XZA.drafts.length; d++) h += '<div class="dr">' + esc(XZA.drafts[d]) + '<button data-xza="use" data-i="' + d + '">' + esc(f9('放進輸入框', 'Put in the box')) + '</button></div>';
+    }
+    m.innerHTML = h + '</div>';
+  }
+  function xzaSum(n) {
+    var since = 0, k = 100;
+    if (n === 'unread') { since = XZA.seen0 || 0; k = 150; } else k = +n || 30;
+    var ctx = xzaCtx(k, since);
+    if (!ctx) { XZA.out = f9('沒有新的訊息。', 'No new messages.'); xzaOpen('sum'); return; }
+    XZA.busy = 1; XZA.out = ''; xzaOpen('sum');
+    var ask = 'Summarize these small-group chat messages for ' + (nick() || 'me') + ', in the same language and script as most messages. Plain text with these short sections: 1) 重點 / key points (3-6 bullets); 2) 代禱事項 / prayer requests (who and what; or "none"); 3) 等你回覆 / messages that mention or ask ' + (nick() || 'me') + ' (or "none"); 4) 活動與時間 / events and times (or "none"). Be concise and faithful; do not invent.\n\nMESSAGES:\n' + ctx;
+    xzaAsk('You summarize church small-group chats accurately and kindly.', ask, 900, function (t) { XZA.busy = 0; XZA.out = t || f9('摘要沒有成功，請再試一次', 'Could not summarize — please try again'); if (XZA.k === 'sum') xzaOpen('sum'); });
+  }
+  function xzaWrite() {
+    var nt = $('xzaNote'); XZA.note = nt ? nt.value : ''; var k = XZA.wk || 'bless';
+    var what = { bless: 'a blessing', comfort: 'a message of comfort', reply: 'a reply to the last message in the chat', bday: 'birthday wishes', thanks: 'a thank-you', cheer: 'an encouragement', pray: 'a response to a prayer request saying we are praying, with a short prayer' }[k];
+    XZA.busy = 1; XZA.drafts = null; xzaOpen('write');
+    var ask = 'Write ' + what + ' that ' + (nick() || 'I') + ' can send in this church small-group chat. ' + (XZA.note ? 'Details: ' + XZA.note + '. ' : '') + 'Give TWO different versions separated by a line containing only ---. Each under 120 Chinese characters or 70 English words, warm and sincere, with at most one short Bible verse (with reference). Same language and script as the chat (or as the details). Plain text only.\n\nRECENT CHAT:\n' + xzaCtx(12);
+    xzaAsk(XZA_SYS, ask, 700, function (t) { XZA.busy = 0; XZA.drafts = t ? t.split(/\n\s*---+\s*\n/).map(trim).filter(Boolean).slice(0, 3) : [f9('沒有寫成功，請再試一次', 'Could not write — please try again')]; if (XZA.k === 'write') xzaOpen('write'); });
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target && e.target.closest ? e.target.closest('[data-xza]') : null; if (!b) return;
+    var a = b.getAttribute('data-xza'); e.preventDefault();
+    if (a === 'menu') { XZA.seen0 = XZA.seen[ccCode()] != null ? XZA.seen[ccCode()] : chatSeen(); XZA.out = ''; XZA.drafts = null; xzaOpen('menu'); }
+    else if (a === 'close') xzaClose();
+    else if (a === 'ask') { xzaClose(); var ta = $('xjIn'); if (ta) { if (!XZA_RE.test(ta.value)) ta.value = '@' + f9('小智', 'Xiaozhi') + ' ' + ta.value; ta.focus(); growTa(ta); } }
+    else if (a === 'sum') xzaOpen('sum');
+    else if (a === 'sumgo') xzaSum(b.getAttribute('data-n'));
+    else if (a === 'write') { XZA.wk = 'bless'; xzaOpen('write'); }
+    else if (a === 'wk') { var nt = $('xzaNote'); XZA.note = nt ? nt.value : ''; XZA.wk = b.getAttribute('data-k'); xzaOpen('write'); }
+    else if (a === 'wgo') xzaWrite();
+    else if (a === 'use') { var d = XZA.drafts && XZA.drafts[+b.getAttribute('data-i')]; xzaClose(); var t2 = $('xjIn'); if (t2 && d) { t2.value = d; CC.draft = d; t2.focus(); growTa(t2); } }
+  }, true);
+
   window.XJ321 = { vvInfo: vvInfo, shareImg: shareImg, uploadTo: uploadTo, getFile: fileGetUrl, errTxt: function (e) { return errTxt(e); }, finish: finish, autoDone: autoDone, autoSync: autoSync, openChat: openChat,
     dm: function (code, name, who, nk) { setAlt(code, name); dmOpen(who, nk); },
     inbox: function (code, name) { setAlt(code, name); dmInbox(); }, shareNow: function () { shareAll(true); },
