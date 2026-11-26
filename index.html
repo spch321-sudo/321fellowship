@@ -23043,7 +23043,7 @@ function watchDayChange(){
    內含：逐句朗讀與背景播放、畫線默想、小智（美編／收合／接續／追問／回答對象）、
         經文美圖工作室（＋media.js 配樂錄影作品）、讀經樂、課程獎章、字級主題三語、自動更新。
    ===================================================================== */
-var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110-vv1110-vb1110-kb1110-kf1110-ac1111-vg1111d-xl1111-vf1111-eco1111-ef1111-sw1111-lg1111-xa1113-dv1126';
+var APPVER = '4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110-vv1110-vb1110-kb1110-kf1110-ac1111-vg1111d-xl1111-vf1111-eco1111-ef1111-sw1111-lg1111-xa1113-dv1126b';
 var SVC = {
   xz: (window.APP_CONFIG && window.APP_CONFIG.aiEndpoint) || 'https://xiaozhi-proxy.spch321.workers.dev',
   tts: (window.APP_CONFIG && window.APP_CONFIG.ttsEndpoint) || 'https://azure-tts.spch321.workers.dev',
@@ -25358,7 +25358,7 @@ PAGES.apps = function () {
     foldItems('eco2', main, 2, ecoCards) +
     (devo.length ? sect('靈', f9('321 靈修生活', '321 Devotional Life')) +
       '<p class="note" style="margin-bottom:10px">' + esc(f9('每天一口屬靈的食物：心靈快餐、真理點心、舊約導讀、靈修會主，隨時隨地飽足心靈。', 'A bite of spiritual food every day: Soul Meal, Truth Snack, Old Testament Guide and Devotion, to feed your heart anywhere, any time.')) + '</p>' +
-      foldItems('devo', devo, 0, ecoCards) : '') +
+      foldItems('devo', devo, 2, ecoCards) : '') +
     (life.length ? sect('活', f9('321 生活操練', '321 Living It Out')) +
       '<p class="note" style="margin-bottom:10px">' + esc(f9('把 321 活在每一個生活領域：生命、健康、屬靈父母、慕道、屬靈、教會、婚姻、家庭、職場、社交。', 'Living out 3-2-1 in every part of life: inner life, health, spiritual parenting, seekers, spiritual life, church, marriage, family, work and friendships.')) + '</p>' +
       foldItems('life', life, 2, ecoCards) : '') +
@@ -25416,7 +25416,7 @@ else document.addEventListener("DOMContentLoaded",init);
 })();
 
 </script>
-<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110-vv1110-vb1110-kb1110-kf1110-ac1111-vg1111d-xl1111-vf1111-eco1111-ef1111-sw1111-lg1111-xa1113-dv1126";</script>
+<script>window.K321_TAIL=1;window.K321_VER="4.0.202611021754-cr-ws3-fs1103-xz1103-au1103-xzm1103-rf1105-ap1107-cs1109-xj1109-tb1109-at1109-cw1109-np1109-sv1109-mg1109-rt1109-ct1109-hb1109-tm1109-ub1109-dm1109-sh1109-rc1109-nt1109-nv1109-ln1109-wa1110-em1110-ff1110-oz1110-nf1110-xa1110-fs1110-lk1110-vf1110-vv1110-vb1110-kb1110-kf1110-ac1111-vg1111d-xl1111-vf1111-eco1111-ef1111-sw1111-lg1111-xa1113-dv1126b";</script>
 <script id="VPICK">
 /* VPICK321 v1（2026-10-23）：小智回答「做成美圖」時，從回答裡找出最合適的那一節經文
    ‧「>」引言裡帶章節的優先，其次是回答裡第一個帶章節的經文
